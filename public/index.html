@@ -233,7 +233,7 @@
                                 <tr class="table-filters-row">
                                     <th>
                                         <div style="display: flex; align-items: center; gap: 8px;">
-                                            <input type="checkbox" id="select-all-tutores" class="custom-checkbox">
+                                            <input type="checkbox" id="select-all-tutores" class="custom-checkbox" onchange="window.toggleSelectAll('tutores', this.checked)">
                                             <label for="select-all-tutores"
                                                 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); cursor: pointer; user-select: none; white-space: nowrap;">Selecionar</label>
                                             <button type="button" id="btn-bulk-delete-tutores"
@@ -331,7 +331,7 @@
                                 <tr class="table-filters-row">
                                     <th>
                                         <div style="display: flex; align-items: center; gap: 8px;">
-                                            <input type="checkbox" id="select-all-pets" class="custom-checkbox">
+                                            <input type="checkbox" id="select-all-pets" class="custom-checkbox" onchange="window.toggleSelectAll('pets', this.checked)">
                                             <label for="select-all-pets"
                                                 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); cursor: pointer; user-select: none; white-space: nowrap;">Selecionar</label>
                                             <button type="button" id="btn-bulk-delete-pets"
@@ -1129,6 +1129,168 @@
                     </div>
                 </section>
 
+                <!-- ABA PET PERFIL -->
+                <section class="tab-panel" id="tab-pet-perfil">
+                    <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; width: 85%;">
+                        <button class="btn btn-secondary" onclick="showPetsList()">
+                            <i data-lucide="arrow-left"></i> Voltar para a Lista
+                        </button>
+
+                    </div>
+
+                    <!-- Cabeçalho Rápido (Top Grid) -->
+                    <div style="display: grid; grid-template-columns: 55% 26%; justify-content: flex-start; gap: 24px; margin-bottom: 24px;">
+                        <div class="profile-card hero-card" style="border-top: 4px solid var(--primary); border-left: none; margin: 0; position: relative;">
+                            <span class="badge-green-tutor" id="perf-pet-status" style="position: absolute; top: 24px; right: 24px;">Ativo</span>
+                            <div class="hero-header">
+                                <div style="position: relative; width: 110px; height: 110px; flex-shrink: 0;">
+                                    <div class="hero-avatar" id="perf-pet-avatar" style="width: 100%; height: 100%; border-radius: 50%; font-size: 32px; font-weight: 700; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--primary-glow); border: 2px solid var(--primary); color: var(--primary);">P</div>
+                                </div>
+                                <div class="hero-titles">
+                                    <h3 id="perf-pet-nome">Carregando...</h3>
+                                    <p id="perf-pet-raca-header" style="margin-top: 4px; color: var(--text-muted); font-size: 14px;">Carregando...</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+
+                    <div class="profile-grid">
+                        <div class="profile-main-col" style="display: grid; grid-template-rows: max-content 1fr; gap: 24px; height: 100%;">
+                            <!-- Informações do Pet -->
+                            <div class="profile-card">
+                                <div class="card-header-icon"><i data-lucide="info"></i>
+                                    <h4>Características Físicas</h4>
+                                </div>
+                                <div class="info-grid-2" style="margin-bottom: 16px;">
+                                    <div class="info-item"><span>Espécie</span><strong id="perf-pet-especie">-</strong></div>
+                                    <div class="info-item"><span>Raça</span><strong id="perf-pet-raca">-</strong></div>
+                                    <div class="info-item"><span>Sexo</span><strong id="perf-pet-sexo">-</strong></div>
+                                    <div class="info-item"><span>Peso</span><strong id="perf-pet-peso">-</strong></div>
+                                    <div class="info-item"><span>Cor / Pelagem</span><strong id="perf-pet-cor">-</strong></div>
+                                    <div class="info-item"><span>Data de Nascimento</span><strong id="perf-pet-nasc">-</strong></div>
+                                    <div class="info-item full-width" style="text-align: center;">
+                                        <span>Próximo Aniversário</span>
+                                        <strong id="perf-pet-proximo-niver" style="font-size: 15px; color: #ebed88;">-</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Observações -->
+                            <div class="profile-card" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start;">
+                                <div class="card-header-icon"><i data-lucide="file-text"></i>
+                                    <h4>Observações do Responsável</h4>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 16px;">
+                                    <div class="info-item full-width">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                            <textarea id="perf-pet-obs" readonly
+                                                style="flex: 1; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 14px; font-weight: 500; padding: 0; resize: none; min-height: 80px; outline: none; line-height: 1.5; overflow: hidden;"
+                                                placeholder="Nenhuma observação registrada..."></textarea>
+                                            <div style="display: flex; gap: 4px; margin-top: -4px;">
+                                                <button id="btn-edit-pet-obs" onclick="toggleEditPetObs()"
+                                                    style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px;"
+                                                    title="Editar" class="hover-bg">
+                                                    <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+                                                </button>
+                                                <button id="btn-save-pet-obs" onclick="savePetObs()"
+                                                    style="background: none; border: none; color: #ebed88; cursor: pointer; padding: 4px; border-radius: 4px; display: none;"
+                                                    title="Salvar" class="hover-bg">
+                                                    <i data-lucide="save" style="width: 16px; height: 16px;"></i>
+                                                </button>
+                                                <button
+                                                    onclick="copyTextToClipboard('perf-pet-obs', 'Observações do Responsável')"
+                                                    style="background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; border-radius: 4px;"
+                                                    title="Copiar" class="hover-bg">
+                                                    <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-side-col" style="display: flex; flex-direction: column; gap: 24px; height: 100%;">
+                            <!-- Dados de Cadastro -->
+                            <div class="profile-card">
+                                <div class="card-header-icon"><i data-lucide="tag"></i>
+                                    <h4>Sobre o Pet</h4>
+                                </div>
+                                <div class="info-grid-1">
+                                    <div class="info-item">
+                                        <span>Castrado?</span>
+                                        <strong id="perf-pet-castrado">-</strong>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Treinado?</span>
+                                        <strong id="perf-pet-treinado">-</strong>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Autoriza Uso de Imagem?</span>
+                                        <strong id="perf-pet-imagem">-</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Acesso Rápido ao Tutor -->
+                            <div class="profile-card" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start;">
+                                <div class="card-header-icon"><i data-lucide="user"></i>
+                                    <h4>Responsável</h4>
+                                </div>
+                                <div class="info-grid-1">
+                                    <div class="info-item">
+                                        <span>CPF</span>
+                                        <strong id="perf-pet-tutor-cpf">-</strong>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Nome do Responsável</span>
+                                        <strong id="perf-pet-tutor-nome">-</strong>
+                                    </div>
+                                    <div class="info-item">
+                                        <span>Celular (WhatsApp)</span>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                                            <strong id="perf-pet-tutor-cel">-</strong>
+                                            <button onclick="copyTextToClipboard('perf-pet-tutor-cel', 'WhatsApp')"
+                                                style="background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; border-radius: 4px;"
+                                                title="Copiar WhatsApp" class="hover-bg">
+                                                <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="profile-stats-col" style="display: flex; flex-direction: column; gap: 24px; height: 100%;">
+                            <!-- Tutor Destaque -->
+                            <div style="flex: 1; justify-content: center; background-color: #e6d3f4; color: #0E1217; border-radius: 8px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <div style="background: rgba(0,0,0,0.1); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+                                    <i data-lucide="user" style="width: 32px; height: 32px; fill: currentColor;"></i>
+                                </div>
+                                <h2 style="margin: 0; font-size: 24px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;" id="stat-pet-tutor">-</h2>
+                                <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Responsável</span>
+                            </div>
+                            <!-- Idade do Pet -->
+                            <div style="flex: 1; justify-content: center; background-color: #ebed88; color: #0E1217; border-radius: 8px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <div style="background: rgba(0,0,0,0.1); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+                                    <i data-lucide="calendar" style="width: 32px; height: 32px;"></i>
+                                </div>
+                                <h2 style="margin: 0; font-size: 36px; font-weight: 500;" id="stat-pet-idade">0</h2>
+                                <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Anos</span>
+                            </div>
+                            <!-- Porte -->
+                            <div style="flex: 1; justify-content: center; background-color: #146038; color: white; border-radius: 8px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                                <div style="background: rgba(255,255,255,0.1); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+                                    <i data-lucide="ruler" style="width: 32px; height: 32px;"></i>
+                                </div>
+                                <h2 style="margin: 0; font-size: 20px; font-weight: 500;" id="stat-pet-porte">-</h2>
+                                <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Porte</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- ABA 9: NOVO PET -->
                 <section class="tab-panel" id="tab-novo-pet">
                     <div class="section-header-row" style="display: none;">
@@ -1614,6 +1776,7 @@
             </div>
         </div>
     </div>
+
 
     <script src="app.js?v=94"></script>
 </body>

@@ -1,6 +1,6 @@
 
 // --- CUSTOM DROPDOWN HELPERS ---
-window.toggleCustomSelect = function(listId) {
+window.toggleCustomSelect = function (listId) {
     document.querySelectorAll('.custom-dropdown-list').forEach(el => {
         if (el.id !== listId && el.id !== 'racas-custom-list') el.style.display = 'none';
     });
@@ -10,7 +10,7 @@ window.toggleCustomSelect = function(listId) {
     }
 };
 
-window.selectCustomOption = function(fieldId, value, text) {
+window.selectCustomOption = function (fieldId, value, text) {
     const visibleInput = document.getElementById(fieldId + '-input');
     const hiddenInput = document.getElementById(fieldId);
     if (visibleInput && hiddenInput) {
@@ -22,7 +22,7 @@ window.selectCustomOption = function(fieldId, value, text) {
     if (list) list.style.display = 'none';
 };
 
-window.setCustomSelectValue = function(fieldId, value) {
+window.setCustomSelectValue = function (fieldId, value) {
     const hiddenInput = document.getElementById(fieldId);
     const visibleInput = document.getElementById(fieldId + '-input');
     if (hiddenInput && visibleInput) {
@@ -31,7 +31,7 @@ window.setCustomSelectValue = function(fieldId, value) {
         if (list) {
             const item = Array.from(list.querySelectorAll('.custom-dropdown-item')).find(el => el.dataset.value === value);
             visibleInput.value = item ? item.textContent.trim() : value;
-            if(!value) visibleInput.value = '';
+            if (!value) visibleInput.value = '';
         }
     }
 };
@@ -52,7 +52,7 @@ document.addEventListener('click', (e) => {
 // ==========================================
 // CONTROLE DE AUTENTICAÇÃO E SESSÃO (CLIENTE)
 // ==========================================
-(function() {
+(function () {
     const token = localStorage.getItem('auth_token');
     // Se o usuário não estiver logado e não estiver na tela de login, redireciona imediatamente
     if (!token && !window.location.pathname.endsWith('login.html')) {
@@ -102,7 +102,7 @@ const CustomUI = {
         const container = this.getToastContainer();
         const toast = document.createElement('div');
         toast.className = `custom-toast ${type}`;
-        
+
         let iconName = 'check-circle';
         if (type === 'danger') iconName = 'x-circle';
         if (type === 'warning') iconName = 'alert-triangle';
@@ -190,7 +190,7 @@ const CustomUI = {
 
             overlay.querySelector('.custom-dialog-btn-cancel').addEventListener('click', () => handleClose(false));
             overlay.querySelector('.custom-dialog-btn-confirm').addEventListener('click', () => handleClose(true));
-            
+
             // Clicar fora também cancela
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) handleClose(false);
@@ -241,7 +241,7 @@ const CustomUI = {
             };
 
             overlay.querySelector('.custom-dialog-btn-confirm').addEventListener('click', handleClose);
-            
+
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) handleClose();
             });
@@ -268,7 +268,7 @@ const state = {
     tutoresRowsPerPage: 20,
     tutoresFilteredList: null,
     currentTutorInView: null,
-    
+
     pets: [],
     petsPage: 1,
     petsRowsPerPage: 20,
@@ -649,7 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNome = localStorage.getItem('user_nome') || 'Administrador';
     const displayUserName = document.getElementById('display-user-name');
     const displayUserAvatar = document.getElementById('display-user-avatar');
-    
+
     if (displayUserName) {
         displayUserName.textContent = userNome;
     }
@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirmLogout) {
                 try {
                     await fetch('/api/auth/logout', { method: 'POST' });
-                } catch(e) {}
+                } catch (e) { }
                 localStorage.clear();
                 window.location.href = 'login.html';
             }
@@ -699,13 +699,13 @@ document.addEventListener('DOMContentLoaded', () => {
         inputNome.addEventListener('input', () => {
             const isEdit = document.getElementById('usuario-id').value !== '';
             if (isEdit) return; // Não altera o username se for edição
-            
+
             const rawVal = inputNome.value;
             // Normaliza o nome (sem acentos, minúsculo)
             const normalized = removeDiacritics(rawVal.toLowerCase())
                 .replace(/[^a-z0-9\s]/g, '') // Remove caracteres especiais
                 .trim();
-                
+
             const words = normalized.split(/\s+/).filter(w => w.length > 0);
             if (words.length === 0) {
                 inputUsername.value = '';
@@ -885,9 +885,9 @@ function initCPFValidation() {
             console.log(`[CPF Input] CPF incompleto (${cleanVal.length} dígitos). Limpando dados do responsável instantaneamente...`);
             // Se o usuário começou a apagar ou o CPF ficou incompleto, limpa todos os dados antigos imediatamente
             const fieldsToClear = [
-                'tutor-nome', 'tutor-data-nascimento', 'tutor-sexo', 
-                'tutor-estado-civil', 'tutor-cep', 'tutor-endereco', 
-                'tutor-numero', 'tutor-complemento', 'tutor-bairro', 
+                'tutor-nome', 'tutor-data-nascimento', 'tutor-sexo',
+                'tutor-estado-civil', 'tutor-cep', 'tutor-endereco',
+                'tutor-numero', 'tutor-complemento', 'tutor-bairro',
                 'tutor-cidade', 'tutor-uf'
             ];
 
@@ -1031,7 +1031,7 @@ function initCPFValidation() {
                                 cepInput.classList.add('is-valid');
                                 clearFeedback('tutor-cep');
                                 formVerificationState.cep = true;
-                                
+
                                 // Dispara o evento de input para acionar a busca automática de endereço via ViaCEP
                                 cepInput.dispatchEvent(new Event('input'));
                             }
@@ -1832,12 +1832,12 @@ function initCEPListener() {
         if (cep.length === 0) {
             formVerificationState.cep = false;
             showFeedback('tutor-cep', 'O CEP é obrigatório.', 'danger');
-            
+
             document.getElementById('tutor-endereco').value = '';
             document.getElementById('tutor-bairro').value = '';
             document.getElementById('tutor-cidade').value = '';
             document.getElementById('tutor-uf').value = '';
-            
+
             const numInput = document.getElementById('tutor-numero');
             if (numInput) numInput.value = '';
             const compInput = document.getElementById('tutor-complemento');
@@ -2014,18 +2014,18 @@ function initCEPListener() {
             document.getElementById('tutor-bairro').value = '';
             document.getElementById('tutor-cidade').value = '';
             document.getElementById('tutor-uf').value = '';
-            
+
             const numInput = document.getElementById('tutor-numero');
             if (numInput) numInput.value = '';
             const compInput = document.getElementById('tutor-complemento');
             if (compInput) compInput.value = '';
-            
+
             ['tutor-endereco', 'tutor-bairro', 'tutor-cidade', 'tutor-uf', 'tutor-numero', 'tutor-complemento'].forEach(id => {
                 clearFeedback(id);
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('is-valid', 'is-invalid');
             });
-            
+
             document.getElementById('tutor-cidade').removeAttribute('readonly');
             document.getElementById('tutor-uf').removeAttribute('readonly');
 
@@ -2035,7 +2035,7 @@ function initCEPListener() {
             formVerificationState.cidade = false;
             formVerificationState.uf = false;
             formVerificationState.numero = false;
-            
+
             validateFormState();
         }
 
@@ -2471,7 +2471,7 @@ function onTabChanged(tabName) {
             title.textContent = "Lista de Pets";
             subtitle.textContent = "Gerencie todos os pets registrados e suas fichas clínicas.";
             break;
-        case 'usuarios':case 'usuarios':
+        case 'usuarios': case 'usuarios':
             title.innerHTML = '<span style="display: flex; align-items: center; gap: 8px;"><i data-lucide="user-cog" style="width: 24px; height: 24px;"></i> Controle de Usuários</span>';
             subtitle.textContent = "Gerencie perfis de acesso, credenciais e permissões dos operadores do sistema.";
             if (window.lucide) {
@@ -2524,7 +2524,7 @@ async function loadDashboardData() {
 
         const tutores = state.tutores;
         const tutoresAtivos = tutores.filter(t => !t.status || t.status.toLowerCase() === 'ativo').length;
-        
+
         // Atualiza os KPIs
         const kpiFaturamento = document.getElementById('kpi-faturamento');
         if (kpiFaturamento) kpiFaturamento.textContent = 'R$ 0,00';
@@ -2722,22 +2722,22 @@ function renderTutoresTable(list, isFiltered = false) {
     }
 
     let itemsToRender = list;
-    
+
     // Pagination logic
     const totalItems = list.length;
     let startItem = 0;
     let endItem = totalItems;
-    
+
     if (state.tutoresRowsPerPage !== 'all') {
         const rows = parseInt(state.tutoresRowsPerPage);
         const totalPages = Math.ceil(totalItems / rows);
         if (state.tutoresPage > totalPages && totalPages > 0) state.tutoresPage = totalPages;
-        
+
         startItem = (state.tutoresPage - 1) * rows;
         endItem = Math.min(startItem + rows, totalItems);
         itemsToRender = list.slice(startItem, endItem);
     }
-    
+
     updatePaginationInfo(totalItems > 0 ? startItem + 1 : 0, endItem, totalItems);
 
     itemsToRender.forEach(t => {
@@ -2765,7 +2765,7 @@ function renderTutoresTable(list, isFiltered = false) {
         row.innerHTML = `
             <td style="vertical-align: middle;">
                 <div style="display: flex; align-items: center; gap: 12px; height: 100%;">
-                    <input type="checkbox" class="custom-checkbox tutor-select-checkbox" data-id="${t.id}">
+                    <input type="checkbox" class="custom-checkbox tutor-select-checkbox" data-id="${t.id}" onchange="window.toggleBulkDeleteBtn('tutores')">
                     <button class="btn-table-edit" onclick="editTutor(${t.id})">
                         <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i> Editar
                     </button>
@@ -2787,9 +2787,9 @@ function renderTutoresTable(list, isFiltered = false) {
             <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">
                 <div style="display: flex; align-items: center; gap: 14px; height: 100%;">
                     ${t.foto_url
-                        ? `<img src="${t.foto_url}" alt="${t.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
-                        : (() => { const parts = (t.nome || '?').trim().split(/\s+/); const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0]; return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials.toUpperCase()}</div>`; })()
-                    }
+                ? `<img src="${t.foto_url}" alt="${t.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
+                : (() => { const parts = (t.nome || '?').trim().split(/\s+/); const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0]; return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials.toUpperCase()}</div>`; })()
+            }
                     <span>${t.nome}</span>
                 </div>
             </td>
@@ -2832,7 +2832,7 @@ function setupTutorFilters() {
     });
 }
 
-window.applyTutorFilters = function() {
+window.applyTutorFilters = function () {
     const nomeInput = document.getElementById('filter-tutor-nome');
     const cpfInput = document.getElementById('filter-tutor-cpf');
     const celularInput = document.getElementById('filter-tutor-celular');
@@ -2856,20 +2856,21 @@ window.applyTutorFilters = function() {
     const statusF = (statusInput ? statusInput.value : '').toLowerCase();
 
     const filtered = state.tutores.filter(t => {
-        const matchNome = !nomeF || (t.nome && t.nome.toLowerCase().startsWith(nomeF));
-        
+        const tNome = t.nome ? t.nome.toLowerCase() : '';
+        const matchNome = !nomeF || tNome.startsWith(nomeF);
+
         const cleanCpf = (t.cpf || '').replace(/\D/g, '');
         const matchCpf = !cpfF || cleanCpf.startsWith(cpfF);
-        
+
         const cleanCelular = (t.telefone || '').replace(/\D/g, '');
         const matchCelular = !celularF || cleanCelular.startsWith(celularF) || (cleanCelular.length >= 2 && cleanCelular.substring(2).startsWith(celularF));
-        
-        const matchEmail = !emailF || (t.email && t.email.toLowerCase().startsWith(emailF));
-        
+
+        const tEmail = t.email ? t.email.toLowerCase() : '';
+        const matchEmail = !emailF || tEmail.startsWith(emailF);
+
         const statusStr = t.status ? t.status.toLowerCase() : '';
-        const matchStatus = !statusF || 
-            (statusStr === 'ativo' ? 'cliente' : 'inativo').startsWith(statusF) ||
-            statusStr.startsWith(statusF);
+        const matchStatus = !statusF ||
+            (statusStr === 'ativo' ? 'cliente' : 'inativo').startsWith(statusF);
 
         return matchNome && matchCpf && matchCelular && matchEmail && matchStatus;
     });
@@ -2884,13 +2885,13 @@ function updatePaginationInfo(start, end, total) {
     const elTotal = document.getElementById('page-total-tutores');
     const btnPrev = document.getElementById('btn-prev-tutores');
     const btnNext = document.getElementById('btn-next-tutores');
-    
+
     if (elStart) elStart.textContent = start;
     if (elEnd) elEnd.textContent = end;
     if (elTotal) elTotal.textContent = total;
-    
+
     if (btnPrev) btnPrev.disabled = state.tutoresPage <= 1;
-    
+
     if (btnNext) {
         if (state.tutoresRowsPerPage === 'all') {
             btnNext.disabled = true;
@@ -2902,7 +2903,7 @@ function updatePaginationInfo(start, end, total) {
     }
 }
 
-window.changeRowsPerPage = function(type, value) {
+window.changeRowsPerPage = function (type, value) {
     if (type === 'tutores') {
         state.tutoresRowsPerPage = value;
         state.tutoresPage = 1;
@@ -2911,7 +2912,7 @@ window.changeRowsPerPage = function(type, value) {
     }
 };
 
-window.prevPage = function(type) {
+window.prevPage = function (type) {
     if (type === 'tutores' && state.tutoresPage > 1) {
         state.tutoresPage--;
         const listToRender = state.tutoresFilteredList || state.tutores;
@@ -2919,12 +2920,12 @@ window.prevPage = function(type) {
     }
 };
 
-window.nextPage = function(type) {
+window.nextPage = function (type) {
     if (type === 'tutores' && state.tutoresRowsPerPage !== 'all') {
         const listToRender = state.tutoresFilteredList || state.tutores;
         const rows = parseInt(state.tutoresRowsPerPage);
         const totalPages = Math.ceil(listToRender.length / rows);
-        
+
         if (state.tutoresPage < totalPages) {
             state.tutoresPage++;
             renderTutoresTable(listToRender, state.tutoresFilteredList !== null);
@@ -2934,63 +2935,51 @@ window.nextPage = function(type) {
 
 // Lógica de seleção múltipla por Checkboxes
 function setupSelectAllLogic() {
-    const selectAllCheckbox = document.getElementById('select-all-tutores');
-    if (selectAllCheckbox) {
-        selectAllCheckbox.removeEventListener('change', handleSelectAllChange);
-        selectAllCheckbox.addEventListener('change', handleSelectAllChange);
-    }
-    
-    const tbody = document.getElementById('tbody-tutores');
-    if (tbody) {
-        tbody.removeEventListener('change', handleTutorCheckboxChange);
-        tbody.addEventListener('change', handleTutorCheckboxChange);
-    }
-    
-    updateBulkDeleteButtonVisibility();
+    window.toggleBulkDeleteBtn('tutores');
 }
 
-function handleSelectAllChange(e) {
-    const checked = e.target.checked;
-    document.querySelectorAll('.tutor-select-checkbox').forEach(cb => {
+window.toggleSelectAll = function (type, checked) {
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.tutor-select-checkbox';
+    document.querySelectorAll(selector).forEach(cb => {
         cb.checked = checked;
     });
-    updateBulkDeleteButtonVisibility();
-}
+    window.toggleBulkDeleteBtn(type);
+};
 
-function handleTutorCheckboxChange(e) {
-    if (e.target.classList.contains('tutor-select-checkbox')) {
-        const total = document.querySelectorAll('.tutor-select-checkbox').length;
-        const checked = document.querySelectorAll('.tutor-select-checkbox:checked').length;
-        const selectAllCheckbox = document.getElementById('select-all-tutores');
-        if (selectAllCheckbox) {
-            selectAllCheckbox.checked = (total > 0 && total === checked);
-        }
-        updateBulkDeleteButtonVisibility();
+window.toggleBulkDeleteBtn = function (type) {
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.tutor-select-checkbox';
+    const total = document.querySelectorAll(selector).length;
+    const checkedCount = document.querySelectorAll(`${selector}:checked`).length;
+
+    // update select-all checkbox
+    let selectAllId = type === 'pets' ? 'select-all-pets' : 'select-all-tutores';
+    const selectAllCheckbox = document.getElementById(selectAllId);
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = (total > 0 && total === checkedCount);
     }
-}
 
-function updateBulkDeleteButtonVisibility() {
-    const checkedCount = document.querySelectorAll('.tutor-select-checkbox:checked').length;
-    const btn = document.getElementById('btn-bulk-delete-tutores');
+    // update bulk delete button visibility
+    let btnId = type === 'pets' ? 'btn-bulk-delete-pets' : 'btn-bulk-delete-tutores';
+    const btn = document.getElementById(btnId);
     if (btn) {
         btn.style.display = checkedCount > 0 ? 'inline-flex' : 'none';
     }
-}
+};
 
 // Lógica para controle dos Dropdowns de Opções na tabela
-window.toggleDropdown = function(id, event) {
+window.toggleDropdown = function (id, event) {
     event.stopPropagation();
     const container = document.getElementById(`dropdown-${id}`);
     const isActive = container.classList.contains('active');
-    
+
     closeAllDropdowns();
-    
+
     if (!isActive) {
         container.classList.add('active');
     }
 };
 
-window.closeAllDropdowns = function() {
+window.closeAllDropdowns = function () {
     document.querySelectorAll('.dropdown-options-container').forEach(el => {
         el.classList.remove('active');
     });
@@ -3126,12 +3115,12 @@ function closeViewTutorModal() {
     }
 }
 
-window.resetTutorForm = function() {
+window.resetTutorForm = function () {
     const form = document.getElementById('form-tutor');
     if (form) form.reset();
     const tutorIdEl = document.getElementById('tutor-id');
     if (tutorIdEl) tutorIdEl.value = '';
-    
+
     // Limpa a foto
     const uploadInput = document.getElementById('tutor-foto-upload');
     if (uploadInput) uploadInput.value = '';
@@ -3171,7 +3160,7 @@ window.resetTutorForm = function() {
     // Desativa a exibição de erros para evitar loops durante o reset
     window.showSubmitError = false;
     validateFormState();
-    
+
     if (window.lucide) lucide.createIcons();
 };
 
@@ -3441,6 +3430,7 @@ async function deleteTutor(id) {
         if (response.ok) {
             CustomUI.toast("Sucesso", "Responsável excluído com sucesso!", "success");
             loadTutores();
+            window.toggleBulkDeleteBtn('tutores');
         } else {
             const err = await response.json();
             CustomUI.alert("Erro ao Excluir", `Erro ao excluir: ${err.detail}`, "danger");
@@ -3450,7 +3440,7 @@ async function deleteTutor(id) {
     }
 }
 
-window.bulkDeleteTutores = async function() {
+window.bulkDeleteTutores = async function () {
     const checkboxes = document.querySelectorAll('.tutor-select-checkbox:checked');
     const ids = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
     if (ids.length === 0) return;
@@ -3471,6 +3461,7 @@ window.bulkDeleteTutores = async function() {
         if (response.ok) {
             CustomUI.toast("Sucesso", `${ids.length} responsáveis excluídos com sucesso!`, "success");
             loadTutores();
+            window.toggleBulkDeleteBtn('tutores');
         } else {
             const err = await response.json();
             CustomUI.alert("Erro ao Excluir", `Erro ao excluir em massa: ${err.detail || 'Erro desconhecido'}`, "danger");
@@ -4163,13 +4154,13 @@ function formatDateShort(str) {
 // ==========================================
 function checkUserPermissions() {
     const is_admin = localStorage.getItem('user_cargo') === 'Administrador';
-    
+
     // Mostra/oculta botão de criar usuário
     const btnNovoUsuario = document.getElementById('btn-novo-usuario');
     if (btnNovoUsuario) {
         btnNovoUsuario.style.display = (is_admin && state.activeTab === 'usuarios') ? 'inline-flex' : 'none';
     }
-    
+
     // Mostra/oculta cabeçalho de ações
     const thAcoes = document.getElementById('th-usuario-acoes');
     if (thAcoes) {
@@ -4185,7 +4176,7 @@ async function verifySession() {
             localStorage.setItem('user_nome', data.nome);
             localStorage.setItem('user_username', data.username);
             localStorage.setItem('user_cargo', data.cargo);
-            
+
             // Atualiza o display do profile no header
             const displayUserName = document.getElementById('display-user-name');
             const displayUserAvatar = document.getElementById('display-user-avatar');
@@ -4196,7 +4187,7 @@ async function verifySession() {
                 const initials = data.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 displayUserAvatar.textContent = initials;
             }
-            
+
             // Executa verificação de permissões na UI
             checkUserPermissions();
         }
@@ -4208,7 +4199,7 @@ async function verifySession() {
 async function loadUsuarios() {
     // Garante que as permissões estejam atualizadas ao abrir a aba
     checkUserPermissions();
-    
+
     showLoading('usuarios', true);
     try {
         const response = await fetch(`${API_BASE}/users`);
@@ -4237,13 +4228,13 @@ function renderUsuariosTable(list) {
 
     list.forEach(u => {
         const row = document.createElement('tr');
-        
+
         // Badge colorida para o cargo
         let badgeStyle = 'background: rgba(148, 163, 184, 0.08); border: 1px solid var(--border-glow); color: var(--text-muted);';
         if (u.cargo === 'Administrador') {
             badgeStyle = 'background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success-glow); color: var(--primary);';
         }
-        
+
         let actionsHTML = '';
         if (is_admin) {
             actionsHTML = `
@@ -4269,7 +4260,7 @@ function renderUsuariosTable(list) {
         `;
         tbody.appendChild(row);
     });
-    
+
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -4286,13 +4277,13 @@ function generateLoginFromName(fullName) {
     const parts = clean.split(/\s+/).filter(p => p.length > 0);
     // Filtra preposições mas mantém ao menos a primeira e última palavra com significado
     const meaningfulParts = parts.filter(p => !ignoredWords.includes(p));
-    
+
     if (meaningfulParts.length === 0) return '';
     if (meaningfulParts.length === 1) return meaningfulParts[0].replace(/[^a-z0-9]/g, '');
-    
+
     const initial = meaningfulParts[0][0]; // Primeira letra do primeiro nome
     const lastName = meaningfulParts[meaningfulParts.length - 1].replace(/[^a-z0-9]/g, ''); // Último sobrenome
-    
+
     return `${initial}.${lastName}`;
 }
 
@@ -4301,10 +4292,10 @@ async function openUsuarioModal(id = null) {
     const modal = document.getElementById('modal-usuario');
     const form = document.getElementById('form-usuario');
     if (!modal || !form) return;
-    
+
     form.reset();
     document.getElementById('usuario-id').value = '';
-    
+
     const title = document.getElementById('modal-usuario-title');
     const inputPassword = document.getElementById('usuario-password');
     inputPassword.setAttribute('type', 'password');
@@ -4313,19 +4304,19 @@ async function openUsuarioModal(id = null) {
         toggleBtn.innerHTML = '<i data-lucide="eye"></i>';
     }
     const helpPassword = document.getElementById('help-usuario-password');
-    
+
     if (id) {
         // Modo Edição
         title.textContent = "Editar Usuário";
         inputPassword.removeAttribute('required');
         helpPassword.style.display = 'block';
-        
+
         try {
             // Busca a lista para encontrar os dados do usuário a editar
             const response = await fetch(`${API_BASE}/users`);
             const list = await response.json();
             const u = list.find(user => user.id === id);
-            
+
             if (u) {
                 document.getElementById('usuario-id').value = u.id;
                 document.getElementById('usuario-nome').value = u.nome;
@@ -4344,11 +4335,11 @@ async function openUsuarioModal(id = null) {
         inputPassword.setAttribute('required', 'true');
         helpPassword.style.display = 'none';
     }
-    
+
     // === AUTO-GERAÇÃO DE LOGIN A PARTIR DO NOME ===
     const inputNome = document.getElementById('usuario-nome');
     const inputUsername = document.getElementById('usuario-username');
-    
+
     // Remove listeners anteriores para evitar duplicatas
     if (inputNome._loginAutoHandler) {
         inputNome.removeEventListener('input', inputNome._loginAutoHandler);
@@ -4356,22 +4347,22 @@ async function openUsuarioModal(id = null) {
     if (inputUsername._loginManualHandler) {
         inputUsername.removeEventListener('input', inputUsername._loginManualHandler);
     }
-    
+
     if (!id) {
         // Apenas no modo de criação: geração automática ativa
         let userManuallyEdited = false;
         let listenerReady = false; // Só ativa após o modal abrir (evita que form.reset() dispare)
-        
+
         // Aguarda um frame para garantir que o reset já aconteceu
         requestAnimationFrame(() => { listenerReady = true; });
-        
+
         const manualHandler = () => {
             if (!listenerReady) return;
             userManuallyEdited = true;
         };
         inputUsername._loginManualHandler = manualHandler;
         inputUsername.addEventListener('input', manualHandler);
-        
+
         const loginAutoHandler = () => {
             if (userManuallyEdited) return;
             const generated = generateLoginFromName(inputNome.value);
@@ -4379,12 +4370,12 @@ async function openUsuarioModal(id = null) {
             // Remove o placeholder quando há valor gerado para não sobrepor o texto
             inputUsername.placeholder = generated ? '' : 'Gerado automaticamente ao digitar o nome';
         };
-        
+
         inputNome._loginAutoHandler = loginAutoHandler;
         inputNome.addEventListener('input', loginAutoHandler);
     }
 
-    
+
     openModal('modal-usuario');
     // Re-renderiza ícones Lucide após abrir o modal
     if (window.lucide) lucide.createIcons();
@@ -4393,22 +4384,22 @@ async function openUsuarioModal(id = null) {
 // Salva o cadastro do usuário (Novo ou Edição)
 async function saveUsuario(e) {
     e.preventDefault();
-    
+
     const id = document.getElementById('usuario-id').value;
     const nome = document.getElementById('usuario-nome').value.trim();
     const username = document.getElementById('usuario-username').value.trim();
     const email = document.getElementById('usuario-email').value.trim();
     const cargo = document.getElementById('usuario-cargo').value;
     const password = document.getElementById('usuario-password').value;
-    
+
     // Validação básica do username (sem espaços)
     if (username.includes(' ')) {
         CustomUI.alert("Usuário Inválido", "O nome de usuário (login) não deve conter espaços.", "warning");
         return;
     }
-    
+
     const data = { nome, username, email, cargo };
-    
+
     // Se for novo, senha é obrigatória. Se for edição, só manda a senha se for alterada
     if (password && password.trim()) {
         data.password = password;
@@ -4416,22 +4407,22 @@ async function saveUsuario(e) {
         CustomUI.alert("Campo Obrigatório", "A senha é obrigatória para novos usuários.", "warning");
         return;
     }
-    
+
     const url = id ? `${API_BASE}/users/${id}` : `${API_BASE}/users`;
     const method = id ? 'PUT' : 'POST';
-    
+
     try {
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        
+
         if (response.ok) {
             closeModal('modal-usuario');
             CustomUI.toast("Sucesso", id ? "Usuário atualizado com sucesso!" : "Usuário cadastrado com sucesso!", "success");
             loadUsuarios();
-            
+
             // Se o próprio usuário editou seu cadastro, atualiza o localStorage e UI
             const loggedInUsername = localStorage.getItem('user_username');
             if (username === loggedInUsername) {
@@ -4455,17 +4446,17 @@ async function saveUsuario(e) {
 async function deleteUsuario(id) {
     // Impede auto-exclusão no front-end por segurança
     const currentUsername = localStorage.getItem('user_username');
-    
+
     try {
         const response = await fetch(`${API_BASE}/users`);
         const list = await response.json();
         const u = list.find(user => user.id === id);
-        
+
         if (u && u.username === currentUsername) {
             CustomUI.alert("Ação Negada", "Você não pode excluir o seu próprio usuário logado no sistema.", "warning");
             return;
         }
-    } catch(e) {}
+    } catch (e) { }
 
     const confirmDelete = await CustomUI.confirm(
         "Excluir Usuário",
@@ -4473,7 +4464,7 @@ async function deleteUsuario(id) {
         { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
     );
     if (!confirmDelete) return;
-    
+
     try {
         const response = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
         if (response.ok) {
@@ -4493,10 +4484,10 @@ function toggleUsuarioPasswordVisibility() {
     const toggleBtn = document.getElementById('toggle-usuario-password');
     if (!passwordInput || !toggleBtn) return;
     const isPrivate = passwordInput.getAttribute('type') === 'password';
-    
+
     passwordInput.setAttribute('type', isPrivate ? 'text' : 'password');
     toggleBtn.innerHTML = isPrivate ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
-    
+
     if (window.lucide) {
         lucide.createIcons();
     }
@@ -4517,7 +4508,7 @@ window.showResponsáveisList = showTutoresList;
 // ==========================================
 // VISUALIZAÇÃO DE PERFIL DO TUTOR (RESUMO)
 // ==========================================
-window.viewTutor = async function(id) {
+window.viewTutor = async function (id) {
     try {
         // Busca os dados completos no backend
         const response = await fetch(`${API_BASE}/tutores/${id}`);
@@ -4536,8 +4527,8 @@ window.viewTutor = async function(id) {
             actionBtn.style.borderColor = '#333';
             actionBtn.title = "Mudar Foto";
             actionBtn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
-            actionBtn.onmouseover = function() { this.style.transform = 'scale(1.1)'; };
-            actionBtn.onmouseout = function() { this.style.transform = 'scale(1)'; };
+            actionBtn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+            actionBtn.onmouseout = function () { this.style.transform = 'scale(1)'; };
         }
 
         // Popula Dados Principais
@@ -4557,7 +4548,7 @@ window.viewTutor = async function(id) {
 
         document.getElementById('perf-nome').textContent = t.nome;
         document.getElementById('perf-status').textContent = t.status === 'Ativo' ? 'Cliente' : 'Inativo';
-        document.getElementById('perf-status').className = t.status === 'Ativo' ? 'badge-green-tutor' : 'badge-danger'; 
+        document.getElementById('perf-status').className = t.status === 'Ativo' ? 'badge-green-tutor' : 'badge-danger';
 
         // Info Pessoais
         let formattedCpf = t.cpf || '-';
@@ -4576,7 +4567,7 @@ window.viewTutor = async function(id) {
             // Handle both YYYY-MM-DD, DD-MM-YYYY, and DD/MM/YYYY formats
             let sep = t.data_nascimento.includes('/') ? '/' : '-';
             const parts = t.data_nascimento.split(sep);
-            
+
             if (parts.length === 3) {
                 let dia, mes;
                 if (parts[0].length === 4) {
@@ -4588,14 +4579,14 @@ window.viewTutor = async function(id) {
                     dia = parseInt(parts[0], 10);
                     mes = parseInt(parts[1], 10);
                 }
-                
+
                 if (!isNaN(dia) && !isNaN(mes)) {
                     const hoje = new Date();
-                    hoje.setHours(0, 0, 0, 0); 
-                    
+                    hoje.setHours(0, 0, 0, 0);
+
                     let anoAniv = hoje.getFullYear();
                     const dataAnivEsteAno = new Date(anoAniv, mes - 1, dia);
-                    
+
                     let corAniv = '#ebed88'; // Amarelinho (não passou ainda neste ano)
                     if (dataAnivEsteAno < hoje) {
                         anoAniv++;
@@ -4613,31 +4604,31 @@ window.viewTutor = async function(id) {
         if (t.cep) {
             formattedCep = t.cep.length === 8 ? t.cep.substring(0, 5) + '-' + t.cep.substring(5, 8) : t.cep;
         }
-        
+
         let partsLogradouro = [];
         if (t.endereco) partsLogradouro.push(t.endereco);
         if (t.numero) partsLogradouro.push(t.numero);
-        
+
         let enderecoGoogle = partsLogradouro.join(', ');
-        
+
         // Complement removed for Google Maps compatibility
         let partsCidade = [];
         if (t.bairro) partsCidade.push(t.bairro);
-        
+
         let cidadeUf = '';
         if (t.cidade) cidadeUf = t.cidade;
         if (t.uf) cidadeUf += cidadeUf ? ` - ${t.uf}` : t.uf;
-        
+
         if (cidadeUf) partsCidade.push(cidadeUf);
-        
+
         if (partsCidade.length > 0) {
             enderecoGoogle += (enderecoGoogle ? ', ' : '') + partsCidade.join(', ');
         }
-        
+
         if (formattedCep) {
             enderecoGoogle += (enderecoGoogle ? ', ' : '') + formattedCep;
         }
-        
+
         // Versão sem complemento para o botão de copiar
         let enderecoGoogleSemComplemento = partsLogradouro.join(', ');
         if (partsCidade.length > 0) {
@@ -4646,7 +4637,7 @@ window.viewTutor = async function(id) {
         if (formattedCep) {
             enderecoGoogleSemComplemento += (enderecoGoogleSemComplemento ? ', ' : '') + formattedCep;
         }
-        
+
         document.getElementById('perf-endereco').innerText = enderecoGoogle || '-';
         const btnCopy = document.getElementById('btn-copy-endereco');
         if (btnCopy) {
@@ -4669,21 +4660,21 @@ window.viewTutor = async function(id) {
     }
 };
 
-window.tempPreviewProfilePhoto = function(input) {
+window.tempPreviewProfilePhoto = function (input) {
     if (!state.currentTutorInView) return;
     if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             const base64Data = e.target.result;
             state.tempProfilePhotoBase64 = base64Data;
-            
+
             // Preview local da foto no avatar do perfil
             const perfAvatar = document.getElementById('perf-avatar');
             if (perfAvatar) {
                 perfAvatar.innerHTML = `<img src="${base64Data}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                 perfAvatar.style.border = 'none';
             }
-            
+
             // Altera o botão da caneta cinza para o disquete cinza igual o X
             const btn = document.getElementById('perf-foto-action-btn');
             if (btn) {
@@ -4692,13 +4683,13 @@ window.tempPreviewProfilePhoto = function(input) {
                 btn.style.borderColor = '#555';
                 btn.title = "Salvar Foto";
                 btn.innerHTML = '<i data-lucide="save" style="width: 15px; height: 15px; color: #aaa;"></i>';
-                btn.onmouseover = function() {
+                btn.onmouseover = function () {
                     this.style.transform = 'scale(1.1)';
                     this.style.background = '#444';
                     const icon = this.querySelector('svg, i');
                     if (icon) icon.style.color = '#fff';
                 };
-                btn.onmouseout = function() {
+                btn.onmouseout = function () {
                     this.style.transform = 'scale(1)';
                     this.style.background = '#333';
                     const icon = this.querySelector('svg, i');
@@ -4711,13 +4702,13 @@ window.tempPreviewProfilePhoto = function(input) {
     }
 };
 
-window.handleProfilePhotoAction = async function() {
+window.handleProfilePhotoAction = async function () {
     const btn = document.getElementById('perf-foto-action-btn');
     if (!btn) return;
-    
+
     if (btn.dataset.state === 'save') {
         if (!state.currentTutorInView || !state.tempProfilePhotoBase64) return;
-        
+
         const confirmed = await CustomUI.confirm("Alterar Foto", "Deseja realmente salvar a nova foto de perfil?", {
             type: 'warning',
             confirmText: 'Sim, salvar',
@@ -4727,7 +4718,7 @@ window.handleProfilePhotoAction = async function() {
             // Restaura o avatar para a foto anterior (do banco)
             const tutor = state.currentTutorInView;
             state.tempProfilePhotoBase64 = null;
-            
+
             const perfAvatar = document.getElementById('perf-avatar');
             if (perfAvatar) {
                 if (tutor.foto_url) {
@@ -4740,51 +4731,51 @@ window.handleProfilePhotoAction = async function() {
                     perfAvatar.style.border = '2px solid var(--primary)';
                 }
             }
-            
+
             // Restaura o botão para a caneta cinza
             btn.dataset.state = 'edit';
             btn.style.background = '#555';
             btn.style.borderColor = '#333';
             btn.title = "Mudar Foto";
             btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
-            btn.onmouseover = function() { this.style.transform = 'scale(1.1)'; };
-            btn.onmouseout = function() { this.style.transform = 'scale(1)'; };
+            btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+            btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
             if (window.lucide) lucide.createIcons();
-            
+
             // Limpa o input de upload
             const fileUpload = document.getElementById('perf-foto-upload');
             if (fileUpload) fileUpload.value = '';
-            
+
             return;
         }
-        
+
         const tutor = state.currentTutorInView;
         const updatedTutor = { ...tutor, foto_url: state.tempProfilePhotoBase64 };
-        
+
         try {
             const response = await fetch(`${API_BASE}/tutores/${tutor.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedTutor)
             });
-            
+
             if (response.ok) {
                 const saved = await response.json();
                 state.currentTutorInView = saved;
                 state.tempProfilePhotoBase64 = null;
-                
+
                 // Restaura o botão para a caneta cinza
                 btn.dataset.state = 'edit';
                 btn.style.background = '#555'; // Cinza
                 btn.style.borderColor = '#333';
                 btn.title = "Mudar Foto";
                 btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
-                btn.onmouseover = function() { this.style.transform = 'scale(1.1)'; };
-                btn.onmouseout = function() { this.style.transform = 'scale(1)'; };
-                
+                btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+                btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
+
                 const removeBtn = document.getElementById('perf-foto-remove');
                 if (removeBtn) removeBtn.style.display = 'flex';
-                
+
                 CustomUI.toast("Sucesso", "Foto de perfil salva com sucesso!", "success");
                 loadTutores();
                 if (window.lucide) lucide.createIcons();
@@ -4802,7 +4793,7 @@ window.handleProfilePhotoAction = async function() {
     }
 };
 
-window.removeProfilePhoto = async function() {
+window.removeProfilePhoto = async function () {
     if (!state.currentTutorInView) return;
     const confirmed = await CustomUI.confirm("Remover Foto", "Deseja realmente remover a foto do responsável?", {
         type: 'danger',
@@ -4810,22 +4801,22 @@ window.removeProfilePhoto = async function() {
         cancelText: 'Cancelar'
     });
     if (!confirmed) return;
-    
+
     const tutor = state.currentTutorInView;
     const updatedTutor = { ...tutor, foto_url: null };
-    
+
     try {
         const response = await fetch(`${API_BASE}/tutores/${tutor.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedTutor)
         });
-        
+
         if (response.ok) {
             const saved = await response.json();
             state.currentTutorInView = saved;
             state.tempProfilePhotoBase64 = null;
-            
+
             const perfAvatar = document.getElementById('perf-avatar');
             const parts = (saved.nome || '?').trim().split(/\s+/);
             const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
@@ -4833,7 +4824,7 @@ window.removeProfilePhoto = async function() {
             perfAvatar.style.border = '2px solid var(--primary)';
             document.getElementById('perf-foto-remove').style.display = 'none';
             document.getElementById('perf-foto-upload').value = '';
-            
+
             // Garante que o botão volte para o estado edit (caneta cinza)
             const btn = document.getElementById('perf-foto-action-btn');
             if (btn) {
@@ -4842,10 +4833,10 @@ window.removeProfilePhoto = async function() {
                 btn.style.borderColor = '#333';
                 btn.title = "Mudar Foto";
                 btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
-                btn.onmouseover = function() { this.style.transform = 'scale(1.1)'; };
-                btn.onmouseout = function() { this.style.transform = 'scale(1)'; };
+                btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+                btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
             }
-            
+
             CustomUI.toast("Sucesso", "Foto de perfil removida!", "success");
             loadTutores();
             if (window.lucide) lucide.createIcons();
@@ -4858,7 +4849,7 @@ window.removeProfilePhoto = async function() {
     }
 };
 
-window.copyTextToClipboard = function(textId, label) {
+window.copyTextToClipboard = function (textId, label) {
     const el = document.getElementById(textId);
     const text = el ? (el.value !== undefined ? el.value : el.innerText) : '';
     if (text && text !== '-') {
@@ -4874,11 +4865,11 @@ window.copyTextToClipboard = function(textId, label) {
     }
 };
 
-window.toggleEditObsEntrega = function() {
+window.toggleEditObsEntrega = function () {
     const el = document.getElementById('perf-obs-entrega');
     const btnEdit = document.getElementById('btn-edit-obs');
     const btnSave = document.getElementById('btn-save-obs');
-    
+
     if (el.hasAttribute('readonly')) {
         el.removeAttribute('readonly');
         el.style.border = '1px solid var(--border-glow)';
@@ -4901,7 +4892,7 @@ window.toggleEditObsEntrega = function() {
 // ==========================================
 // CONTROLE DE PETS
 // ==========================================
-window.populateTutoresSelect = async function() {
+window.populateTutoresSelect = async function () {
     try {
         const response = await fetch(`${API_BASE}/tutores`);
         if (response.ok) {
@@ -4914,11 +4905,11 @@ window.populateTutoresSelect = async function() {
     }
 };
 
-window.renderTutorDropdown = function(tutoresArray) {
+window.renderTutorDropdown = function (tutoresArray) {
     const listDiv = document.getElementById('tutores-custom-list');
     if (!listDiv) return;
     listDiv.innerHTML = '';
-    
+
     if (tutoresArray.length === 0) {
         const div = document.createElement('div');
         div.style.padding = '10px 14px';
@@ -4935,9 +4926,9 @@ window.renderTutorDropdown = function(tutoresArray) {
         div.style.cursor = 'default';
         div.style.color = 'var(--text-main)';
         div.style.transition = 'none';
-        
+
         div.textContent = tutor.nome;
-        
+
         div.onmouseover = () => {
             div.style.background = '#1a73e8';
             div.style.color = '#ffffff';
@@ -4946,18 +4937,18 @@ window.renderTutorDropdown = function(tutoresArray) {
             div.style.background = 'transparent';
             div.style.color = 'var(--text-main)';
         };
-        
-        div.onclick = function() {
+
+        div.onclick = function () {
             document.getElementById('pet-tutor-name').value = tutor.nome;
             document.getElementById('pet-tutor').value = tutor.id;
             listDiv.style.display = 'none';
         };
-        
+
         listDiv.appendChild(div);
     });
 };
 
-window.openTutorDropdown = function() {
+window.openTutorDropdown = function () {
     const listDiv = document.getElementById('tutores-custom-list');
     if (listDiv) {
         listDiv.style.display = 'block';
@@ -4969,21 +4960,21 @@ window.openTutorDropdown = function() {
     }
 };
 
-window.filterTutorDropdown = function(searchTerm) {
+window.filterTutorDropdown = function (searchTerm) {
     if (!window.allTutores) return;
-    
+
     document.getElementById('pet-tutor').value = '';
-    
+
     const listDiv = document.getElementById('tutores-custom-list');
     if (listDiv) listDiv.style.display = 'block';
-    
+
     const lowerTerm = searchTerm.toLowerCase();
     const filtered = window.allTutores.filter(t => t.nome.toLowerCase().includes(lowerTerm) || (t.cpf && t.cpf.includes(lowerTerm)));
     window.renderTutorDropdown(filtered);
 };
 
 // Fechar o dropdown ao clicar fora dele
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const input = document.getElementById('pet-tutor-name');
     const listDiv = document.getElementById('tutores-custom-list');
     if (input && listDiv) {
@@ -4994,20 +4985,20 @@ document.addEventListener('click', function(e) {
 });
 
 // Escuta cliques para carregar a lista de tutores ao abrir a aba
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const tabTarget = e.target.closest('[data-tab="novo-pet"]');
     if (tabTarget) {
         window.populateTutoresSelect();
     }
 });
 
-window.savePet = async function(e) {
+window.savePet = async function (e) {
     e.preventDefault();
     const id = document.getElementById('pet-id').value;
-    
+
     const castradoChecked = document.querySelector('input[name="pet-castrado"]:checked');
     const treinadoChecked = document.querySelector('input[name="pet-treinado"]:checked');
-    
+
     const data = {
         tutor_id: document.getElementById('pet-tutor').value,
         nome: document.getElementById('pet-nome').value,
@@ -5033,7 +5024,7 @@ window.savePet = async function(e) {
     try {
         const url = id ? `${API_BASE}/pets/${id}` : `${API_BASE}/pets`;
         const method = id ? 'PUT' : 'POST';
-        
+
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
@@ -5044,17 +5035,17 @@ window.savePet = async function(e) {
             CustomUI.toast("Sucesso", "Pet salvo com sucesso!", "success");
             document.getElementById('form-pet').reset();
             const dashLink = document.querySelector('[data-tab="dashboard"]');
-            if(dashLink) dashLink.click();
+            if (dashLink) dashLink.click();
         } else {
             const err = await response.json().catch(() => ({}));
             if (response.status === 404) {
-                 console.log("API de Pets ainda não implementada. Simulando sucesso no frontend.");
-                 CustomUI.toast("Sucesso", "Pet validado no frontend. (API pendente de implementação completa)", "success");
-                 document.getElementById('form-pet').reset();
-                 const dashLink = document.querySelector('[data-tab="dashboard"]');
-                 if(dashLink) dashLink.click();
+                console.log("API de Pets ainda não implementada. Simulando sucesso no frontend.");
+                CustomUI.toast("Sucesso", "Pet validado no frontend. (API pendente de implementação completa)", "success");
+                document.getElementById('form-pet').reset();
+                const dashLink = document.querySelector('[data-tab="dashboard"]');
+                if (dashLink) dashLink.click();
             } else {
-                 CustomUI.alert("Erro", `Erro ao salvar pet: ${err.detail || 'Verifique os dados.'}`, "danger");
+                CustomUI.alert("Erro", `Erro ao salvar pet: ${err.detail || 'Verifique os dados.'}`, "danger");
             }
         }
     } catch (error) {
@@ -5063,17 +5054,17 @@ window.savePet = async function(e) {
     }
 };
 
-window.saveObsEntrega = function() {
+window.saveObsEntrega = function () {
     // Aqui podemos futuramente adicionar uma chamada real para salvar no banco
     window.toggleEditObsEntrega();
     CustomUI.toast('Sucesso', 'Observação de entrega salva localmente!', 'success');
 };
 
-window.toggleEditTutorObs = function() {
-    const el = document.getElementById('perf-obs');
-    const btnEdit = document.getElementById('btn-edit-tutor-obs');
-    const btnSave = document.getElementById('btn-save-tutor-obs');
-    
+window.toggleEditPetObs = function () {
+    const el = document.getElementById('perf-pet-obs');
+    const btnEdit = document.getElementById('btn-edit-pet-obs');
+    const btnSave = document.getElementById('btn-save-pet-obs');
+
     if (el.hasAttribute('readonly')) {
         el.removeAttribute('readonly');
         el.style.border = '1px solid var(--border-glow)';
@@ -5093,17 +5084,93 @@ window.toggleEditTutorObs = function() {
     }
 };
 
-window.saveTutorObs = function() {
+window.savePetObs = async function () {
+    const el = document.getElementById('perf-pet-obs');
+    const newObs = el.value;
+
+    if (!state.currentPetInView) {
+        window.toggleEditPetObs();
+        return;
+    }
+
+    try {
+        const pet = state.currentPetInView;
+        pet.observacoes = newObs;
+
+        const payload = {
+            nome: pet.nome,
+            tutor_id: pet.tutor_id,
+            especie: pet.especie,
+            raca: pet.raca,
+            sexo: pet.sexo,
+            peso: pet.peso,
+            data_nascimento: pet.nascimento,
+            cor: pet.cor,
+            status: pet.status,
+            castrado: pet.castrado,
+            porte: pet.porte,
+            agressivo: pet.agressivo,
+            treinado: pet.treinado,
+            autoriza_imagem: pet.uso_imagem,
+            observacoes: newObs,
+            foto_url: pet.foto_url
+        };
+
+        const response = await fetch(`${API_BASE}/pets/${pet.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            window.toggleEditPetObs();
+            CustomUI.toast('Sucesso', 'Observações atualizadas!', 'success');
+            if (typeof window.loadPets === 'function') window.loadPets();
+        } else {
+            CustomUI.alert('Erro', 'Falha ao atualizar as observações do pet.', 'danger');
+        }
+    } catch (e) {
+        console.error(e);
+        window.toggleEditPetObs();
+        CustomUI.toast('Aviso', 'Erro de conexão ou API indisponível. Observação salva localmente.', 'warning');
+    }
+};
+
+window.toggleEditTutorObs = function () {
+    const el = document.getElementById('perf-obs');
+    const btnEdit = document.getElementById('btn-edit-tutor-obs');
+    const btnSave = document.getElementById('btn-save-tutor-obs');
+
+    if (el.hasAttribute('readonly')) {
+        el.removeAttribute('readonly');
+        el.style.border = '1px solid var(--border-glow)';
+        el.style.background = 'rgba(0,0,0,0.02)';
+        el.style.padding = '8px';
+        el.style.borderRadius = '4px';
+        el.focus();
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+    } else {
+        el.setAttribute('readonly', 'true');
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+    }
+};
+
+window.saveTutorObs = function () {
     // Aqui podemos futuramente adicionar uma chamada real para salvar no banco
     window.toggleEditTutorObs();
     CustomUI.toast('Sucesso', 'Observações salvas localmente!', 'success');
 };
 
-window.toggleEditTutorFormObs = function() {
+window.toggleEditTutorFormObs = function () {
     const el = document.getElementById('tutor-observacoes');
     const btnEdit = document.getElementById('btn-edit-tutor-form-obs');
     const btnSave = document.getElementById('btn-save-tutor-form-obs');
-    
+
     if (el.hasAttribute('readonly')) {
         el.removeAttribute('readonly');
         el.style.border = '1px solid var(--border-glow)';
@@ -5123,15 +5190,15 @@ window.toggleEditTutorFormObs = function() {
     }
 };
 
-window.saveTutorFormObs = function() {
+window.saveTutorFormObs = function () {
     window.toggleEditTutorFormObs();
     CustomUI.toast('Sucesso', 'Observações confirmadas!', 'success');
 };
 
-window.copyAddressToClipboard = function() {
+window.copyAddressToClipboard = function () {
     const btn = document.getElementById('btn-copy-endereco');
     const enderecoParaCopiar = btn ? btn.dataset.copyText : document.getElementById('perf-endereco').innerText;
-    
+
     if (enderecoParaCopiar && enderecoParaCopiar !== '-') {
         // Fallback robusto para navegadores sem suporte a clipboard ou rodando em HTTP (não local)
         if (navigator.clipboard && window.isSecureContext) {
@@ -5171,7 +5238,7 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-window.showTutorProfileTab = function() {
+window.showTutorProfileTab = function () {
     // Esconder tudo
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -5199,28 +5266,28 @@ window.showTutorProfileTab = function() {
     }
 };
 
-window.updatePaginationInfo = function(start, end, total, tab = 'tutores') {
+window.updatePaginationInfo = function (start, end, total, tab = 'tutores') {
     const startEl = document.getElementById('page-start-' + tab);
     const endEl = document.getElementById('page-end-' + tab);
     const totalEl = document.getElementById('page-total-' + tab);
-    
+
     if (startEl) startEl.textContent = start;
     if (endEl) endEl.textContent = end;
     if (totalEl) totalEl.textContent = total;
-    
+
     const prevBtn = document.getElementById('btn-prev-' + tab);
     const nextBtn = document.getElementById('btn-next-' + tab);
-    
+
     if (prevBtn) {
         prevBtn.disabled = start <= 1;
     }
-    
+
     if (nextBtn) {
         nextBtn.disabled = end >= total;
     }
 };
 
-window.changeRowsPerPage = function(tab, value) {
+window.changeRowsPerPage = function (tab, value) {
     if (tab === 'tutores') {
         state.tutoresRowsPerPage = value;
         state.tutoresPage = 1;
@@ -5231,7 +5298,7 @@ window.changeRowsPerPage = function(tab, value) {
     }
 };
 
-window.prevPage = function(tab) {
+window.prevPage = function (tab) {
     if (tab === 'tutores') {
         if (state.tutoresPage > 1) {
             state.tutoresPage--;
@@ -5243,7 +5310,7 @@ window.prevPage = function(tab) {
     }
 };
 
-window.nextPage = function(tab) {
+window.nextPage = function (tab) {
     if (tab === 'tutores') {
         const listToRender = state.tutoresFilteredList || state.tutores;
         const rows = state.tutoresRowsPerPage === 'all' ? listToRender.length : parseInt(state.tutoresRowsPerPage);
@@ -5262,7 +5329,7 @@ window.nextPage = function(tab) {
 window.allRacas = ['SRD (Sem Raça Definida)', 'Abissínio (Gato)', 'Affenpinscher', 'Afghan Hound', 'Airedale Terrier', 'Akita Americano', 'Akita Inu', 'American Bully', 'American Hairless Terrier', 'American Pit Bull Terrier', 'American Shorthair (Gato)', 'American Staffordshire Terrier', 'Angorá (Gato)', 'Ashera (Gato)', 'Azawakh', 'Basset Hound', 'Beagle', 'Bengal (Gato)', 'Bichon Frisé', 'Bichon Havanês', 'Bloodhound', 'Bobtail', 'Boerboel', 'Border Collie', 'Border Terrier', 'Borzoi', 'Boston Terrier', 'Boxer', 'Braco Alemão', 'Braco Italiano', 'Buldogue Campeiro', 'Bull Terrier', 'Bulldog Francês', 'Bulldog Inglês', 'Bullmastiff', 'Burmês (Gato)', 'Cairn Terrier', 'Cane Corso', 'Cavalier King Charles Spaniel', 'Chesapeake Bay Retriever', 'Chihuahua', 'Chow Chow', 'Cocker Spaniel Americano', 'Cocker Spaniel Inglês', 'Collie', 'Corgi (Cardigan)', 'Corgi (Pembroke)', 'Cão de Crista Chinês', 'Cão de Santo Humberto', 'Cão de Água Português', 'Dachshund (Salsicha)', 'Doberman', 'Dogo Argentino', 'Dogue Alemão', 'Dogue Brasileiro', 'Dogue de Bordeaux', 'Dálmata', 'Fila Brasileiro', 'Fox Terrier', 'Foxhound Inglês', 'Galgo Espanhol', 'Golden Retriever', 'Greyhound', 'Grifo da Bélgica', 'Himalaio (Gato)', 'Husky Siberiano', 'Jack Russell Terrier', 'Kuvasz', 'Labrador Retriever', 'Leão da Rodésia', 'Lhasa Apso', 'Lulu da Pomerânia (Spitz Alemão)', 'Maine Coon (Gato)', 'Malamute do Alasca', 'Maltês', 'Mastiff Inglês', 'Mastim Napolitano', 'Mastim Tibetano', 'Munchkin (Gato)', 'Norwich Terrier', 'Ovelheiro Gaúcho', 'Papillon', 'Pastor Alemão', 'Pastor Australiano', 'Pastor Belga', 'Pastor Branco Suíço', 'Pastor Maremano', 'Pastor de Beauce', 'Pastor de Shetland', 'Pequinês', 'Persa (Gato)', 'Pinscher', 'Pit Bull', 'Pointer Inglês', 'Poodle', 'Pug', 'Puli', 'Ragdoll (Gato)', 'Rastreador Brasileiro', 'Rottweiler', 'Sagrado da Birmânia (Gato)', 'Saluki', 'Samoieda', 'Schnauzer Gigante', 'Schnauzer Miniatura', 'Schnauzer Standard', 'Scottish Fold (Gato)', 'Setter Inglês', 'Setter Irlandês', 'Shar-Pei', 'Shiba Inu', 'Shih Tzu', 'Siamês (Gato)', 'Sphynx (Gato)', 'Spitz Japonês', 'Staffordshire Bull Terrier', 'São Bernardo', 'Terra Nova', 'Terrier Brasileiro (Fox Paulistinha)', 'Terrier Tibetano', 'Tosa Inu', 'Veadeiro Pampeano', 'Vizsla', 'Weimaraner', 'West Highland White Terrier', 'Whippet', 'Yorkshire Terrier'];
 
 
-window.getRacasForEspecie = function() {
+window.getRacasForEspecie = function () {
     const especie = document.getElementById('pet-especie').value;
     if (especie === 'Felino') {
         return window.allRacas.filter(r => r.includes('(Gato)') || r.includes('SRD')).map(r => r.replace(' (Gato)', ''));
@@ -5272,7 +5339,7 @@ window.getRacasForEspecie = function() {
     return window.allRacas.map(r => r.replace(' (Gato)', ''));
 };
 
-window.openRacaDropdown = function() {
+window.openRacaDropdown = function () {
     const listDiv = document.getElementById('racas-custom-list');
     if (listDiv) {
         listDiv.style.display = 'block';
@@ -5280,10 +5347,10 @@ window.openRacaDropdown = function() {
     }
 };
 
-window.renderRacaDropdown = function(racas) {
+window.renderRacaDropdown = function (racas) {
     const listDiv = document.getElementById('racas-custom-list');
     listDiv.innerHTML = '';
-    if(racas.length === 0) {
+    if (racas.length === 0) {
         listDiv.innerHTML = '<div style="padding: 8px 12px; color: var(--text-muted); font-size: 14px;">Nenhuma raça encontrada</div>';
         return;
     }
@@ -5296,7 +5363,7 @@ window.renderRacaDropdown = function(racas) {
         div.style.color = '#fff';
         div.onmouseover = () => div.style.backgroundColor = 'var(--primary)';
         div.onmouseout = () => div.style.backgroundColor = 'transparent';
-        div.onclick = function(e) {
+        div.onclick = function (e) {
             e.stopPropagation();
             document.getElementById('pet-raca-input').value = r;
             document.getElementById('pet-raca').value = r;
@@ -5306,9 +5373,9 @@ window.renderRacaDropdown = function(racas) {
     });
 };
 
-window.filterRacaDropdown = function(text) {
+window.filterRacaDropdown = function (text) {
     const baseRacas = window.getRacasForEspecie();
-    if(!text) {
+    if (!text) {
         window.renderRacaDropdown(baseRacas);
         document.getElementById('pet-raca').value = '';
         return;
@@ -5318,13 +5385,13 @@ window.filterRacaDropdown = function(text) {
     window.renderRacaDropdown(filtered);
 };
 
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     const input = document.getElementById('pet-raca-input');
     const list = document.getElementById('racas-custom-list');
     if (input && list) {
         if (!input.contains(e.target) && !list.contains(e.target)) {
             list.style.display = 'none';
-            if(input.value) {
+            if (input.value) {
                 document.getElementById('pet-raca').value = input.value;
             }
         }
@@ -5339,17 +5406,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = e.target.value;
             const container = document.getElementById('dynamic-fields-container');
             const allSections = document.querySelectorAll('.service-fields');
-            
+
             // Esconde todas as sessões primeiro
             allSections.forEach(sec => sec.style.display = 'none');
-            
+
             if (!val) {
                 // Nenhum serviço selecionado
                 container.style.display = 'none';
             } else {
                 // Mostra container geral
                 container.style.display = 'block';
-                
+
                 // Mostra seção específica baseada no valor selecionado
                 if (val === 'Adestramento') {
                     document.getElementById('fields-adestramento').style.display = 'block';
@@ -5376,7 +5443,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Helper functions for Pet Observations
-window.togglePetObs = function(isEditing) {
+window.togglePetObs = function (isEditing) {
     const textarea = document.getElementById('pet-restricao');
     const btnEdit = document.getElementById('btn-edit-pet-obs');
     const btnSave = document.getElementById('btn-save-pet-obs');
@@ -5386,20 +5453,20 @@ window.togglePetObs = function(isEditing) {
         textarea.style.opacity = '1';
         textarea.style.borderColor = 'var(--primary)';
         textarea.focus();
-        if(btnEdit) btnEdit.style.display = 'none';
-        if(btnSave) btnSave.style.display = 'flex';
+        if (btnEdit) btnEdit.style.display = 'none';
+        if (btnSave) btnSave.style.display = 'flex';
     } else {
         textarea.setAttribute('readonly', 'true');
         textarea.style.opacity = '0.8';
         textarea.style.borderColor = 'var(--border-glow)';
-        if(btnEdit) btnEdit.style.display = 'flex';
-        if(btnSave) btnSave.style.display = 'none';
+        if (btnEdit) btnEdit.style.display = 'flex';
+        if (btnSave) btnSave.style.display = 'none';
         // Mostrar feedback sutil
         CustomUI.toast("Salvo", "Observação validada. (Finalize no botão Salvar Pet)", "success");
     }
 };
 
-window.copyPetObs = function() {
+window.copyPetObs = function () {
     const textarea = document.getElementById('pet-restricao');
     if (textarea && textarea.value) {
         navigator.clipboard.writeText(textarea.value).then(() => {
@@ -5416,21 +5483,21 @@ window.copyPetObs = function() {
 
 async function loadPets(force = false) {
     if (!force && state.pets.length > 0) return;
-    
+
     try {
         const loading = document.getElementById('loading-pets');
         if (loading) loading.style.display = 'flex';
-        
+
         const response = await fetch(`${API_BASE}/pets`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        
+
         if (!response.ok) throw new Error('Falha ao carregar pets');
-        
+
         const data = await response.json();
         state.pets = data;
         state.petsFilteredList = null; // reseta filtros
-        
+
         if (state.activeTab === 'pets') {
             renderPetsList();
         }
@@ -5446,61 +5513,61 @@ async function loadPets(force = false) {
 function renderPetsList() {
     const tbody = document.getElementById('tbody-pets');
     const emptyState = document.getElementById('empty-pets');
-    
+
     if (!tbody) return;
-    
+
     const listToRender = state.petsFilteredList || state.pets;
-    
+
     // Pagination logic
     const totalItems = listToRender.length;
     let itemsPerPage = state.petsRowsPerPage;
-    
+
     if (itemsPerPage === 'all') {
         itemsPerPage = totalItems;
         state.petsPage = 1;
     }
-    
+
     const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
     if (state.petsPage > totalPages) state.petsPage = totalPages;
-    
+
     const startIndex = (state.petsPage - 1) * itemsPerPage;
     const endIndex = itemsPerPage === totalItems ? totalItems : Math.min(startIndex + itemsPerPage, totalItems);
-    
+
     const pageItems = listToRender.slice(startIndex, endIndex);
-    
+
     const pageStartElem = document.getElementById('page-start-pets');
-    if(pageStartElem) pageStartElem.textContent = totalItems === 0 ? 0 : startIndex + 1;
-    
+    if (pageStartElem) pageStartElem.textContent = totalItems === 0 ? 0 : startIndex + 1;
+
     const pageEndElem = document.getElementById('page-end-pets');
-    if(pageEndElem) pageEndElem.textContent = endIndex;
-    
+    if (pageEndElem) pageEndElem.textContent = endIndex;
+
     const pageTotalElem = document.getElementById('page-total-pets');
-    if(pageTotalElem) pageTotalElem.textContent = totalItems;
-    
+    if (pageTotalElem) pageTotalElem.textContent = totalItems;
+
     const btnPrev = document.getElementById('btn-prev-pets');
-    if(btnPrev) btnPrev.disabled = state.petsPage === 1;
-    
+    if (btnPrev) btnPrev.disabled = state.petsPage === 1;
+
     const btnNext = document.getElementById('btn-next-pets');
-    if(btnNext) btnNext.disabled = state.petsPage === totalPages;
-    
+    if (btnNext) btnNext.disabled = state.petsPage === totalPages;
+
     tbody.innerHTML = '';
-    
+
     if (pageItems.length === 0) {
-        if(emptyState) emptyState.style.display = 'flex';
+        if (emptyState) emptyState.style.display = 'flex';
     } else {
-        if(emptyState) emptyState.style.display = 'none';
-        
+        if (emptyState) emptyState.style.display = 'none';
+
         pageItems.forEach(pet => {
             const tr = document.createElement('tr');
-            
+
             // Buscar nome do tutor correspondente
             const tutor = state.tutores.find(t => t.id === pet.tutor_id);
             const tutorNome = tutor ? tutor.nome : 'Desconhecido';
-            
+
             // Formatar espécie/raça
             const especieDisplay = pet.especie || '-';
             const racaDisplay = pet.raca || '-';
-            
+
             tr.innerHTML = `
                 <td style="vertical-align: middle;">
                     <div style="display: flex; align-items: center; gap: 12px; height: 100%;">
@@ -5526,9 +5593,9 @@ function renderPetsList() {
                 <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">
                     <div style="display: flex; align-items: center; gap: 14px; height: 100%;">
                         ${pet.foto_url
-                            ? `<img src="${pet.foto_url}" alt="${pet.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
-                            : (() => { const parts = (pet.nome || '?').trim().split(/\s+/); const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0]; return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials.toUpperCase()}</div>`; })()
-                        }
+                    ? `<img src="${pet.foto_url}" alt="${pet.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
+                    : (() => { const parts = (pet.nome || '?').trim().split(/\s+/); const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0]; return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials.toUpperCase()}</div>`; })()
+                }
                         <span>${pet.nome || '-'}</span>
                     </div>
                 </td>
@@ -5541,7 +5608,7 @@ function renderPetsList() {
             `;
             tbody.appendChild(tr);
         });
-        
+
         if (window.lucide) {
             window.lucide.createIcons();
         }
@@ -5549,42 +5616,49 @@ function renderPetsList() {
 }
 
 function applyPetFilters() {
-    const searchNome = document.getElementById('filter-pet-nome')?.value.toLowerCase() || '';
-    const searchTutor = document.getElementById('filter-pet-tutor')?.value.toLowerCase() || '';
-    const searchEspecie = document.getElementById('filter-pet-especie')?.value.toLowerCase() || '';
-    const searchRaca = document.getElementById('filter-pet-raca')?.value.toLowerCase() || '';
-    const searchStatus = document.getElementById('filter-pet-status')?.value.toLowerCase() || '';
-    
+    const searchNome = removeDiacritics(document.getElementById('filter-pet-nome')?.value.toLowerCase() || '');
+    const searchTutor = removeDiacritics(document.getElementById('filter-pet-tutor')?.value.toLowerCase() || '');
+    const searchEspecie = removeDiacritics(document.getElementById('filter-pet-especie')?.value.toLowerCase() || '');
+    const searchRaca = removeDiacritics(document.getElementById('filter-pet-raca')?.value.toLowerCase() || '');
+    const searchStatus = removeDiacritics(document.getElementById('filter-pet-status')?.value.toLowerCase() || '');
+
     if (!searchNome && !searchTutor && !searchEspecie && !searchRaca && !searchStatus) {
         state.petsFilteredList = null;
     } else {
         state.petsFilteredList = state.pets.filter(pet => {
             const tutor = state.tutores.find(t => t.id === pet.tutor_id);
-            const tutorNome = tutor ? tutor.nome.toLowerCase() : '';
-            
-            const matchNome = !searchNome || (pet.nome && pet.nome.toLowerCase().includes(searchNome));
-            const matchTutor = !searchTutor || tutorNome.includes(searchTutor);
-            const matchEspecie = !searchEspecie || (pet.especie && pet.especie.toLowerCase().includes(searchEspecie));
-            const matchRaca = !searchRaca || (pet.raca && pet.raca.toLowerCase().includes(searchRaca));
-            const matchStatus = !searchStatus || (pet.status && pet.status.toLowerCase().includes(searchStatus));
-            
+            const tutorNome = tutor ? removeDiacritics(tutor.nome.toLowerCase()) : '';
+            const tutorCpf = tutor && tutor.cpf ? tutor.cpf.replace(/\D/g, '') : '';
+            const searchTutorNumbersOnly = searchTutor.replace(/\D/g, '');
+
+            const petNome = pet.nome ? removeDiacritics(pet.nome.toLowerCase()) : '';
+            const petEspecie = pet.especie ? removeDiacritics(pet.especie.toLowerCase()) : '';
+            const petRaca = pet.raca ? removeDiacritics(pet.raca.toLowerCase()) : '';
+            const petStatus = pet.status ? removeDiacritics(pet.status.toLowerCase()) : '';
+
+            const matchNome = !searchNome || petNome.startsWith(searchNome);
+            const matchTutor = !searchTutor || tutorNome.startsWith(searchTutor) || (searchTutorNumbersOnly && tutorCpf.startsWith(searchTutorNumbersOnly));
+            const matchEspecie = !searchEspecie || petEspecie.startsWith(searchEspecie);
+            const matchRaca = !searchRaca || petRaca.startsWith(searchRaca);
+            const matchStatus = !searchStatus || petStatus.startsWith(searchStatus);
+
             return matchNome && matchTutor && matchEspecie && matchRaca && matchStatus;
         });
     }
-    
+
     state.petsPage = 1;
     renderPetsList();
 }
 
-window.bulkDeletePets = async function() {
+window.bulkDeletePets = async function () {
     const checkboxes = document.querySelectorAll('.row-checkbox-pets:checked');
     const ids = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
-    
+
     if (ids.length === 0) return;
-    
+
     const confirmDelete = await CustomUI.confirm("Atenção", `Tem certeza que deseja excluir os ${ids.length} pets selecionados? Esta ação é irreversível.`, "danger");
     if (!confirmDelete) return;
-    
+
     try {
         for (const id of ids) {
             await fetch(`${API_BASE}/pets/${id}`, {
@@ -5592,27 +5666,27 @@ window.bulkDeletePets = async function() {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
             });
         }
-        
+
         CustomUI.toast("Sucesso", `${ids.length} pets foram excluídos.`);
         state.pets = state.pets.filter(p => !ids.includes(p.id));
         if (state.petsFilteredList) {
             state.petsFilteredList = state.petsFilteredList.filter(p => !ids.includes(p.id));
         }
         renderPetsList();
-        
+
         const selectAll = document.getElementById('select-all-pets');
-        if(selectAll) selectAll.checked = false;
+        if (selectAll) selectAll.checked = false;
         toggleBulkDeleteBtn('pets');
-    } catch(e) {
+    } catch (e) {
         CustomUI.toast("Erro", "Falha ao excluir alguns pets.", "danger");
     }
 };
 
-window.savePet = async function(event) {
+window.savePet = async function (event) {
     event.preventDefault();
     const btn = event.submitter || event.target.querySelector('button[type="submit"]');
-    if(btn) btn.disabled = true;
-    
+    if (btn) btn.disabled = true;
+
     try {
         const id = document.getElementById('pet-id') ? document.getElementById('pet-id').value : '';
         const nome = document.getElementById('pet-nome').value;
@@ -5623,23 +5697,24 @@ window.savePet = async function(event) {
         const peso = document.getElementById('pet-peso').value ? parseFloat(document.getElementById('pet-peso').value.replace(',', '.')) : null;
         const nascimento = document.getElementById('pet-nascimento').value;
         const cor = document.getElementById('pet-cor').value;
-        const microchip = document.getElementById('pet-microchip').value;
         const status = document.getElementById('pet-status').value;
+        const castrado = document.querySelector('input[name="pet-castrado"]:checked')?.value === 'Sim';
         const agressivo = document.querySelector('input[name="pet-agressivo"]:checked')?.value === 'Sim';
         const treinado = document.querySelector('input[name="pet-treinado"]:checked')?.value === 'Sim';
         const uso_imagem = document.querySelector('input[name="pet-autoriza-imagem"]:checked')?.value === 'true';
         const observacoes = document.getElementById('pet-restricao').value;
-        
+        const porte = document.getElementById('pet-porte').value || null;
+
         const previewImg = document.querySelector('#pet-foto-preview img');
         const foto_url = previewImg ? previewImg.src : null;
-        
+
         const payload = {
-            nome, tutor_id, especie, raca, sexo, peso, data_nascimento: nascimento, cor, microchip, status, agressivo, treinado, autoriza_imagem: uso_imagem, observacoes, foto_url
+            nome, tutor_id, especie, raca, sexo, peso, data_nascimento: nascimento, cor, status, castrado, porte, agressivo, treinado, autoriza_imagem: uso_imagem, observacoes, foto_url
         };
-        
+
         const url = id ? `${API_BASE}/pets/${id}` : `${API_BASE}/pets`;
         const method = id ? 'PUT' : 'POST';
-        
+
         const response = await fetch(url, {
             method: method,
             headers: {
@@ -5648,34 +5723,34 @@ window.savePet = async function(event) {
             },
             body: JSON.stringify(payload)
         });
-        
-        if(!response.ok) {
+
+        if (!response.ok) {
             const errorData = await response.json().catch(() => null);
             throw new Error(errorData?.detail || 'Erro ao salvar pet');
         }
-        
+
         CustomUI.toast('Sucesso', id ? 'Pet atualizado com sucesso!' : 'Pet cadastrado com sucesso!', 'success');
         document.getElementById('form-pet').reset();
-        
-        state.pets = []; 
+
+        state.pets = [];
         switchTab('pets');
     } catch (e) {
         CustomUI.toast('Erro', e.message, 'danger');
     } finally {
-        if(btn) btn.disabled = false;
+        if (btn) btn.disabled = false;
     }
 };
 
-window.editPet = async function(id) {
-    if(state.tutores.length === 0) await loadTutores();
+window.editPet = async function (id) {
+    if (state.tutores.length === 0) await loadTutores();
     const pet = state.pets.find(p => p.id === id);
     if (!pet) return;
-    
+
     const tabLink = document.querySelector('.submenu-link[data-tab="novo-pet"]');
     if (tabLink) tabLink.click();
-    
+
     setTimeout(() => {
-        if(document.getElementById('pet-id')) document.getElementById('pet-id').value = pet.id;
+        if (document.getElementById('pet-id')) document.getElementById('pet-id').value = pet.id;
         else {
             const hiddenId = document.createElement('input');
             hiddenId.type = 'hidden';
@@ -5683,9 +5758,9 @@ window.editPet = async function(id) {
             hiddenId.value = pet.id;
             document.getElementById('form-pet').appendChild(hiddenId);
         }
-        
+
         const tutorSelect = document.getElementById('pet-tutor');
-        if(tutorSelect && tutorSelect.options.length <= 1) {
+        if (tutorSelect && tutorSelect.options.length <= 1) {
             state.tutores.forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t.id;
@@ -5693,50 +5768,55 @@ window.editPet = async function(id) {
                 tutorSelect.appendChild(opt);
             });
         }
-        
-        if(document.getElementById('pet-nome')) document.getElementById('pet-nome').value = pet.nome;
-        if(document.getElementById('pet-tutor')) document.getElementById('pet-tutor').value = pet.tutor_id;
-        if(document.getElementById('pet-especie')) {
+
+        if (document.getElementById('pet-nome')) document.getElementById('pet-nome').value = pet.nome;
+        if (document.getElementById('pet-tutor')) document.getElementById('pet-tutor').value = pet.tutor_id;
+        if (document.getElementById('pet-especie')) {
             document.getElementById('pet-especie').value = pet.especie;
             document.getElementById('pet-especie').dispatchEvent(new Event('change'));
         }
-        
+
         setTimeout(() => {
-            if(pet.especie === 'Cachorro' || pet.especie === 'Gato') {
-                if(document.getElementById('pet-raca')) document.getElementById('pet-raca').value = pet.raca;
+            if (pet.especie === 'Cachorro' || pet.especie === 'Gato') {
+                if (document.getElementById('pet-raca')) document.getElementById('pet-raca').value = pet.raca;
             } else {
-                if(document.getElementById('pet-raca-input')) document.getElementById('pet-raca-input').value = pet.raca;
+                if (document.getElementById('pet-raca-input')) document.getElementById('pet-raca-input').value = pet.raca;
             }
         }, 100);
-        
-        if(pet.sexo) {
+
+        if (pet.sexo) {
             const sexoInput = document.querySelector(`input[name="pet-sexo"][value="${pet.sexo}"]`);
-            if(sexoInput) sexoInput.checked = true;
+            if (sexoInput) sexoInput.checked = true;
         }
-        
-        if(document.getElementById('pet-peso')) document.getElementById('pet-peso').value = pet.peso || '';
-        if(document.getElementById('pet-nascimento') && pet.nascimento) document.getElementById('pet-nascimento').value = pet.nascimento.split('T')[0];
-        if(document.getElementById('pet-cor')) document.getElementById('pet-cor').value = pet.cor || '';
-        if(document.getElementById('pet-microchip')) document.getElementById('pet-microchip').value = pet.microchip || '';
-        if(document.getElementById('pet-status')) document.getElementById('pet-status').value = pet.status || 'Ativo';
-        
-        if(pet.agressivo !== null) {
+
+        if (document.getElementById('pet-peso')) document.getElementById('pet-peso').value = pet.peso || '';
+        if (document.getElementById('pet-nascimento') && pet.nascimento) document.getElementById('pet-nascimento').value = pet.nascimento.split('T')[0];
+        if (document.getElementById('pet-cor')) document.getElementById('pet-cor').value = pet.cor || '';
+
+        if (document.getElementById('pet-status')) document.getElementById('pet-status').value = pet.status || 'Ativo';
+
+        if (pet.castrado !== null && pet.castrado !== undefined) {
+            const castradoInput = document.querySelector(`input[name="pet-castrado"][value="${pet.castrado ? 'Sim' : 'Não'}"]`);
+            if (castradoInput) castradoInput.checked = true;
+        }
+
+        if (pet.agressivo !== null) {
             const agrInput = document.querySelector(`input[name="pet-agressivo"][value="${pet.agressivo ? 'Sim' : 'Não'}"]`);
-            if(agrInput) agrInput.checked = true;
+            if (agrInput) agrInput.checked = true;
         }
-        
-        if(pet.treinado !== null) {
+
+        if (pet.treinado !== null) {
             const treiInput = document.querySelector(`input[name="pet-treinado"][value="${pet.treinado ? 'Sim' : 'Não'}"]`);
-            if(treiInput) treiInput.checked = true;
+            if (treiInput) treiInput.checked = true;
         }
-        
-        if(pet.uso_imagem !== null) {
+
+        if (pet.uso_imagem !== null) {
             const imgInput = document.querySelector(`input[name="pet-autoriza-imagem"][value="${pet.uso_imagem ? 'true' : 'false'}"]`);
-            if(imgInput) imgInput.checked = true;
+            if (imgInput) imgInput.checked = true;
         }
-        
-        if(document.getElementById('pet-restricao')) document.getElementById('pet-restricao').value = pet.observacoes || '';
-        
+
+        if (document.getElementById('pet-restricao')) document.getElementById('pet-restricao').value = pet.observacoes || '';
+
         if (pet.foto_url) {
             const previewLabel = document.getElementById('pet-foto-preview');
             if (previewLabel) {
@@ -5748,39 +5828,186 @@ window.editPet = async function(id) {
             const previewLabel = document.getElementById('pet-foto-preview');
             if (previewLabel) {
                 previewLabel.innerHTML = '<i data-lucide="camera" style="width: 24px; height: 24px; color: var(--text-muted);"></i>';
-                if(window.lucide) window.lucide.createIcons();
+                if (window.lucide) window.lucide.createIcons();
             }
             const removeBtn = document.getElementById('pet-foto-remove');
             if (removeBtn) removeBtn.style.display = 'none';
         }
-        
+
         const title = document.getElementById('current-tab-title');
-        if(title) title.textContent = "Editar Pet";
-        
+        if (title) title.textContent = "Editar Pet";
+
         const submitBtn = document.querySelector('#form-pet button[type="submit"]');
-        if(submitBtn) submitBtn.textContent = "Salvar Alterações";
+        if (submitBtn) submitBtn.textContent = "Salvar Alterações";
     }, 200);
 };
 
-window.deletePet = async function(id) {
+window.deletePet = async function (id) {
     const confirmDelete = await CustomUI.confirm("Excluir Pet", "Tem certeza que deseja excluir este pet? Esta ação não pode ser desfeita.", "danger");
-    if(!confirmDelete) return;
-    
+    if (!confirmDelete) return;
+
     try {
         const response = await fetch(`${API_BASE}/pets/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
-        
-        if(!response.ok) throw new Error('Falha ao excluir pet');
-        
+
+        if (!response.ok) throw new Error('Falha ao excluir pet');
+
         CustomUI.toast("Sucesso", "Pet excluído com sucesso", "success");
         state.pets = state.pets.filter(p => p.id !== id);
-        if(state.petsFilteredList) {
+        if (state.petsFilteredList) {
             state.petsFilteredList = state.petsFilteredList.filter(p => p.id !== id);
         }
         renderPetsList();
+        window.toggleBulkDeleteBtn('pets');
     } catch (e) {
         CustomUI.toast("Erro", e.message, "danger");
     }
+};
+
+window.viewPet = async function (id) {
+    try {
+        const response = await fetch(`${API_BASE}/pets/${id}`);
+        if (!response.ok) throw new Error("Erro ao buscar detalhes do pet");
+        const pet = await response.json();
+
+        // Salvar pet em visualização caso precise
+        state.currentPetInView = pet;
+
+        // Cabeçalho (Status e Nome)
+        const statusEl = document.getElementById('perf-pet-status');
+        if (statusEl) {
+            statusEl.textContent = pet.status || 'Ativo';
+            statusEl.className = pet.status === 'Ativo' ? 'badge-green-tutor' : 'badge-danger';
+        }
+
+        const avatarEl = document.getElementById('perf-pet-avatar');
+        if (avatarEl) {
+            if (pet.foto_url) {
+                avatarEl.innerHTML = `<img src="${pet.foto_url}" alt="${pet.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                avatarEl.style.border = 'none';
+            } else {
+                const parts = (pet.nome || '?').trim().split(/\s+/);
+                const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
+                avatarEl.innerHTML = initials.toUpperCase();
+                avatarEl.style.border = '2px solid var(--primary)';
+            }
+        }
+
+        const nomeEl = document.getElementById('perf-pet-nome');
+        if (nomeEl) nomeEl.textContent = pet.nome || '-';
+
+        const racaHeader = document.getElementById('perf-pet-raca-header');
+        if (racaHeader) racaHeader.textContent = pet.raca || 'Raça não inf.';
+
+        // Características Físicas
+        document.getElementById('perf-pet-especie').textContent = pet.especie || '-';
+        document.getElementById('perf-pet-raca').textContent = pet.raca || '-';
+        document.getElementById('perf-pet-sexo').textContent = pet.sexo || '-';
+        document.getElementById('perf-pet-peso').textContent = pet.peso ? String(pet.peso).replace('.', ',') + ' Kg' : '-';
+        document.getElementById('perf-pet-cor').textContent = pet.cor || '-';
+
+        let nascimentoFormatado = '-';
+        let idadeAnos = '0';
+        let proximoNiverFormatado = '-';
+        if (pet.nascimento) {
+            nascimentoFormatado = formatDateWithSlashes(pet.nascimento);
+
+            // Calcular idade
+            const nascimentoData = new Date(pet.nascimento);
+            const hoje = new Date();
+            let anos = hoje.getFullYear() - nascimentoData.getFullYear();
+            const m = hoje.getMonth() - nascimentoData.getMonth();
+            if (m < 0 || (m === 0 && hoje.getDate() < nascimentoData.getDate())) {
+                anos--;
+            }
+            idadeAnos = anos >= 0 ? String(anos) : '0';
+
+            // Calcular próximo aniversário
+            if (nascimentoFormatado && nascimentoFormatado.includes('/')) {
+                const parts = nascimentoFormatado.split('/');
+                if (parts.length === 3) {
+                    const dia = parseInt(parts[0], 10);
+                    const mes = parseInt(parts[1], 10) - 1;
+
+                    let niverThisYear = new Date(hoje.getFullYear(), mes, dia);
+                    let todayStart = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+
+                    if (niverThisYear < todayStart) {
+                        niverThisYear.setFullYear(hoje.getFullYear() + 1);
+                    }
+
+                    const dd = String(niverThisYear.getDate()).padStart(2, '0');
+                    const mm = String(niverThisYear.getMonth() + 1).padStart(2, '0');
+                    const yyyy = niverThisYear.getFullYear();
+                    proximoNiverFormatado = `${dd}/${mm}/${yyyy}`;
+                }
+            }
+        }
+        document.getElementById('perf-pet-nasc').textContent = nascimentoFormatado;
+        document.getElementById('stat-pet-idade').textContent = idadeAnos;
+        const elProximoNiver = document.getElementById('perf-pet-proximo-niver');
+        if (elProximoNiver) elProximoNiver.textContent = proximoNiverFormatado;
+
+        // Observações
+        const obsEl = document.getElementById('perf-pet-obs');
+        if (obsEl) obsEl.value = pet.observacoes || '';
+
+        // Dados de Cadastro
+        document.getElementById('perf-pet-castrado').textContent = pet.castrado ? 'Sim' : 'Não';
+        document.getElementById('stat-pet-porte').textContent = pet.porte || '-';
+        document.getElementById('perf-pet-imagem').textContent = pet.uso_imagem ? 'Sim' : 'Não';
+
+        const treinadoEl = document.getElementById('perf-pet-treinado');
+        if (treinadoEl) treinadoEl.textContent = pet.treinado ? 'Sim' : 'Não';
+
+        // Responsável (Tutor)
+        const tutor = state.tutores.find(t => t.id === pet.tutor_id);
+        const tutorNome = tutor ? tutor.nome : 'Desconhecido';
+
+        document.getElementById('perf-pet-tutor-nome').textContent = tutorNome;
+        document.getElementById('stat-pet-tutor').textContent = tutorNome.split(' ')[0]; // Primeiro nome no stat
+
+        let tutorCpf = '-';
+        if (tutor && tutor.cpf && tutor.cpf.length === 11) {
+            tutorCpf = `${tutor.cpf.substring(0, 3)}.${tutor.cpf.substring(3, 6)}.${tutor.cpf.substring(6, 9)}-${tutor.cpf.substring(9, 11)}`;
+        }
+        document.getElementById('perf-pet-tutor-cpf').textContent = tutorCpf;
+
+        document.getElementById('perf-pet-tutor-cel').textContent = tutor ? (tutor.celular || tutor.telefone || '-') : '-';
+        const emailEl = document.getElementById('perf-pet-tutor-email');
+        if (emailEl) emailEl.textContent = tutor ? (tutor.email || '-') : '-';
+
+        // Botão Editar
+        const btnEdit = document.getElementById('btn-edit-pet-profile');
+        if (btnEdit) {
+            btnEdit.onclick = () => {
+                window.editPet(pet.id);
+            };
+        }
+
+        // Mudar para a aba do perfil do pet
+        if (typeof onTabChanged === 'function') {
+            onTabChanged('pet-perfil');
+        }
+
+        // Esconder loading e mostrar painel
+        showLoading('tab-pet-perfil', false);
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab-pet-perfil').classList.add('active');
+
+        lucide.createIcons();
+    } catch (e) {
+        console.error(e);
+        CustomUI.toast("Erro", "Falha ao carregar detalhes do pet", "danger");
+    }
+};
+
+window.showPetsList = function () {
+    if (typeof onTabChanged === 'function') {
+        onTabChanged('pets');
+    }
+    document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+    document.getElementById('tab-pets').classList.add('active');
 };
