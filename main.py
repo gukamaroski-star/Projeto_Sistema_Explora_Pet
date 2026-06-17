@@ -1,3 +1,4 @@
+# Deploy: 2026-06-17 - Explora Pet Sistema
 from fastapi import FastAPI, Depends, HTTPException, Query, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
