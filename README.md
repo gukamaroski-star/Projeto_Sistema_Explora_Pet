@@ -1,5 +1,7 @@
 # EnterpriseDB | Dashboard & Gestão de Dados (FastAPI + Supabase/PostgreSQL)
 
+> 🚀 **Deploy automático ativo** — qualquer `git push` para a branch `main` aciona o deploy no Render automaticamente.
+
 Este é um projeto completo de banco de dados empresarial que combina o poder e alto desempenho do **Python (FastAPI)** com a escalabilidade robusta do **PostgreSQL (Supabase)**, acompanhado de uma interface web administrativa ultra-premium, responsiva e com modo escuro nativo.
 
 ---
