@@ -35,24 +35,24 @@
     --border-radius: 12px;
 }
 
-/* Tokens Alternativos para Modo Claro */
+/* Tokens Alternativos para Modo Claro (Premium & Delicado) */
 .light-theme {
-    --bg-app: #f1f5f9; /* Slate 100 - muito mais premium e elegante do que o branco puro */
+    --bg-app: #f8fafc; /* Slate 50 - mais clean, delicado e luminoso */
     --bg-card: #ffffff; /* Fundo de card branco puro e limpo */
     --bg-sidebar: #ffffff; /* Sidebar branca e destacada */
-    --border-glow: #e2e8f0; /* Bordas de divisores muito mais elegantes e com bom contraste */
-    --border-hover: rgba(16, 185, 129, 0.3);
+    --border-glow: rgba(0, 0, 0, 0.06); /* Bordas super sutis e elegantes */
+    --border-hover: rgba(16, 185, 129, 0.2);
 
     /* O verde se mantém idêntico ao do modo dark para preservar os menus e campos */
     --primary: #258e5a;
     --primary-hover: #146038;
-    --primary-glow: rgba(37, 142, 90, 0.35);
+    --primary-glow: rgba(37, 142, 90, 0.15); /* Brilho mais suave no modo claro */
 
-    --text-main: #000000; /* Preto Sólido */
-    --text-muted: #333333; /* Cinza Escuro / Carvão para rótulos secundários */
+    --text-main: #1e293b; /* Slate 800 - Suave e legível, muito mais elegante que preto puro */
+    --text-muted: #64748b; /* Slate 500 - Cinza médio premium para rótulos secundários */
     --text-inverse: #ffffff;
 
-    --shadow-main: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --shadow-main: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0, 0, 0, 0.02); /* Sombra difusa e super delicada */
 
     background-color: var(--bg-app);
 }
@@ -74,24 +74,38 @@
     box-shadow: 0 0 8px var(--primary-glow) !important;
 }
 
-/* Garante texto branco com contraste ideal no verde esmeralda no menu e nos botões */
-.light-theme .nav-link.active,
-.light-theme .nav-link:hover,
-.light-theme .submenu-link:hover,
+/* Garante texto branco com contraste ideal nos botões */
 .light-theme .btn-primary {
     color: #ffffff !important;
 }
 
-.light-theme .nav-link.active i,
-.light-theme .nav-link:hover i,
-.light-theme .submenu-link:hover i,
 .light-theme .btn-primary i {
     color: #ffffff !important;
 }
 
-.light-theme .nav-link.active .dropdown-arrow,
+/* Menu ativo (Dashboard) super elegante e delicado no modo claro */
+.light-theme .nav-link.active {
+    background-color: rgba(37, 142, 90, 0.1) !important;
+    color: var(--primary) !important;
+    box-shadow: none !important;
+}
+
+.light-theme .nav-link.active i,
+.light-theme .nav-link.active .dropdown-arrow {
+    color: var(--primary) !important;
+}
+
+/* Efeito de hover nos menus em modo claro */
+.light-theme .nav-link:hover,
+.light-theme .submenu-link:hover {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    color: var(--text-main) !important;
+}
+
+.light-theme .nav-link:hover i,
+.light-theme .submenu-link:hover i,
 .light-theme .nav-link:hover .dropdown-arrow {
-    color: #ffffff !important;
+    color: var(--text-main) !important;
 }
 
 /* Itens de submenu padrão (não ativos) no modo claro: texto escuro e legível */
@@ -124,9 +138,22 @@
 }
 
 /* Ajustes finos de contraste para elementos do dashboard em modo claro */
+.light-theme .brand-text span {
+    color: var(--text-muted) !important;
+}
+
+.light-theme .brand-logo {
+    border: 1px solid #000000 !important;
+}
+
+.light-theme .kpi-card::before {
+    height: 2px; /* Linha de topo mais fina e delicada */
+    opacity: 0.6; /* Brilho mais suave */
+}
+
 .light-theme .db-status {
     background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .light-theme .data-table th {
@@ -242,20 +269,20 @@ textarea {
 }
 
 .brand-logo {
-    width: 90px;
-    height: 90px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid #1a1a1a;
-    box-shadow: inset 0 0 0 8px #0e1118;
+    border: 2px solid var(--border-glow);
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.05);
     flex-shrink: 0;
     transition: var(--transition-smooth);
     position: relative;
 }
 
 .brand-logo:hover {
-    box-shadow: inset 0 0 0 8px #0e1118;
-    border-color: #333333;
+    box-shadow: inset 0 0 0 3px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
     transform: scale(1.05);
 }
 
@@ -282,7 +309,7 @@ textarea {
 }
 
 .brand-text span {
-    font-size: 10px;
+    font-size: 11.5px;
     color: #94a3b8;
     font-weight: 700;
     text-transform: uppercase;
@@ -1609,6 +1636,7 @@ textarea {
     flex-direction: column;
     gap: 24px;
     animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    zoom: 0.95; /* Ajuste o tamanho de visualização da página */
 }
 
 .login-card {

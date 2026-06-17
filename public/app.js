@@ -2525,12 +2525,29 @@ async function loadDashboardData() {
         const tutores = state.tutores;
         const tutoresAtivos = tutores.filter(t => !t.status || t.status.toLowerCase() === 'ativo').length;
 
+        // Carrega Pets para o KPI
+        if (!state.pets || state.pets.length === 0) {
+            try {
+                if (typeof loadPets === 'function') {
+                    await loadPets(true);
+                } else {
+                    const resPets = await fetch(`${API_BASE}/pets`);
+                    if (resPets.ok) state.pets = await resPets.json();
+                }
+            } catch (e) {}
+        }
+        const pets = state.pets || [];
+        const petsAtivos = pets.filter(p => !p.status || p.status.toLowerCase() === 'ativo').length;
+
         // Atualiza os KPIs
         const kpiFaturamento = document.getElementById('kpi-faturamento');
         if (kpiFaturamento) kpiFaturamento.textContent = 'R$ 0,00';
 
         const kpiClientes = document.getElementById('kpi-clientes');
         if (kpiClientes) kpiClientes.textContent = tutoresAtivos;
+
+        const kpiPetsAtivos = document.getElementById('kpi-pets-ativos');
+        if (kpiPetsAtivos) kpiPetsAtivos.textContent = petsAtivos;
 
         const kpiVendas = document.getElementById('kpi-vendas');
         if (kpiVendas) kpiVendas.textContent = '0';
