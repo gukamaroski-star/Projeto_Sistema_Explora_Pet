@@ -1,5 +1,6 @@
 import os
 import sys
+# Comentário de teste 4 para forçar o commit e deploy automático
 
 # Garante que o diretório raiz esteja no sys.path para permitir imports absolutos
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -85,3 +85,4 @@ Quando estiver pronto para colocar o banco online e garantir escalabilidade infi
   * `app.js`: Comunicação AJAX/Fetch com o backend.
 
 <!-- Linha adicionada para testar o hook de deploy automático -->
+<!-- Teste 2 do deploy automático -->
