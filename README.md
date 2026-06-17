@@ -83,3 +83,5 @@ Quando estiver pronto para colocar o banco online e garantir escalabilidade infi
   * `index.html`: Estrutura do dashboard e painéis.
   * `style.css`: Design premium com variáveis CSS e Glassmorphism.
   * `app.js`: Comunicação AJAX/Fetch com o backend.
+
+<!-- Linha adicionada para testar o hook de deploy automático -->
