@@ -1,4 +1,4 @@
-# Deploy: 2026-06-17 14:48 - Explora Pet Sistema v1.1
+# Deploy: 2026-06-17 15:04 - Explora Pet Sistema v1.1 (Auto Deploy Test)
 from fastapi import FastAPI, Depends, HTTPException, Query, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
