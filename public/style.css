@@ -2707,7 +2707,7 @@ textarea {
 }
 
 /* Avatar de Tutor (Circulo com Iniciais) */
-.tutor-avatar-circle {
+.responsavel-avatar-circle {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -2724,13 +2724,13 @@ textarea {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.light-theme .tutor-avatar-circle {
+.light-theme .responsavel-avatar-circle {
     background: #e6fcf5;
     border-color: #c3fae8;
 }
 
 /* Badge de Cliente Roxo Neon */
-.badge-green-tutor {
+.badge-green-responsavel {
     background: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.25);
     color: var(--primary) !important;
@@ -2744,7 +2744,7 @@ textarea {
     box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);
 }
 
-.light-theme .badge-green-tutor {
+.light-theme .badge-green-responsavel {
     background: #e6fcf5;
     border-color: #c3fae8;
     color: #0ca678 !important;
@@ -2939,7 +2939,7 @@ textarea {
     border: 1px solid var(--primary-hover);
 }
 
-.badge-green-tutor {
+.badge-green-responsavel {
     border: 1px solid rgba(16, 185, 129, 0.3);
     background-color: rgba(16, 185, 129, 0.1);
     color: #10b981;
@@ -2954,7 +2954,7 @@ textarea {
     min-width: 75px; /* Garante o mesmo tamanho */
 }
 
-.badge-red-tutor {
+.badge-red-responsavel {
     border: 1px solid rgba(239, 68, 68, 0.3);
     background-color: rgba(239, 68, 68, 0.1);
     color: #ef4444;

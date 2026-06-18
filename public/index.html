@@ -53,7 +53,7 @@
                         <i data-lucide="chevron-down" class="dropdown-arrow"></i>
                     </a>
                     <div class="submenu">
-                        <a href="#" class="submenu-link" data-tab="novo-tutor">
+                        <a href="#" class="submenu-link" data-tab="novo-responsavel">
                             <i data-lucide="plus"></i>
                             <span>Responsável</span>
                         </a>
@@ -137,31 +137,17 @@
                 <!-- ABA 1: DASHBOARD -->
                 <section class="tab-panel active" id="tab-dashboard">
                     <!-- Cards de KPI -->
-                    <div class="kpi-grid">
-                        <div class="kpi-card card-glow-primary">
-                            <div class="kpi-header">
-                                <span class="kpi-title">Faturamento Total</span>
-                                <div class="kpi-icon icon-primary">
-                                    <i data-lucide="dollar-sign"></i>
-                                </div>
-                            </div>
-                            <div class="kpi-value" id="kpi-faturamento">R$ 0,00</div>
-                            <div class="kpi-footer">
-                                <span class="trend-up"><i data-lucide="trending-up"></i> +12.5%</span>
-                                <span class="kpi-period">este mês</span>
-                            </div>
-                        </div>
-
+                    <div class="kpi-grid" style="grid-template-columns: repeat(2, 1fr);">
                         <div class="kpi-card card-glow-success">
                             <div class="kpi-header">
-                                <span class="kpi-title">Clientes Ativos</span>
+                                <span class="kpi-title">Responsáveis Ativos</span>
                                 <div class="kpi-icon icon-success">
                                     <i data-lucide="users"></i>
                                 </div>
                             </div>
-                            <div class="kpi-value" id="kpi-clientes">0</div>
+                            <div class="kpi-value" id="kpi-responsaveis">0</div>
                             <div class="kpi-footer">
-                                <span class="trend-up" id="trend-clientes"><i data-lucide="trending-up"></i>
+                                <span class="trend-up" id="trend-responsaveis"><i data-lucide="trending-up"></i>
                                     +8.2%</span>
                                 <span class="kpi-period">cadastro ativo</span>
                             </div>
@@ -184,52 +170,6 @@
                                 <span class="kpi-period">cadastro ativo</span>
                             </div>
                         </div>
-
-                        <div class="kpi-card card-glow-warning">
-                            <div class="kpi-header">
-                                <span class="kpi-title">Vendas Realizadas</span>
-                                <div class="kpi-icon icon-warning">
-                                    <i data-lucide="shopping-bag"></i>
-                                </div>
-                            </div>
-                            <div class="kpi-value" id="kpi-vendas">0</div>
-                            <div class="kpi-footer">
-                                <span class="trend-up"><i data-lucide="trending-up"></i> +15.4%</span>
-                                <span class="kpi-period">pedidos entregues</span>
-                            </div>
-                        </div>
-
-                        <div class="kpi-card card-glow-danger">
-                            <div class="kpi-header">
-                                <span class="kpi-title">Estoque Alerta</span>
-                                <div class="kpi-icon icon-danger">
-                                    <i data-lucide="alert-triangle"></i>
-                                </div>
-                            </div>
-                            <div class="kpi-value" id="kpi-estoque-alerta">0</div>
-                            <div class="kpi-footer">
-                                <span class="trend-danger"><i data-lucide="info"></i> Estoque < 5</span>
-                                        <span class="kpi-period">produtos críticos</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gráficos -->
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <h3>Histórico de Faturamento Recente</h3>
-                            <p>Valores das vendas agregadas por dia útil</p>
-                            <div class="chart-container">
-                                <canvas id="salesChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="chart-card">
-                            <h3>Distribuição de Categorias</h3>
-                            <p>Quantidade de itens cadastrados por setor</p>
-                            <div class="chart-container-doughnut">
-                                <canvas id="categoriesChart"></canvas>
-                            </div>
-                        </div>
                     </div>
                 </section>
 
@@ -237,7 +177,7 @@
                 <section class="tab-panel" id="tab-clientes">
 
                     <div class="table-container" style="margin-bottom: 36px;">
-                        <table class="data-table" id="table-tutores-element">
+                        <table class="data-table" id="table-responsaveis-element">
                             <thead>
                                 <!-- Primeira linha: Títulos das Colunas -->
                                 <tr>
@@ -252,11 +192,11 @@
                                 <tr class="table-filters-row">
                                     <th>
                                         <div style="display: flex; align-items: center; gap: 8px;">
-                                            <input type="checkbox" id="select-all-tutores" class="custom-checkbox" onchange="window.toggleSelectAll('tutores', this.checked)">
-                                            <label for="select-all-tutores"
+                                            <input type="checkbox" id="select-all-responsaveis" class="custom-checkbox" onchange="window.toggleSelectAll('responsaveis', this.checked)">
+                                            <label for="select-all-responsaveis"
                                                 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); cursor: pointer; user-select: none; white-space: nowrap;">Selecionar</label>
-                                            <button type="button" id="btn-bulk-delete-tutores"
-                                                onclick="window.bulkDeleteTutores()" title="Excluir Selecionados"
+                                            <button type="button" id="btn-bulk-delete-responsaveis"
+                                                onclick="window.bulkDeleteResponsaveis()" title="Excluir Selecionados"
                                                 style="display: none; background: none; border: none; color: var(--danger); cursor: pointer; padding: 4px; border-radius: 4px; align-items: center; justify-content: center; transition: all 0.2s ease; margin-left: 4px;"
                                                 onmouseover="this.style.transform='scale(1.15)'"
                                                 onmouseout="this.style.transform='scale(1)'">
@@ -264,39 +204,39 @@
                                             </button>
                                         </div>
                                     </th>
-                                    <th><input type="text" id="filter-tutor-nome" placeholder="Pesquisar Nome"
-                                            class="table-filter-input" oninput="applyTutorFilters()"></th>
-                                    <th><input type="text" id="filter-tutor-cpf" placeholder="Pesquisar CPF"
-                                            class="table-filter-input" oninput="applyTutorFilters()"></th>
-                                    <th><input type="text" id="filter-tutor-celular" placeholder="Pesquisar Whatsapp"
-                                            class="table-filter-input" oninput="applyTutorFilters()"></th>
-                                    <th><input type="text" id="filter-tutor-email" placeholder="Pesquisar E-mail"
-                                            class="table-filter-input" oninput="applyTutorFilters()"></th>
-                                    <th style="text-align: center;"><input type="text" id="filter-tutor-status"
+                                    <th><input type="text" id="filter-responsavel-nome" placeholder="Pesquisar Nome"
+                                            class="table-filter-input" oninput="applyResponsavelFilters()"></th>
+                                    <th><input type="text" id="filter-responsavel-cpf" placeholder="Pesquisar CPF"
+                                            class="table-filter-input" oninput="applyResponsavelFilters()"></th>
+                                    <th><input type="text" id="filter-responsavel-celular" placeholder="Pesquisar Whatsapp"
+                                            class="table-filter-input" oninput="applyResponsavelFilters()"></th>
+                                    <th><input type="text" id="filter-responsavel-email" placeholder="Pesquisar E-mail"
+                                            class="table-filter-input" oninput="applyResponsavelFilters()"></th>
+                                    <th style="text-align: center;"><input type="text" id="filter-responsavel-status"
                                             placeholder="Pesquisar Status" class="table-filter-input"
-                                            style="text-align: center;" oninput="applyTutorFilters()"></th>
+                                            style="text-align: center;" oninput="applyResponsavelFilters()"></th>
                                 </tr>
                             </thead>
-                            <tbody id="tbody-tutores">
+                            <tbody id="tbody-responsaveis">
                                 <!-- Preenchido dinamicamente via JS -->
                             </tbody>
                         </table>
-                        <div class="loading-spinner" id="loading-tutores">
+                        <div class="loading-spinner" id="loading-responsaveis">
                             <div class="spinner"></div>
                         </div>
-                        <div class="empty-state" id="empty-tutores" style="display: none;">
+                        <div class="empty-state" id="empty-responsaveis" style="display: none;">
                             <i data-lucide="user-check"></i>
                             <p>Nenhum responsável cadastrado ou encontrado.</p>
                         </div>
 
                         <!-- Pagination Footer -->
-                        <div class="pagination-footer" id="pagination-tutores"
+                        <div class="pagination-footer" id="pagination-responsaveis"
                             style="display: flex; justify-content: space-between; align-items: center; padding: 16px; border-top: 1px solid var(--border); background-color: var(--surface);">
                             <div class="pagination-size">
-                                <label for="rows-per-page-tutores"
+                                <label for="rows-per-page-responsaveis"
                                     style="font-size: 13px; color: var(--text-muted); margin-right: 8px;">Itens por
                                     página:</label>
-                                <select id="rows-per-page-tutores" onchange="changeRowsPerPage('tutores', this.value)"
+                                <select id="rows-per-page-responsaveis" onchange="changeRowsPerPage('responsaveis', this.value)"
                                     style="padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-glow); background-color: var(--bg-card); color: var(--text-main); outline: none;">
                                     <option value="10"
                                         style="background-color: var(--bg-card); color: var(--text-main);">10</option>
@@ -313,15 +253,15 @@
                             </div>
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <div class="pagination-info" style="font-size: 13px; color: var(--text-muted);">
-                                    Mostrando <span id="page-start-tutores">0</span> a <span
-                                        id="page-end-tutores">0</span> de <span id="page-total-tutores">0</span>
+                                    Mostrando <span id="page-start-responsaveis">0</span> a <span
+                                        id="page-end-responsaveis">0</span> de <span id="page-total-responsaveis">0</span>
                                 </div>
                                 <div class="pagination-controls" style="display: flex; gap: 8px;">
-                                    <button class="btn btn-secondary btn-icon" onclick="prevPage('tutores')"
-                                        id="btn-prev-tutores" disabled style="padding: 4px 8px;"><i
+                                    <button class="btn btn-secondary btn-icon" onclick="prevPage('responsaveis')"
+                                        id="btn-prev-responsaveis" disabled style="padding: 4px 8px;"><i
                                             data-lucide="chevron-left"></i></button>
-                                    <button class="btn btn-secondary btn-icon" onclick="nextPage('tutores')"
-                                        id="btn-next-tutores" disabled style="padding: 4px 8px;"><i
+                                    <button class="btn btn-secondary btn-icon" onclick="nextPage('responsaveis')"
+                                        id="btn-next-responsaveis" disabled style="padding: 4px 8px;"><i
                                             data-lucide="chevron-right"></i></button>
                                 </div>
                             </div>
@@ -364,7 +304,7 @@
                                     </th>
                                     <th><input type="text" id="filter-pet-nome" placeholder="Pesquisar Nome"
                                             class="table-filter-input" oninput="applyPetFilters()"></th>
-                                    <th><input type="text" id="filter-pet-tutor" placeholder="Pesquisar Responsável"
+                                    <th><input type="text" id="filter-pet-responsavel" placeholder="Pesquisar Responsável"
                                             class="table-filter-input" oninput="applyPetFilters()"></th>
                                     <th><input type="text" id="filter-pet-especie" placeholder="Pesquisar Espécie"
                                             class="table-filter-input" oninput="applyPetFilters()"></th>
@@ -479,17 +419,17 @@
                 </section>
 
                 <!-- ABA 6: NOVO TUTOR -->
-                <section class="tab-panel" id="tab-novo-tutor">
+                <section class="tab-panel" id="tab-novo-responsavel">
                     <div class="section-header-row" style="display: none;">
                         <div>
-                            <h3 class="section-label" id="tab-novo-tutor-title"><i data-lucide="user-plus"></i> Novo
-                                Tutor</h3>
+                            <h3 class="section-label" id="tab-novo-responsavel-title"><i data-lucide="user-plus"></i> Novo
+                                Responsável</h3>
                             <p class="section-desc">Cadastre ou edite as informações de um responsável.</p>
                         </div>
                     </div>
                     <div class="table-container" style="padding: 24px 24px 12px 24px;">
-                        <form id="form-tutor" onsubmit="saveTutor(event)">
-                            <input type="hidden" id="tutor-id">
+                        <form id="form-responsavel" onsubmit="saveResponsavel(event)">
+                            <input type="hidden" id="responsavel-id">
 
                             <!-- LAYOUT PRINCIPAL -->
                             <div
@@ -500,33 +440,33 @@
                                     <div
                                         style="display: flex; align-items: center; justify-content: center; height: 100%; margin-top: 2px;">
                                         <div style="position: relative; width: 140px; height: 140px;">
-                                            <input type="file" id="tutor-foto-upload" accept="image/*"
+                                            <input type="file" id="responsavel-foto-upload" accept="image/*"
                                                 style="display: none;" onchange="
                                                 if(this.files && this.files[0]) {
                                                     const reader = new FileReader();
                                                     reader.onload = function(e) {
-                                                        const preview = document.getElementById('tutor-foto-preview');
+                                                        const preview = document.getElementById('responsavel-foto-preview');
                                                         preview.innerHTML = '<img src=\'' + e.target.result + '\' style=\'width:100%; height:100%; object-fit:cover; border-radius:50%;\'>';
                                                         preview.style.border = 'none';
-                                                        document.getElementById('tutor-foto-remove').style.display = 'flex';
+                                                        document.getElementById('responsavel-foto-remove').style.display = 'flex';
                                                     }
                                                     reader.readAsDataURL(this.files[0]);
                                                 }
                                             ">
-                                            <label for="tutor-foto-upload" id="tutor-foto-preview"
+                                            <label for="responsavel-foto-upload" id="responsavel-foto-preview"
                                                 style="width: 100%; height: 100%; border-radius: 50%; background-color: rgba(255,255,255,0.05); border: 1px dashed var(--border-glow); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-smooth); overflow: hidden; gap: 8px;">
                                                 <i data-lucide="camera"
                                                     style="width: 24px; height: 24px; color: var(--text-muted);"></i>
                                                 <span
                                                     style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: center;">Selecionar<br>Foto</span>
                                             </label>
-                                            <div id="tutor-foto-remove" title="Remover Foto"
+                                            <div id="responsavel-foto-remove" title="Remover Foto"
                                                 style="display: none; position: absolute; top: 0; right: 0; background: #333; color: #aaa; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10; border: 1px solid #555; transition: all 0.2s ease;"
                                                 onmouseover="this.style.transform='scale(1.1)'; this.style.color='#fff'; this.style.background='#444'"
                                                 onmouseout="this.style.transform='scale(1)'; this.style.color='#aaa'; this.style.background='#333'"
                                                 onclick="
-                                                document.getElementById('tutor-foto-upload').value = '';
-                                                const preview = document.getElementById('tutor-foto-preview');
+                                                document.getElementById('responsavel-foto-upload').value = '';
+                                                const preview = document.getElementById('responsavel-foto-preview');
                                                 preview.innerHTML = '<i data-lucide=\'camera\' style=\'width: 24px; height: 24px; color: var(--text-muted);\'></i><span style=\'font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: center;\'>Selecionar<br>Foto</span>';
                                                 preview.style.border = '1px dashed var(--border-glow)';
                                                 this.style.display = 'none';
@@ -544,18 +484,18 @@
                                     <div class="form-row"
                                         style="grid-template-columns: 1.5fr 2fr 1fr; margin-bottom: 0;">
                                         <div class="form-group">
-                                            <label for="tutor-cpf">CPF *</label>
-                                            <input type="text" id="tutor-cpf" required placeholder="000.000.000-00"
+                                            <label for="responsavel-cpf">CPF *</label>
+                                            <input type="text" id="responsavel-cpf" required placeholder="000.000.000-00"
                                                 maxlength="14" title="Digite os 11 números do CPF" autocomplete="off">
                                         </div>
                                         <div class="form-group">
-                                            <label for="tutor-nome">Nome Completo *</label>
-                                            <input type="text" id="tutor-nome" required placeholder="Ex: João da Silva"
+                                            <label for="responsavel-nome">Nome Completo *</label>
+                                            <input type="text" id="responsavel-nome" required placeholder="Ex: João da Silva"
                                                 maxlength="150" autocomplete="off">
                                         </div>
                                         <div class="form-group">
-                                            <label for="tutor-data-nascimento">Data Nascimento *</label>
-                                            <input type="text" id="tutor-data-nascimento" required
+                                            <label for="responsavel-data-nascimento">Data Nascimento *</label>
+                                            <input type="text" id="responsavel-data-nascimento" required
                                                 placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off">
                                         </div>
                                     </div>
@@ -563,40 +503,40 @@
                                     <!-- Linha 2 -->
                                     <div class="form-row" style="grid-template-columns: 2fr 1fr 1fr; margin-bottom: 0;">
                                         <div class="form-group">
-                                            <label for="tutor-email">E-mail *</label>
-                                            <input type="email" id="tutor-email" required
+                                            <label for="responsavel-email">E-mail *</label>
+                                            <input type="email" id="responsavel-email" required
                                                 placeholder="Ex: joao@email.com" autocomplete="off">
                                         </div>
                                         <div class="form-group">
-                                            <label for="tutor-sexo">Sexo *</label>
+                                            <label for="responsavel-sexo">Sexo *</label>
                                             <div class="custom-select-wrapper"
-                                                onclick="toggleCustomSelect('tutor-sexo-list')"
+                                                onclick="toggleCustomSelect('responsavel-sexo-list')"
                                                 style="position: relative; width: 100%;">
-                                                <input type="text" id="tutor-sexo-input" placeholder="Selecione"
+                                                <input type="text" id="responsavel-sexo-input" placeholder="Selecione"
                                                     readonly style="cursor: pointer; width: 100%;" class="required">
                                                 <i data-lucide="chevron-down"
                                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); width: 18px; height: 18px;"></i>
-                                                <input type="hidden" id="tutor-sexo" required>
-                                                <div id="tutor-sexo-list" class="custom-dropdown-list"
+                                                <input type="hidden" id="responsavel-sexo" required>
+                                                <div id="responsavel-sexo-list" class="custom-dropdown-list"
                                                     style="display: none; position: absolute; width: 100%; background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; z-index: 9999; max-height: 200px; overflow-y: auto; top: calc(100% + 5px); left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                                     <div class="custom-dropdown-item raca-item" data-value="Masculino"
-                                                        onclick="selectCustomOption('tutor-sexo', 'Masculino', 'Masculino')"
+                                                        onclick="selectCustomOption('responsavel-sexo', 'Masculino', 'Masculino')"
                                                         style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                         Masculino</div>
                                                     <div class="custom-dropdown-item raca-item" data-value="Feminino"
-                                                        onclick="selectCustomOption('tutor-sexo', 'Feminino', 'Feminino')"
+                                                        onclick="selectCustomOption('responsavel-sexo', 'Feminino', 'Feminino')"
                                                         style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                         Feminino</div>
                                                     <div class="custom-dropdown-item raca-item" data-value="Outro"
-                                                        onclick="selectCustomOption('tutor-sexo', 'Outro', 'Outro')"
+                                                        onclick="selectCustomOption('responsavel-sexo', 'Outro', 'Outro')"
                                                         style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                         Outro</div>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="tutor-telefone">WhatsApp *</label>
-                                            <input type="text" id="tutor-telefone" required
+                                            <label for="responsavel-telefone">WhatsApp *</label>
+                                            <input type="text" id="responsavel-telefone" required
                                                 placeholder="Ex: (41) 99999-0000" autocomplete="off">
                                         </div>
                                     </div>
@@ -608,8 +548,8 @@
                             <!-- ROW 5 -->
                             <div class="form-row" style="grid-template-columns: 1fr 3fr 1fr;">
                                 <div class="form-group">
-                                    <label for="tutor-cep">CEP *</label>
-                                    <input type="text" id="tutor-cep" required placeholder="00000-000" maxlength="9"
+                                    <label for="responsavel-cep">CEP *</label>
+                                    <input type="text" id="responsavel-cep" required placeholder="00000-000" maxlength="9"
                                         autocomplete="off">
                                     <a href="https://buscacepinter.correios.com.br/app/endereco/index.php"
                                         target="_blank"
@@ -619,32 +559,32 @@
                                     </a>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-endereco">Logradouro *</label>
-                                    <input type="text" id="tutor-endereco" required placeholder="Ex: Rua das Flores">
+                                    <label for="responsavel-endereco">Logradouro *</label>
+                                    <input type="text" id="responsavel-endereco" required placeholder="Ex: Rua das Flores">
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-numero">Número *</label>
-                                    <input type="text" id="tutor-numero" required placeholder="Ex: 123">
+                                    <label for="responsavel-numero">Número *</label>
+                                    <input type="text" id="responsavel-numero" required placeholder="Ex: 123">
                                 </div>
                             </div>
 
                             <!-- ROW 6 -->
                             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
                                 <div class="form-group">
-                                    <label for="tutor-complemento">Complemento</label>
-                                    <input type="text" id="tutor-complemento" placeholder="Ex: Apto 402">
+                                    <label for="responsavel-complemento">Complemento</label>
+                                    <input type="text" id="responsavel-complemento" placeholder="Ex: Apto 402">
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-bairro">Bairro *</label>
-                                    <input type="text" id="tutor-bairro" required placeholder="Ex: Centro">
+                                    <label for="responsavel-bairro">Bairro *</label>
+                                    <input type="text" id="responsavel-bairro" required placeholder="Ex: Centro">
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-cidade">Cidade *</label>
-                                    <input type="text" id="tutor-cidade" required placeholder="Ex: Curitiba">
+                                    <label for="responsavel-cidade">Cidade *</label>
+                                    <input type="text" id="responsavel-cidade" required placeholder="Ex: Curitiba">
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-uf">UF *</label>
-                                    <input type="text" id="tutor-uf" required placeholder="PR" maxlength="2"
+                                    <label for="responsavel-uf">UF *</label>
+                                    <input type="text" id="responsavel-uf" required placeholder="PR" maxlength="2"
                                         style="text-transform: uppercase;">
                                 </div>
                             </div>
@@ -654,54 +594,54 @@
                             <!-- ROW 7 -->
                             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr;">
                                 <div class="form-group">
-                                    <label for="tutor-como-conheceu">Como nos conheceu?</label>
+                                    <label for="responsavel-como-conheceu">Como nos conheceu?</label>
                                     <div class="custom-select-wrapper"
-                                        onclick="toggleCustomSelect('tutor-como-conheceu-list')"
+                                        onclick="toggleCustomSelect('responsavel-como-conheceu-list')"
                                         style="position: relative; width: 100%;">
-                                        <input type="text" id="tutor-como-conheceu-input" placeholder="Selecione"
+                                        <input type="text" id="responsavel-como-conheceu-input" placeholder="Selecione"
                                             readonly style="cursor: pointer; width: 100%;" class="">
                                         <i data-lucide="chevron-down"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); width: 18px; height: 18px;"></i>
-                                        <input type="hidden" id="tutor-como-conheceu">
-                                        <div id="tutor-como-conheceu-list" class="custom-dropdown-list"
+                                        <input type="hidden" id="responsavel-como-conheceu">
+                                        <div id="responsavel-como-conheceu-list" class="custom-dropdown-list"
                                             style="display: none; position: absolute; width: 100%; background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; z-index: 9999; max-height: 200px; overflow-y: auto; top: calc(100% + 5px); left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                             <div class="custom-dropdown-item raca-item" data-value="Instagram"
-                                                onclick="selectCustomOption('tutor-como-conheceu', 'Instagram', 'Instagram')"
+                                                onclick="selectCustomOption('responsavel-como-conheceu', 'Instagram', 'Instagram')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Instagram</div>
                                             <div class="custom-dropdown-item raca-item" data-value="WhatsApp"
-                                                onclick="selectCustomOption('tutor-como-conheceu', 'WhatsApp', 'WhatsApp')"
+                                                onclick="selectCustomOption('responsavel-como-conheceu', 'WhatsApp', 'WhatsApp')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 WhatsApp</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Indicação"
-                                                onclick="selectCustomOption('tutor-como-conheceu', 'Indicação', 'Indicação')"
+                                                onclick="selectCustomOption('responsavel-como-conheceu', 'Indicação', 'Indicação')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Indicação</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Anúncio"
-                                                onclick="selectCustomOption('tutor-como-conheceu', 'Anúncio', 'Anúncio')"
+                                                onclick="selectCustomOption('responsavel-como-conheceu', 'Anúncio', 'Anúncio')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Anúncio</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Outros"
-                                                onclick="selectCustomOption('tutor-como-conheceu', 'Outros', 'Outros')"
+                                                onclick="selectCustomOption('responsavel-como-conheceu', 'Outros', 'Outros')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Outros</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-indicacao">Conte mais</label>
-                                    <input type="text" id="tutor-indicacao" placeholder="Ex: João da Silva (Amigo)">
+                                    <label for="responsavel-indicacao">Conte mais</label>
+                                    <input type="text" id="responsavel-indicacao" placeholder="Ex: João da Silva (Amigo)">
                                 </div>
                                 <div class="form-group">
                                     <label>Uso de imagem autorizado? *</label>
                                     <div class="custom-radio-group">
                                         <label class="custom-radio-check">
-                                            <input type="radio" name="tutor-autoriza-imagem" value="true" required>
+                                            <input type="radio" name="responsavel-autoriza-imagem" value="true" required>
                                             <div class="radio-box box-success"><i data-lucide="check"></i></div>
                                             <span class="radio-label">Sim</span>
                                         </label>
                                         <label class="custom-radio-check">
-                                            <input type="radio" name="tutor-autoriza-imagem" value="false" required>
+                                            <input type="radio" name="responsavel-autoriza-imagem" value="false" required>
                                             <div class="radio-box box-danger"><i data-lucide="x"></i></div>
                                             <span class="radio-label">Não</span>
                                         </label>
@@ -714,88 +654,88 @@
                             <!-- ROW 8 -->
                             <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 24px;">
                                 <div class="form-group">
-                                    <label for="tutor-forma-pgto">Preferência de pagamento</label>
+                                    <label for="responsavel-forma-pgto">Preferência de pagamento</label>
                                     <div class="custom-select-wrapper"
-                                        onclick="toggleCustomSelect('tutor-forma-pgto-list')"
+                                        onclick="toggleCustomSelect('responsavel-forma-pgto-list')"
                                         style="position: relative; width: 100%;">
-                                        <input type="text" id="tutor-forma-pgto-input" placeholder="Selecione" readonly
+                                        <input type="text" id="responsavel-forma-pgto-input" placeholder="Selecione" readonly
                                             style="cursor: pointer; width: 100%;" class="">
                                         <i data-lucide="chevron-down"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); width: 18px; height: 18px;"></i>
-                                        <input type="hidden" id="tutor-forma-pgto">
-                                        <div id="tutor-forma-pgto-list" class="custom-dropdown-list"
+                                        <input type="hidden" id="responsavel-forma-pgto">
+                                        <div id="responsavel-forma-pgto-list" class="custom-dropdown-list"
                                             style="display: none; position: absolute; width: 100%; background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; z-index: 9999; max-height: 200px; overflow-y: auto; top: calc(100% + 5px); left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                             <div class="custom-dropdown-item raca-item" data-value="Pix"
-                                                onclick="selectCustomOption('tutor-forma-pgto', 'Pix', 'Pix')"
+                                                onclick="selectCustomOption('responsavel-forma-pgto', 'Pix', 'Pix')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Pix</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Cartão de débito"
-                                                onclick="selectCustomOption('tutor-forma-pgto', 'Cartão de débito', 'Cartão de débito')"
+                                                onclick="selectCustomOption('responsavel-forma-pgto', 'Cartão de débito', 'Cartão de débito')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Cartão de débito</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Cartão de crédito"
-                                                onclick="selectCustomOption('tutor-forma-pgto', 'Cartão de crédito', 'Cartão de crédito')"
+                                                onclick="selectCustomOption('responsavel-forma-pgto', 'Cartão de crédito', 'Cartão de crédito')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Cartão de crédito</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Boleto bancário"
-                                                onclick="selectCustomOption('tutor-forma-pgto', 'Boleto bancário', 'Boleto bancário')"
+                                                onclick="selectCustomOption('responsavel-forma-pgto', 'Boleto bancário', 'Boleto bancário')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Boleto bancário</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-dia-pagamento">Melhor dia de pagamento</label>
+                                    <label for="responsavel-dia-pagamento">Melhor dia de pagamento</label>
                                     <div class="custom-select-wrapper"
-                                        onclick="toggleCustomSelect('tutor-dia-pagamento-list')"
+                                        onclick="toggleCustomSelect('responsavel-dia-pagamento-list')"
                                         style="position: relative; width: 100%;">
-                                        <input type="text" id="tutor-dia-pagamento-input" placeholder="Selecione"
+                                        <input type="text" id="responsavel-dia-pagamento-input" placeholder="Selecione"
                                             readonly style="cursor: pointer; width: 100%;" class="">
                                         <i data-lucide="chevron-down"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); width: 18px; height: 18px;"></i>
-                                        <input type="hidden" id="tutor-dia-pagamento">
-                                        <div id="tutor-dia-pagamento-list" class="custom-dropdown-list"
+                                        <input type="hidden" id="responsavel-dia-pagamento">
+                                        <div id="responsavel-dia-pagamento-list" class="custom-dropdown-list"
                                             style="display: none; position: absolute; width: 100%; background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; z-index: 9999; max-height: 200px; overflow-y: auto; top: calc(100% + 5px); left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                             <div class="custom-dropdown-item raca-item" data-value="05"
-                                                onclick="selectCustomOption('tutor-dia-pagamento', '05', 'Dia 05')"
+                                                onclick="selectCustomOption('responsavel-dia-pagamento', '05', 'Dia 05')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Dia 05</div>
                                             <div class="custom-dropdown-item raca-item" data-value="10"
-                                                onclick="selectCustomOption('tutor-dia-pagamento', '10', 'Dia 10')"
+                                                onclick="selectCustomOption('responsavel-dia-pagamento', '10', 'Dia 10')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Dia 10</div>
                                             <div class="custom-dropdown-item raca-item" data-value="15"
-                                                onclick="selectCustomOption('tutor-dia-pagamento', '15', 'Dia 15')"
+                                                onclick="selectCustomOption('responsavel-dia-pagamento', '15', 'Dia 15')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Dia 15</div>
                                             <div class="custom-dropdown-item raca-item" data-value="20"
-                                                onclick="selectCustomOption('tutor-dia-pagamento', '20', 'Dia 20')"
+                                                onclick="selectCustomOption('responsavel-dia-pagamento', '20', 'Dia 20')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Dia 20</div>
                                             <div class="custom-dropdown-item raca-item" data-value="25"
-                                                onclick="selectCustomOption('tutor-dia-pagamento', '25', 'Dia 25')"
+                                                onclick="selectCustomOption('responsavel-dia-pagamento', '25', 'Dia 25')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Dia 25</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="tutor-status">Status *</label>
-                                    <div class="custom-select-wrapper" onclick="toggleCustomSelect('tutor-status-list')"
+                                    <label for="responsavel-status">Status *</label>
+                                    <div class="custom-select-wrapper" onclick="toggleCustomSelect('responsavel-status-list')"
                                         style="position: relative; width: 100%;">
-                                        <input type="text" id="tutor-status-input" placeholder="Selecione" readonly
+                                        <input type="text" id="responsavel-status-input" placeholder="Selecione" readonly
                                             style="cursor: pointer; width: 100%;" class="required">
                                         <i data-lucide="chevron-down"
                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); width: 18px; height: 18px;"></i>
-                                        <input type="hidden" id="tutor-status" required>
-                                        <div id="tutor-status-list" class="custom-dropdown-list"
+                                        <input type="hidden" id="responsavel-status" required>
+                                        <div id="responsavel-status-list" class="custom-dropdown-list"
                                             style="display: none; position: absolute; width: 100%; background: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 6px; z-index: 9999; max-height: 200px; overflow-y: auto; top: calc(100% + 5px); left: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
                                             <div class="custom-dropdown-item raca-item" data-value="Ativo"
-                                                onclick="selectCustomOption('tutor-status', 'Ativo', 'Ativo')"
+                                                onclick="selectCustomOption('responsavel-status', 'Ativo', 'Ativo')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Ativo</div>
                                             <div class="custom-dropdown-item raca-item" data-value="Inativo"
-                                                onclick="selectCustomOption('tutor-status', 'Inativo', 'Inativo')"
+                                                onclick="selectCustomOption('responsavel-status', 'Inativo', 'Inativo')"
                                                 style="padding: 10px 14px; cursor: pointer; color: var(--text-main); font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                                 Inativo</div>
                                         </div>
@@ -806,27 +746,27 @@
                             <!-- ROW 9: OBSERVAÇÕES -->
                             <div class="form-row" style="grid-template-columns: 1fr; margin-top: 24px;">
                                 <div class="form-group">
-                                    <label for="tutor-observacoes">Observações</label>
+                                    <label for="responsavel-observacoes">Observações</label>
                                     <div
                                         style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; background-color: var(--bg-card); border: 1px solid var(--border-glow); border-radius: 8px; padding: 10px 14px; width: 100%; transition: var(--transition-smooth);">
-                                        <textarea id="tutor-observacoes" readonly
+                                        <textarea id="responsavel-observacoes" readonly
                                             style="flex: 1; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 14px; padding: 0; resize: none; min-height: 80px; outline: none; line-height: 1.5; overflow: hidden;"
-                                            placeholder="Observações importantes sobre o tutor..."></textarea>
+                                            placeholder="Observações importantes sobre o responsavel..."></textarea>
                                         <div style="display: flex; gap: 4px; margin-top: -2px; margin-right: -4px;">
-                                            <button type="button" id="btn-edit-tutor-form-obs"
-                                                onclick="toggleEditTutorFormObs()"
+                                            <button type="button" id="btn-edit-responsavel-form-obs"
+                                                onclick="toggleEditResponsávelFormObs()"
                                                 style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px;"
                                                 title="Editar" class="hover-bg">
                                                 <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button type="button" id="btn-save-tutor-form-obs"
-                                                onclick="saveTutorFormObs()"
+                                            <button type="button" id="btn-save-responsavel-form-obs"
+                                                onclick="saveResponsavelFormObs()"
                                                 style="background: none; border: none; color: #ebed88; cursor: pointer; padding: 4px; border-radius: 4px; display: none;"
                                                 title="Salvar" class="hover-bg">
                                                 <i data-lucide="save" style="width: 16px; height: 16px;"></i>
                                             </button>
                                             <button type="button"
-                                                onclick="copyTextToClipboard('tutor-observacoes', 'Observações')"
+                                                onclick="copyTextToClipboard('responsavel-observacoes', 'Observações')"
                                                 style="background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; border-radius: 4px;"
                                                 title="Copiar" class="hover-bg">
                                                 <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
@@ -839,8 +779,8 @@
                             <div class="modal-footer"
                                 style="margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border-glow);">
                                 <button type="button" class="btn btn-secondary"
-                                    onclick="document.getElementById('form-tutor').reset(); document.querySelector('[data-tab=\'dashboard\']').click();">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Salvar Tutor</button>
+                                    onclick="document.getElementById('form-responsavel').reset(); document.querySelector('[data-tab=\'dashboard\']').click();">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Salvar Responsável</button>
                             </div>
                         </form>
                 </section>
@@ -875,10 +815,10 @@
                 </section>
 
                 <!-- ABA 8: PERFIL DO TUTOR (RESUMO) -->
-                <section class="tab-panel" id="tab-tutor-perfil">
+                <section class="tab-panel" id="tab-responsavel-perfil">
                     <div
                         style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; width: 85%;">
-                        <button class="btn btn-secondary" onclick="showTutoresList()">
+                        <button class="btn btn-secondary" onclick="showResponsáveisList()">
                             <i data-lucide="arrow-left"></i> Voltar para a Lista
                         </button>
                     </div>
@@ -888,7 +828,7 @@
                         style="display: grid; grid-template-columns: 55% 26%; justify-content: flex-start; gap: 24px; margin-bottom: 24px;">
                         <div class="profile-card hero-card"
                             style="border-top: 4px solid var(--primary); border-left: none; margin: 0; position: relative;">
-                            <span class="badge-green-tutor" id="perf-status"
+                            <span class="badge-green-responsavel" id="perf-status"
                                 style="position: absolute; top: 24px; right: 24px;">Cliente</span>
                             <div class="hero-header">
                                 <div style="position: relative; width: 110px; height: 110px; flex-shrink: 0;">
@@ -1045,12 +985,12 @@
                                             style="flex: 1; background: transparent; border: none; color: var(--text-main); font-family: inherit; font-size: 14px; font-weight: 500; padding: 0; resize: none; min-height: 40px; outline: none; line-height: 1.5; overflow: hidden;"
                                             placeholder="Nenhuma observação..."></textarea>
                                         <div style="display: flex; gap: 4px; margin-top: -4px;">
-                                            <button id="btn-edit-tutor-obs" onclick="toggleEditTutorObs()"
+                                            <button id="btn-edit-responsavel-obs" onclick="toggleEditResponsávelObs()"
                                                 style="background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 4px;"
                                                 title="Editar" class="hover-bg">
                                                 <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
                                             </button>
-                                            <button id="btn-save-tutor-obs" onclick="saveTutorObs()"
+                                            <button id="btn-save-responsavel-obs" onclick="saveResponsavelObs()"
                                                 style="background: none; border: none; color: #ebed88; cursor: pointer; padding: 4px; border-radius: 4px; display: none;"
                                                 title="Salvar" class="hover-bg">
                                                 <i data-lucide="save" style="width: 16px; height: 16px;"></i>
@@ -1160,7 +1100,7 @@
                     <!-- Cabeçalho Rápido (Top Grid) -->
                     <div style="display: grid; grid-template-columns: 55% 26%; justify-content: flex-start; gap: 24px; margin-bottom: 24px;">
                         <div class="profile-card hero-card" style="border-top: 4px solid var(--primary); border-left: none; margin: 0; position: relative;">
-                            <span class="badge-green-tutor" id="perf-pet-status" style="position: absolute; top: 24px; right: 24px;">Ativo</span>
+                            <span class="badge-green-responsavel" id="perf-pet-status" style="position: absolute; top: 24px; right: 24px;">Ativo</span>
                             <div class="hero-header">
                                 <div style="position: relative; width: 110px; height: 110px; flex-shrink: 0;">
                                     <div class="hero-avatar" id="perf-pet-avatar" style="width: 100%; height: 100%; border-radius: 50%; font-size: 32px; font-weight: 700; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--primary-glow); border: 2px solid var(--primary); color: var(--primary);">P</div>
@@ -1252,7 +1192,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Acesso Rápido ao Tutor -->
+                            <!-- Acesso Rápido ao Responsável -->
                             <div class="profile-card" style="flex: 1; display: flex; flex-direction: column; justify-content: flex-start;">
                                 <div class="card-header-icon"><i data-lucide="user"></i>
                                     <h4>Responsável</h4>
@@ -1260,17 +1200,17 @@
                                 <div class="info-grid-1">
                                     <div class="info-item">
                                         <span>CPF</span>
-                                        <strong id="perf-pet-tutor-cpf">-</strong>
+                                        <strong id="perf-pet-responsavel-cpf">-</strong>
                                     </div>
                                     <div class="info-item">
                                         <span>Nome do Responsável</span>
-                                        <strong id="perf-pet-tutor-nome">-</strong>
+                                        <strong id="perf-pet-responsavel-nome">-</strong>
                                     </div>
                                     <div class="info-item">
                                         <span>Celular (WhatsApp)</span>
                                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                                            <strong id="perf-pet-tutor-cel">-</strong>
-                                            <button onclick="copyTextToClipboard('perf-pet-tutor-cel', 'WhatsApp')"
+                                            <strong id="perf-pet-responsavel-cel">-</strong>
+                                            <button onclick="copyTextToClipboard('perf-pet-responsavel-cel', 'WhatsApp')"
                                                 style="background: none; border: none; color: var(--primary); cursor: pointer; padding: 4px; border-radius: 4px;"
                                                 title="Copiar WhatsApp" class="hover-bg">
                                                 <i data-lucide="copy" style="width: 16px; height: 16px;"></i>
@@ -1282,12 +1222,12 @@
                         </div>
 
                         <div class="profile-stats-col" style="display: flex; flex-direction: column; gap: 24px; height: 100%;">
-                            <!-- Tutor Destaque -->
+                            <!-- Responsável Destaque -->
                             <div style="flex: 1; justify-content: center; background-color: #e6d3f4; color: #0E1217; border-radius: 8px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                                 <div style="background: rgba(0,0,0,0.1); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
                                     <i data-lucide="user" style="width: 32px; height: 32px; fill: currentColor;"></i>
                                 </div>
-                                <h2 style="margin: 0; font-size: 24px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;" id="stat-pet-tutor">-</h2>
+                                <h2 style="margin: 0; font-size: 24px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;" id="stat-pet-responsavel">-</h2>
                                 <span style="font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;">Responsável</span>
                             </div>
                             <!-- Idade do Pet -->
@@ -1385,18 +1325,18 @@
 
                                         <!-- Item 2: Responsável -->
                                         <div class="form-group">
-                                            <label for="pet-tutor-name">Responsável *</label>
+                                            <label for="pet-responsavel-name">Responsável *</label>
                                             <div style="position: relative; width: 100%;">
-                                                <input type="text" id="pet-tutor-name" required
+                                                <input type="text" id="pet-responsavel-name" required
                                                     placeholder="Selecione ou digite..." autocomplete="off"
                                                     style="background-image: url('data:image/svg+xml;utf8,<svg fill=%22%23ffffff%22 height=%2224%22 viewBox=%220 0 24 24%22 width=%2224%22 xmlns=%22http://www.w3.org/2000/svg%22><path d=%22M7 10l5 5 5-5z%22/><path d=%22M0 0h24v24H0z%22 fill=%22none%22/></svg>'); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px; cursor: text;"
-                                                    onfocus="window.openTutorDropdown()"
-                                                    oninput="window.filterTutorDropdown(this.value)">
-                                                <div id="tutores-custom-list"
+                                                    onfocus="window.openResponsávelDropdown()"
+                                                    oninput="window.filterResponsávelDropdown(this.value)">
+                                                <div id="responsaveis-custom-list"
                                                     style="display: none; position: absolute; top: calc(100% - 1px); left: 0; right: 0; background: #2b2b2b; border: 1px solid #555; border-top: 1px solid #444; border-radius: 0 0 4px 4px; max-height: 350px; overflow-y: auto; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.5); padding: 4px 0;">
                                                 </div>
                                             </div>
-                                            <input type="hidden" id="pet-tutor">
+                                            <input type="hidden" id="pet-responsavel">
                                         </div>
 
                                         <!-- Item 3: Data de Nascimento -->
@@ -1772,24 +1712,24 @@
 
 
 
-    <!-- Modal Moderno de Visualização de Tutor (Card Premium) -->
-    <div id="modal-view-tutor" class="modal-overlay">
+    <!-- Modal Moderno de Visualização de Responsável (Card Premium) -->
+    <div id="modal-view-responsavel" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
                 <div class="header-title">
                     <i data-lucide="user"></i>
                     <h3>Ficha Completa do Responsável</h3>
                 </div>
-                <button class="btn-close-modal" onclick="closeViewTutorModal()" title="Fechar Visualização">
+                <button class="btn-close-modal" onclick="closeViewResponsávelModal()" title="Fechar Visualização">
                     <i data-lucide="x"></i>
                 </button>
             </div>
-            <div class="modal-body" id="modal-view-tutor-content">
+            <div class="modal-body" id="modal-view-responsavel-content">
                 <!-- Preenchido dinamicamente via JS -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeViewTutorModal()">Fechar</button>
-                <button class="btn btn-primary" id="btn-modal-edit-tutor">
+                <button class="btn btn-secondary" onclick="closeViewResponsávelModal()">Fechar</button>
+                <button class="btn btn-primary" id="btn-modal-edit-responsavel">
                     <i data-lucide="edit-3"></i> Editar Cadastro
                 </button>
             </div>

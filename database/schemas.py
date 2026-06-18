@@ -2,24 +2,14 @@ from typing import Optional
 from sqlmodel import Field, SQLModel
 from datetime import datetime
 
-# Modelo para a tabela de Clientes
-class Cliente(SQLModel, table=True):
-    __tablename__ = "clientes"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    cpf: Optional[str] = Field(default=None)
-    nome: str
-    email: str
-    telefone: Optional[str] = Field(default=None)
-    status: str = Field(default="Ativo")  # Ativo, Inativo
-    data_cadastro: str = Field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# Modelo para a tabela de Tutores
-class Tutor(SQLModel, table=True):
-    __tablename__ = "tutores"
+
+# Modelo para a tabela de Responsáveis
+class Responsavel(SQLModel, table=True):
+    __tablename__ = "responsaveis"
     id: Optional[int] = Field(default=None, primary_key=True)
-    nome: str
-    cpf: Optional[str] = Field(default=None)
+    nome: str = Field(index=True)
+    cpf: Optional[str] = Field(default=None, index=True)
     estado_civil: Optional[str] = None
     sexo: Optional[str] = None
     email: str
@@ -45,31 +35,11 @@ class Tutor(SQLModel, table=True):
     como_conheceu: Optional[str] = None
     dia_pagamento: Optional[str] = None
     observacoes: Optional[str] = None
-    status: str = Field(default="Ativo")
+    status: str = Field(default="Ativo", index=True)
     foto_url: Optional[str] = None
     data_cadastro: str = Field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-# Modelo para a tabela de Produtos
-class Produto(SQLModel, table=True):
-    __tablename__ = "produtos"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    nome: str
-    categoria: str
-    preco: float
-    estoque: int
-    status: str = Field(default="Disponível")  # Disponível, Sem Estoque
 
-# Modelo para a tabela de Vendas
-class Venda(SQLModel, table=True):
-    __tablename__ = "vendas"
-    
-    id: Optional[int] = Field(default=None, primary_key=True)
-    cliente_id: int = Field(foreign_key="clientes.id")
-    produto_id: int = Field(foreign_key="produtos.id")
-    quantidade: int
-    valor_total: float
-    data_venda: str = Field(default_factory=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # Modelo para a tabela de Usuários (Autenticação)
 class Usuario(SQLModel, table=True):
@@ -87,8 +57,8 @@ class Pet(SQLModel, table=True):
     __tablename__ = "pets"
     
     id: Optional[int] = Field(default=None, primary_key=True)
-    tutor_id: int = Field(foreign_key="tutores.id")
-    nome: str
+    responsavel_id: int = Field(foreign_key="responsaveis.id", index=True)
+    nome: str = Field(index=True)
     apelido: Optional[str] = None
     sexo: str
     especie: str

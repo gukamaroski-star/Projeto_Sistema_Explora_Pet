@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from sqlmodel import create_engine, SQLModel, Session, text
+from sqlalchemy import event
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -17,8 +18,18 @@ connect_args = {}
 if DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
 
-# Cria a engine de conexão do SQLModel
-engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=True)
+# Cria a engine de conexão do SQLModel (echo=False para melhor performance)
+engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=False)
+
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if DATABASE_URL.startswith("sqlite"):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
+        cursor.execute("PRAGMA cache_size=-5000")
+        cursor.execute("PRAGMA temp_store=MEMORY")
+        cursor.close()
 
 # Função para criar o banco de dados e as tabelas definidas em models.py
 def create_db_and_tables():
@@ -35,8 +46,17 @@ def create_db_and_tables():
                 session.execute(text("UPDATE usuarios SET cargo = 'Administrador' WHERE username = 'admin'"))
                 session.commit()
                 print("Tabela 'usuarios' migrada com sucesso!")
+            
+            # Criação de índices para otimização de consultas
+            session.execute(text("CREATE INDEX IF NOT EXISTS ix_responsaveis_nome ON responsaveis (nome)"))
+            session.execute(text("CREATE INDEX IF NOT EXISTS ix_responsaveis_cpf ON responsaveis (cpf)"))
+            session.execute(text("CREATE INDEX IF NOT EXISTS ix_responsaveis_status ON responsaveis (status)"))
+            session.execute(text("CREATE INDEX IF NOT EXISTS ix_pets_nome ON pets (nome)"))
+            session.execute(text("CREATE INDEX IF NOT EXISTS ix_pets_responsavel_id ON pets (responsavel_id)"))
+            session.commit()
+            
         except Exception as e:
-            print(f"Erro na migração automática: {e}")
+            print(f"Erro na migração automática/criação de índices: {e}")
 
 # Dependency generator para obter sessões do banco de dados nas rotas do FastAPI
 def get_session():

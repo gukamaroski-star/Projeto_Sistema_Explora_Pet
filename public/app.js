@@ -255,7 +255,8 @@ window.CustomUI = CustomUI;
 const state = {
     activeTab: 'dashboard',
     clientes: [],
-    tutores: [],
+    responsaveis: [],
+    pets: [],
     produtos: [],
     vendas: [],
     officialCPFData: null,
@@ -264,10 +265,14 @@ const state = {
         categories: null
     },
     // Pagination state
-    tutoresPage: 1,
-    tutoresRowsPerPage: 20,
-    tutoresFilteredList: null,
-    currentTutorInView: null,
+    responsaveisPage: 1,
+    responsaveisRowsPerPage: 20,
+    responsaveisFilteredList: null,
+    currentResponsávelInView: null,
+    
+    petsPage: 1,
+    petsRowsPerPage: 20,
+    petsFilteredList: null,
 
     pets: [],
     petsPage: 1,
@@ -278,7 +283,7 @@ const state = {
 // Configurações e URLs da API
 const API_BASE = '/api';
 
-// Estado de Verificação do Formulário de Tutores (Validações Anti-Fraude e Campo Obrigatório)
+// Estado de Verificação do Formulário de Responsáveles (Validações Anti-Fraude e Campo Obrigatório)
 const formVerificationState = {
     cpf: false,
     nome: false,
@@ -384,7 +389,7 @@ function validateFormState() {
     isValidating = true;
 
     try {
-        const submitBtn = document.querySelector('#form-tutor button[type="submit"]');
+        const submitBtn = document.querySelector('#form-responsavel button[type="submit"]');
         if (!submitBtn) return false;
 
         const pendingFields = [];
@@ -396,23 +401,23 @@ function validateFormState() {
             }
         };
 
-        checkField('tutor-cpf', 'CPF');
-        checkField('tutor-nome', 'Nome Completo');
-        checkField('tutor-data-nascimento', 'Data de Nascimento');
-        checkField('tutor-email', 'E-mail');
-        checkField('tutor-telefone', 'WhatsApp Principal');
-        checkField('tutor-cep', 'CEP');
-        checkField('tutor-endereco', 'Logradouro');
-        checkField('tutor-numero', 'Número');
-        checkField('tutor-bairro', 'Bairro');
-        checkField('tutor-cidade', 'Cidade');
-        checkField('tutor-uf', 'UF');
-        checkField('tutor-sexo', 'Sexo');
+        checkField('responsavel-cpf', 'CPF');
+        checkField('responsavel-nome', 'Nome Completo');
+        checkField('responsavel-data-nascimento', 'Data de Nascimento');
+        checkField('responsavel-email', 'E-mail');
+        checkField('responsavel-telefone', 'WhatsApp Principal');
+        checkField('responsavel-cep', 'CEP');
+        checkField('responsavel-endereco', 'Logradouro');
+        checkField('responsavel-numero', 'Número');
+        checkField('responsavel-bairro', 'Bairro');
+        checkField('responsavel-cidade', 'Cidade');
+        checkField('responsavel-uf', 'UF');
+        checkField('responsavel-sexo', 'Sexo');
 
         // Validação especial para Uso de Imagem (Radio buttons)
-        const autorizaImagemChecked = document.querySelector('input[name="tutor-autoriza-imagem"]:checked');
+        const autorizaImagemChecked = document.querySelector('input[name="responsavel-autoriza-imagem"]:checked');
         if (!autorizaImagemChecked) {
-            pendingFields.push({ id: 'tutor-uso-imagem-container', label: 'Uso de Imagem' });
+            pendingFields.push({ id: 'responsavel-uso-imagem-container', label: 'Uso de Imagem' });
         }
 
         const hasCriticalError = pendingFields.length > 0;
@@ -442,7 +447,7 @@ function validateFormState() {
 
             // Pinta de vermelho e mostra mensagem abaixo de cada campo
             pendingFields.forEach(field => {
-                if (field.id === 'tutor-uso-imagem-container') {
+                if (field.id === 'responsavel-uso-imagem-container') {
                     const container = document.querySelector('.custom-radio-group').parentElement;
                     let fb = container.querySelector('.field-feedback');
                     if (!fb) {
@@ -525,13 +530,13 @@ function isFieldValid(input) {
     // Se o campo estiver vazio, consideramos inválido
     if (val === '') return false;
 
-    if (id === 'tutor-nome') {
+    if (id === 'responsavel-nome') {
         return validateNameLogic(val).isValid;
     }
-    if (id === 'tutor-profissao') {
+    if (id === 'responsavel-profissao') {
         return val.length >= 2 && /^[a-zA-ZÀ-ÿ\s]+$/.test(val);
     }
-    if (id === 'tutor-data-nascimento') {
+    if (id === 'responsavel-data-nascimento') {
         if (val.length !== 10) return false;
         const parts = val.split('/');
         if (parts.length !== 3) return false;
@@ -547,40 +552,40 @@ function isFieldValid(input) {
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
         return age >= 18;
     }
-    if (id === 'tutor-email') {
+    if (id === 'responsavel-email') {
         return validateEmailLogic(val).isValid;
     }
-    if (id === 'tutor-telefone' || id === 'tutor-telefone-secundario') {
+    if (id === 'responsavel-telefone' || id === 'responsavel-telefone-secundario') {
         const cleanPhone = val.replace(/\D/g, '');
         return validatePhoneLogic(cleanPhone).isValid;
     }
-    if (id === 'tutor-cep') {
+    if (id === 'responsavel-cep') {
         const cleanCep = val.replace(/\D/g, '');
         return cleanCep.length === 8;
     }
-    if (id === 'tutor-estado-civil' || id === 'tutor-sexo') {
+    if (id === 'responsavel-estado-civil' || id === 'responsavel-sexo') {
         return val !== "";
     }
-    if (id === 'tutor-instagram') {
+    if (id === 'responsavel-instagram') {
         return val.startsWith('@') && val.length >= 2;
     }
-    if (id === 'tutor-endereco') {
+    if (id === 'responsavel-endereco') {
         return val.length > 0 && /^[a-zA-Z0-9À-ÿ\s\.,\-\/]+$/.test(val);
     }
-    if (id === 'tutor-bairro') {
+    if (id === 'responsavel-bairro') {
         return val.length > 0 && /^[a-zA-Z0-9À-ÿ\s\.,\-]+$/.test(val);
     }
-    if (id === 'tutor-cidade') {
+    if (id === 'responsavel-cidade') {
         return val.length > 0 && /^[a-zA-ZÀ-ÿ\s\.\-]+$/.test(val);
     }
-    if (id === 'tutor-uf') {
+    if (id === 'responsavel-uf') {
         const validUFs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
         return val.length === 2 && validUFs.includes(val.toUpperCase());
     }
-    if (id === 'tutor-numero') {
+    if (id === 'responsavel-numero') {
         return val.length > 0 && !/\D/.test(val);
     }
-    if (id === 'tutor-complemento') {
+    if (id === 'responsavel-complemento') {
         return val.length > 0 && !/[^a-zA-ZÀ-ÿ0-9\s]/.test(val);
     }
 
@@ -600,7 +605,7 @@ function checkFormOrder(input) {
         return false; // Permite prosseguir sem marcar como fora de ordem
     }
 
-    const cpfInput = document.getElementById('tutor-cpf');
+    const cpfInput = document.getElementById('responsavel-cpf');
     const cpfVal = cpfInput ? cpfInput.value.replace(/\D/g, '') : '';
 
     // Se o CPF não estiver verificado com sucesso ou incompleto
@@ -609,13 +614,13 @@ function checkFormOrder(input) {
         // REMOVIDO: input.classList.add('is-invalid'); para que o campo atual não fique vermelho ao clicar
 
         // Deixa o campo CPF vermelho mas PRESERVA qualquer mensagem de erro já exibida nele
-        if (cpfInput && input.id !== 'tutor-cpf') {
+        if (cpfInput && input.id !== 'responsavel-cpf') {
             cpfInput.classList.remove('is-valid');
             cpfInput.classList.add('is-invalid');
             // Só exibe mensagem de obrigatório se o CPF ainda não tiver nenhuma mensagem visível
             const existingFeedback = cpfInput.parentElement.querySelector('.field-feedback.active');
             if (!existingFeedback) {
-                showFeedback('tutor-cpf', 'O CPF é obrigatório.', 'danger');
+                showFeedback('responsavel-cpf', 'O CPF é obrigatório.', 'danger');
             }
         }
 
@@ -626,10 +631,10 @@ function checkFormOrder(input) {
 
 // Limpa alertas de fora de ordem nos campos quando o CPF for validado
 function clearOutOfOrderAlerts() {
-    const form = document.getElementById('form-tutor');
+    const form = document.getElementById('form-responsavel');
     if (!form) return;
     form.querySelectorAll('.is-invalid').forEach(input => {
-        if (input.id !== 'tutor-cpf') {
+        if (input.id !== 'responsavel-cpf') {
             input.classList.remove('is-invalid');
         }
     });
@@ -766,8 +771,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Inicializa a validação dos selects Estado Civil e Sexo (deve ficar verde apenas se for diferente de selecione)
 function initSelectsValidation() {
     const selects = [
-        { id: 'tutor-estado-civil', required: false, stateKey: 'estadoCivil' },
-        { id: 'tutor-sexo', required: true, stateKey: 'sexo' }
+        { id: 'responsavel-estado-civil', required: false, stateKey: 'estadoCivil' },
+        { id: 'responsavel-sexo', required: true, stateKey: 'sexo' }
     ];
 
     selects.forEach(item => {
@@ -810,10 +815,10 @@ function initSelectsValidation() {
 
 // Inicializa a verificação de preenchimento fora de ordem para todos os campos do formulário
 function initFormOrderCheck() {
-    const form = document.getElementById('form-tutor');
+    const form = document.getElementById('form-responsavel');
     if (!form) return;
 
-    const ignoredIds = ['tutor-cpf', 'tutor-id', 'tutor-foto-upload'];
+    const ignoredIds = ['responsavel-cpf', 'responsavel-id', 'responsavel-foto-upload'];
 
     const handleInteraction = (e) => {
         const target = e.target;
@@ -822,8 +827,8 @@ function initFormOrderCheck() {
         // Verifica se é um input, select ou textarea de dentro do formulário e não está ignorado
         const isFormField = (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') &&
             !ignoredIds.includes(target.id) &&
-            target.name !== 'tutor-autoriza-imagem' &&
-            target.name !== 'tutor-assina';
+            target.name !== 'responsavel-autoriza-imagem' &&
+            target.name !== 'responsavel-assina';
 
         if (isFormField) {
             checkFormOrder(target);
@@ -842,19 +847,19 @@ function initFormOrderCheck() {
 // VALIDAÇÃO E FORMATAÇÃO DE CPF (SEGURANÇA E CORRETUDE)
 // ==========================================
 function initCPFValidation() {
-    const cpfInput = document.getElementById('tutor-cpf');
-    const nameInput = document.getElementById('tutor-nome');
+    const cpfInput = document.getElementById('responsavel-cpf');
+    const nameInput = document.getElementById('responsavel-nome');
     if (!cpfInput) return;
 
     cpfInput.addEventListener('blur', () => {
         let cleanVal = cpfInput.value.replace(/\D/g, '');
         if (cleanVal.length === 0) {
             formVerificationState.cpf = false;
-            showFeedback('tutor-cpf', 'O CPF é obrigatório.', 'danger');
+            showFeedback('responsavel-cpf', 'O CPF é obrigatório.', 'danger');
             validateFormState();
         } else if (cleanVal.length > 0 && cleanVal.length < 11) {
             formVerificationState.cpf = false;
-            showFeedback('tutor-cpf', 'O CPF deve ter 11 números.', 'danger');
+            showFeedback('responsavel-cpf', 'O CPF deve ter 11 números.', 'danger');
             validateFormState();
         }
     });
@@ -885,10 +890,10 @@ function initCPFValidation() {
             console.log(`[CPF Input] CPF incompleto (${cleanVal.length} dígitos). Limpando dados do responsável instantaneamente...`);
             // Se o usuário começou a apagar ou o CPF ficou incompleto, limpa todos os dados antigos imediatamente
             const fieldsToClear = [
-                'tutor-nome', 'tutor-data-nascimento', 'tutor-sexo',
-                'tutor-estado-civil', 'tutor-cep', 'tutor-endereco',
-                'tutor-numero', 'tutor-complemento', 'tutor-bairro',
-                'tutor-cidade', 'tutor-uf'
+                'responsavel-nome', 'responsavel-data-nascimento', 'responsavel-sexo',
+                'responsavel-estado-civil', 'responsavel-cep', 'responsavel-endereco',
+                'responsavel-numero', 'responsavel-complemento', 'responsavel-bairro',
+                'responsavel-cidade', 'responsavel-uf'
             ];
 
             fieldsToClear.forEach(id => {
@@ -901,9 +906,9 @@ function initCPFValidation() {
             });
 
             // Restaura campos editáveis de cidade/estado
-            const cityInput = document.getElementById('tutor-cidade');
+            const cityInput = document.getElementById('responsavel-cidade');
             if (cityInput) cityInput.removeAttribute('readonly');
-            const ufInput = document.getElementById('tutor-uf');
+            const ufInput = document.getElementById('responsavel-uf');
             if (ufInput) ufInput.removeAttribute('readonly');
 
             // Redefine todos os estados de verificação do formulário
@@ -918,7 +923,7 @@ function initCPFValidation() {
             formVerificationState.uf = false;
             formVerificationState.numero = false;
 
-            clearFeedback('tutor-cpf');
+            clearFeedback('responsavel-cpf');
             cpfInput.classList.remove('is-valid', 'is-invalid');
 
             validateFormState();
@@ -943,7 +948,7 @@ function initCPFValidation() {
 
                     // Auto-preenchimento completo e inteligente dos campos retornados pela API (sobrescreve sempre para permitir correção de CPF)
                     if (actualData) {
-                        // 1. Nome do tutor
+                        // 1. Nome do responsavel
                         const rawNome = actualData.name || actualData.nameUpper || actualData.nome;
                         let formattedNome = "";
                         if (rawNome) {
@@ -952,7 +957,7 @@ function initCPFValidation() {
                                 nameInput.value = formattedNome;
                                 nameInput.classList.remove('is-invalid');
                                 nameInput.classList.add('is-valid');
-                                clearFeedback('tutor-nome');
+                                clearFeedback('responsavel-nome');
                                 formVerificationState.nome = true;
                             }
                         }
@@ -962,12 +967,12 @@ function initCPFValidation() {
                         let formattedDate = "";
                         if (rawBirth) {
                             formattedDate = formatDateWithSlashes(rawBirth);
-                            const dateInput = document.getElementById('tutor-data-nascimento');
+                            const dateInput = document.getElementById('responsavel-data-nascimento');
                             if (dateInput) {
                                 dateInput.value = formattedDate;
                                 dateInput.classList.remove('is-invalid');
                                 dateInput.classList.add('is-valid');
-                                clearFeedback('tutor-data-nascimento');
+                                clearFeedback('responsavel-data-nascimento');
                                 formVerificationState.nascimento = true;
                             }
                         }
@@ -976,7 +981,7 @@ function initCPFValidation() {
                         const rawGender = actualData.gender || actualData.genero || actualData.sexo;
                         if (rawGender) {
                             const g = rawGender.toLowerCase();
-                            const sexoSelect = document.getElementById('tutor-sexo');
+                            const sexoSelect = document.getElementById('responsavel-sexo');
                             if (sexoSelect) {
                                 if (g.startsWith('m')) {
                                     sexoSelect.value = 'Masculino';
@@ -987,7 +992,7 @@ function initCPFValidation() {
                                 }
                                 sexoSelect.classList.remove('is-invalid');
                                 sexoSelect.classList.add('is-valid');
-                                clearFeedback('tutor-sexo');
+                                clearFeedback('responsavel-sexo');
                                 formVerificationState.sexo = true;
                             }
                         }
@@ -996,7 +1001,7 @@ function initCPFValidation() {
                         const rawMarital = actualData.estado_civil || actualData.marital_status || actualData.situacao_civil;
                         if (rawMarital) {
                             const m = rawMarital.toLowerCase();
-                            const civilSelect = document.getElementById('tutor-estado-civil');
+                            const civilSelect = document.getElementById('responsavel-estado-civil');
                             if (civilSelect) {
                                 if (m.includes('solteir')) {
                                     civilSelect.value = 'Solteiro(a)';
@@ -1013,7 +1018,7 @@ function initCPFValidation() {
                                 }
                                 civilSelect.classList.remove('is-invalid');
                                 civilSelect.classList.add('is-valid');
-                                clearFeedback('tutor-estado-civil');
+                                clearFeedback('responsavel-estado-civil');
                             }
                         }
 
@@ -1024,12 +1029,12 @@ function initCPFValidation() {
                             if (cepVal.length > 5) {
                                 cepVal = cepVal.substring(0, 5) + '-' + cepVal.substring(5, 8);
                             }
-                            const cepInput = document.getElementById('tutor-cep');
+                            const cepInput = document.getElementById('responsavel-cep');
                             if (cepInput) {
                                 cepInput.value = cepVal;
                                 cepInput.classList.remove('is-invalid');
                                 cepInput.classList.add('is-valid');
-                                clearFeedback('tutor-cep');
+                                clearFeedback('responsavel-cep');
                                 formVerificationState.cep = true;
 
                                 // Dispara o evento de input para acionar a busca automática de endereço via ViaCEP
@@ -1039,59 +1044,59 @@ function initCPFValidation() {
 
                         const rawAddress = actualData.endereco || actualData.logradouro || actualData.street || actualData.address;
                         if (rawAddress) {
-                            const addrInput = document.getElementById('tutor-endereco');
+                            const addrInput = document.getElementById('responsavel-endereco');
                             if (addrInput) {
                                 addrInput.value = rawAddress;
                                 addrInput.classList.remove('is-invalid');
                                 addrInput.classList.add('is-valid');
-                                clearFeedback('tutor-endereco');
+                                clearFeedback('responsavel-endereco');
                                 formVerificationState.logradouro = true;
                             }
                         }
 
                         const rawNum = actualData.numero || actualData.number;
                         if (rawNum) {
-                            const numInput = document.getElementById('tutor-numero');
+                            const numInput = document.getElementById('responsavel-numero');
                             if (numInput) {
                                 numInput.value = rawNum;
                                 numInput.classList.remove('is-invalid');
                                 numInput.classList.add('is-valid');
-                                clearFeedback('tutor-numero');
+                                clearFeedback('responsavel-numero');
                                 formVerificationState.numero = true;
                             }
                         }
 
                         const rawComp = actualData.complemento || actualData.complement;
                         if (rawComp) {
-                            const compInput = document.getElementById('tutor-complemento');
+                            const compInput = document.getElementById('responsavel-complemento');
                             if (compInput) {
                                 compInput.value = rawComp;
                                 compInput.classList.remove('is-invalid');
                                 compInput.classList.add('is-valid');
-                                clearFeedback('tutor-complemento');
+                                clearFeedback('responsavel-complemento');
                             }
                         }
 
                         const rawBairro = actualData.bairro || actualData.neighborhood || actualData.district;
                         if (rawBairro) {
-                            const bairroInput = document.getElementById('tutor-bairro');
+                            const bairroInput = document.getElementById('responsavel-bairro');
                             if (bairroInput) {
                                 bairroInput.value = rawBairro;
                                 bairroInput.classList.remove('is-invalid');
                                 bairroInput.classList.add('is-valid');
-                                clearFeedback('tutor-bairro');
+                                clearFeedback('responsavel-bairro');
                                 formVerificationState.bairro = true;
                             }
                         }
 
                         const rawCity = actualData.cidade || actualData.city || actualData.localidade;
                         if (rawCity) {
-                            const cityInput = document.getElementById('tutor-cidade');
+                            const cityInput = document.getElementById('responsavel-cidade');
                             if (cityInput) {
                                 cityInput.value = rawCity;
                                 cityInput.classList.remove('is-invalid');
                                 cityInput.classList.add('is-valid');
-                                clearFeedback('tutor-cidade');
+                                clearFeedback('responsavel-cidade');
                                 formVerificationState.cidade = true;
                             }
                         }
@@ -1099,12 +1104,12 @@ function initCPFValidation() {
                         const rawUf = actualData.uf || actualData.estado || actualData.state;
                         if (rawUf) {
                             const ufVal = rawUf.toUpperCase().substring(0, 2);
-                            const ufInput = document.getElementById('tutor-uf');
+                            const ufInput = document.getElementById('responsavel-uf');
                             if (ufInput) {
                                 ufInput.value = ufVal;
                                 ufInput.classList.remove('is-invalid');
                                 ufInput.classList.add('is-valid');
-                                clearFeedback('tutor-uf');
+                                clearFeedback('responsavel-uf');
                                 formVerificationState.uf = true;
                             }
                         }
@@ -1117,39 +1122,39 @@ function initCPFValidation() {
                                 // ERRO CRÍTICO ANTI-FRAUDE: Nome digitado não coincide com o CPF oficial
                                 formVerificationState.cpf = false;
                                 formVerificationState.nome = false;
-                                showFeedback('tutor-cpf', 'ALERTA ANTI-FRAUDE: Nome do titular diverge do CPF cadastrado.', 'danger');
-                                showFeedback('tutor-nome', 'ALERTA ANTI-FRAUDE: O nome informado diverge do CPF consultado.', 'danger');
+                                showFeedback('responsavel-cpf', 'ALERTA ANTI-FRAUDE: Nome do titular diverge do CPF cadastrado.', 'danger');
+                                showFeedback('responsavel-nome', 'ALERTA ANTI-FRAUDE: O nome informado diverge do CPF consultado.', 'danger');
                             } else {
                                 formVerificationState.cpf = true;
                                 formVerificationState.nome = true;
-                                showFeedback('tutor-cpf', 'CPF ativo e verificado na Receita Federal.', 'success');
-                                showFeedback('tutor-nome', 'Nome compatível com o CPF verificado.', 'success');
+                                showFeedback('responsavel-cpf', 'CPF ativo e verificado na Receita Federal.', 'success');
+                                showFeedback('responsavel-nome', 'Nome compatível com o CPF verificado.', 'success');
                                 clearOutOfOrderAlerts();
                             }
                         } else {
                             // Se nome estiver vazio, aceita provisoriamente e pede para preencher
                             formVerificationState.cpf = true;
-                            showFeedback('tutor-cpf', 'CPF verificado na Receita Federal.', 'success');
+                            showFeedback('responsavel-cpf', 'CPF verificado na Receita Federal.', 'success');
                             clearOutOfOrderAlerts();
                         }
 
                         // Realiza Validação Cruzada de Nascimento se já preenchido
-                        const dateInput = document.getElementById('tutor-data-nascimento');
+                        const dateInput = document.getElementById('responsavel-data-nascimento');
                         const currentTypedBirth = dateInput ? dateInput.value.trim() : "";
                         if (currentTypedBirth.length === 10 && formattedDate.length === 10) {
                             if (currentTypedBirth !== formattedDate) {
                                 formVerificationState.nascimento = false;
-                                showFeedback('tutor-data-nascimento', 'Divergência: Nascimento difere do CPF oficial.', 'warning');
+                                showFeedback('responsavel-data-nascimento', 'Divergência: Nascimento difere do CPF oficial.', 'warning');
                             } else {
                                 formVerificationState.nascimento = true;
-                                showFeedback('tutor-data-nascimento', 'Data de nascimento oficial verificada.', 'success');
+                                showFeedback('responsavel-data-nascimento', 'Data de nascimento oficial verificada.', 'success');
                             }
                         } else {
                             formVerificationState.nascimento = true;
                         }
 
                         // Foca automaticamente no campo Estado Civil para o cliente selecionar
-                        const civilSelect = document.getElementById('tutor-estado-civil');
+                        const civilSelect = document.getElementById('responsavel-estado-civil');
                         if (civilSelect) {
                             setTimeout(() => {
                                 civilSelect.focus();
@@ -1165,7 +1170,7 @@ function initCPFValidation() {
                     // Fallback local: se a API falhar (ex: sem internet/key inválida) mas for matematicamente válido, aceita
                     if (validateCPF(cleanVal)) {
                         formVerificationState.cpf = true;
-                        showFeedback('tutor-cpf', '', 'success');
+                        showFeedback('responsavel-cpf', '', 'success');
                         clearOutOfOrderAlerts();
 
                         // Libera o nome localmente também
@@ -1173,12 +1178,12 @@ function initCPFValidation() {
                             const valResult = validateNameLogic(nameInput.value);
                             if (valResult.isValid) {
                                 formVerificationState.nome = true;
-                                showFeedback('tutor-nome', 'Nome em formato válido.', 'success');
+                                showFeedback('responsavel-nome', 'Nome em formato válido.', 'success');
                             }
                         }
                     } else {
                         formVerificationState.cpf = false;
-                        clearFeedback('tutor-cpf');
+                        clearFeedback('responsavel-cpf');
                         cpfInput.classList.remove('is-valid');
                         cpfInput.classList.add('is-invalid');
                     }
@@ -1191,19 +1196,19 @@ function initCPFValidation() {
         const cpf = cpfInput.value.replace(/\D/g, '');
         if (cpf.length === 0) {
             formVerificationState.cpf = false;
-            showFeedback('tutor-cpf', 'O CPF é obrigatório.', 'danger');
+            showFeedback('responsavel-cpf', 'O CPF é obrigatório.', 'danger');
             cpfInput.classList.remove('is-valid');
             cpfInput.classList.add('is-invalid');
             validateFormState();
         } else if (cpf.length < 11) {
             formVerificationState.cpf = false;
-            showFeedback('tutor-cpf', 'CPF incompleto. Digite todos os 11 dígitos.', 'danger');
+            showFeedback('responsavel-cpf', 'CPF incompleto. Digite todos os 11 dígitos.', 'danger');
             cpfInput.classList.remove('is-valid');
             cpfInput.classList.add('is-invalid');
             validateFormState();
         } else if (cpf.length === 11 && !validateCPF(cpf)) {
             formVerificationState.cpf = false;
-            showFeedback('tutor-cpf', 'CPF inválido. Verifique os dígitos informados.', 'danger');
+            showFeedback('responsavel-cpf', 'CPF inválido. Verifique os dígitos informados.', 'danger');
             cpfInput.classList.remove('is-valid');
             cpfInput.classList.add('is-invalid');
             validateFormState();
@@ -1243,7 +1248,7 @@ function validateCPF(cpf) {
 // VALIDAÇÃO DE NOME COMPLETO (SEGURANÇA E ANTI-FRAUDE)
 // ==========================================
 function initNameValidation() {
-    const nameInput = document.getElementById('tutor-nome');
+    const nameInput = document.getElementById('responsavel-nome');
     if (!nameInput) return;
 
     nameInput.addEventListener('input', (e) => {
@@ -1260,12 +1265,12 @@ function initNameValidation() {
         }
 
         if (nameInput.value.trim().length === 0) {
-            clearFeedback('tutor-nome');
+            clearFeedback('responsavel-nome');
             formVerificationState.nome = false;
             validateFormState();
         } else {
             // Oculta a mensagem de erro temporariamente enquanto o usuário está corrigindo o nome
-            clearFeedback('tutor-nome');
+            clearFeedback('responsavel-nome');
         }
     });
 
@@ -1273,7 +1278,7 @@ function initNameValidation() {
         const typedName = nameInput.value.trim();
         if (!typedName) {
             formVerificationState.nome = false;
-            showFeedback('tutor-nome', 'O nome completo é obrigatório.', 'danger');
+            showFeedback('responsavel-nome', 'O nome completo é obrigatório.', 'danger');
             checkFormOrder(nameInput);
             validateFormState();
             return;
@@ -1282,7 +1287,7 @@ function initNameValidation() {
         const valResult = validateNameLogic(typedName);
         if (!valResult.isValid) {
             formVerificationState.nome = false;
-            showFeedback('tutor-nome', valResult.reason, 'danger');
+            showFeedback('responsavel-nome', valResult.reason, 'danger');
             checkFormOrder(nameInput);
             validateFormState();
             return;
@@ -1301,18 +1306,18 @@ function initNameValidation() {
             if (!comp.matches) {
                 formVerificationState.nome = false;
                 formVerificationState.cpf = false;
-                showFeedback('tutor-nome', 'ALERTA ANTI-FRAUDE: O nome informado diverge do CPF consultado.', 'danger');
-                showFeedback('tutor-cpf', 'ALERTA ANTI-FRAUDE: Nome do titular diverge do CPF cadastrado.', 'danger');
+                showFeedback('responsavel-nome', 'ALERTA ANTI-FRAUDE: O nome informado diverge do CPF consultado.', 'danger');
+                showFeedback('responsavel-cpf', 'ALERTA ANTI-FRAUDE: Nome do titular diverge do CPF cadastrado.', 'danger');
             } else {
                 formVerificationState.nome = true;
                 formVerificationState.cpf = true;
-                showFeedback('tutor-nome', 'Nome compatível com o CPF verificado.', 'success');
-                showFeedback('tutor-cpf', 'CPF ativo e verificado na Receita Federal.', 'success');
+                showFeedback('responsavel-nome', 'Nome compatível com o CPF verificado.', 'success');
+                showFeedback('responsavel-cpf', 'CPF ativo e verificado na Receita Federal.', 'success');
             }
         } else {
             // Se não houver dados da API, aceita com base na validação lógica básica
             formVerificationState.nome = true;
-            showFeedback('tutor-nome', 'Nome em formato válido.', 'success');
+            showFeedback('responsavel-nome', 'Nome em formato válido.', 'success');
         }
         validateFormState();
     });
@@ -1322,7 +1327,7 @@ function initNameValidation() {
 // VALIDAÇÃO DE PROFISSÃO (SOMENTE LETRAS E ESPAÇOS)
 // ==========================================
 function initProfessionValidation() {
-    const profInput = document.getElementById('tutor-profissao');
+    const profInput = document.getElementById('responsavel-profissao');
     if (!profInput) return;
 
     profInput.addEventListener('input', () => {
@@ -1336,18 +1341,18 @@ function initProfessionValidation() {
             return;
         }
 
-        clearFeedback('tutor-profissao');
+        clearFeedback('responsavel-profissao');
     });
 
     profInput.addEventListener('blur', () => {
         const val = profInput.value.trim();
         if (val.length > 0) {
             if (val.length < 2 || !/^[a-zA-ZÀ-ÿ\s]+$/.test(val)) {
-                showFeedback('tutor-profissao', 'A profissão não pode conter números ou caracteres especiais.', 'danger');
+                showFeedback('responsavel-profissao', 'A profissão não pode conter números ou caracteres especiais.', 'danger');
                 checkFormOrder(profInput);
                 return;
             } else {
-                showFeedback('tutor-profissao', '', 'success');
+                showFeedback('responsavel-profissao', '', 'success');
             }
         }
 
@@ -1361,29 +1366,29 @@ function initProfessionValidation() {
 // VALIDAÇÃO DE INSTAGRAM (OBRIGATÓRIO @ SE PREENCHIDO)
 // ==========================================
 function initInstagramValidation() {
-    const instaInput = document.getElementById('tutor-instagram');
+    const instaInput = document.getElementById('responsavel-instagram');
     if (!instaInput) return;
 
     instaInput.addEventListener('input', () => {
         if (checkFormOrder(instaInput)) {
             return;
         }
-        clearFeedback('tutor-instagram');
+        clearFeedback('responsavel-instagram');
     });
 
     instaInput.addEventListener('blur', () => {
         const val = instaInput.value.trim();
         if (val.length > 0) {
             if (!val.startsWith('@')) {
-                showFeedback('tutor-instagram', 'O Instagram deve começar com @ (ex: @usuario)', 'danger');
+                showFeedback('responsavel-instagram', 'O Instagram deve começar com @ (ex: @usuario)', 'danger');
                 checkFormOrder(instaInput);
                 return;
             } else if (val.length < 2) {
-                showFeedback('tutor-instagram', 'Nome de usuário inválido.', 'danger');
+                showFeedback('responsavel-instagram', 'Nome de usuário inválido.', 'danger');
                 checkFormOrder(instaInput);
                 return;
             } else {
-                showFeedback('tutor-instagram', '', 'success');
+                showFeedback('responsavel-instagram', '', 'success');
             }
         }
 
@@ -1476,12 +1481,12 @@ function validateNameLogic(name) {
 // VALIDAÇÃO DE EMAIL
 // ==========================================
 function initEmailValidation() {
-    const emailInput = document.getElementById('tutor-email');
+    const emailInput = document.getElementById('responsavel-email');
     if (!emailInput) return;
 
     emailInput.addEventListener('input', () => {
         if (emailInput.value.trim().length === 0) {
-            clearFeedback('tutor-email');
+            clearFeedback('responsavel-email');
             formVerificationState.email = false;
             validateFormState();
             return;
@@ -1493,7 +1498,7 @@ function initEmailValidation() {
             return;
         }
 
-        clearFeedback('tutor-email');
+        clearFeedback('responsavel-email');
         formVerificationState.email = false; // temporário em digitação
         validateFormState();
     });
@@ -1502,7 +1507,7 @@ function initEmailValidation() {
         const val = emailInput.value.trim();
         if (!val) {
             formVerificationState.email = false;
-            showFeedback('tutor-email', 'O e-mail é obrigatório.', 'danger');
+            showFeedback('responsavel-email', 'O e-mail é obrigatório.', 'danger');
             validateFormState();
             return;
         }
@@ -1510,13 +1515,13 @@ function initEmailValidation() {
         const valResult = validateEmailLogic(val);
         if (!valResult.isValid) {
             formVerificationState.email = false;
-            showFeedback('tutor-email', valResult.reason, 'danger');
+            showFeedback('responsavel-email', valResult.reason, 'danger');
             checkFormOrder(emailInput);
             validateFormState();
             return;
         } else {
             formVerificationState.email = true;
-            showFeedback('tutor-email', '✓ E-mail em formato seguro.', 'success');
+            showFeedback('responsavel-email', '✓ E-mail em formato seguro.', 'success');
         }
 
         checkFormOrder(emailInput);
@@ -1563,8 +1568,8 @@ function validateEmailLogic(email) {
 // ==========================================
 function initPhoneValidation() {
     const phoneInputs = [
-        { input: document.getElementById('tutor-telefone'), isMain: true },
-        { input: document.getElementById('tutor-telefone-secundario'), isMain: false }
+        { input: document.getElementById('responsavel-telefone'), isMain: true },
+        { input: document.getElementById('responsavel-telefone-secundario'), isMain: false }
     ];
 
     phoneInputs.forEach(item => {
@@ -1631,15 +1636,15 @@ function initPhoneValidation() {
                     showFeedback(input.id, '✓ Telefone verificado e ativo.', 'success');
 
                     // Se o principal mudou, revalida o secundário se estiver preenchido
-                    const secInput = document.getElementById('tutor-telefone-secundario');
+                    const secInput = document.getElementById('responsavel-telefone-secundario');
                     const secVal = secInput.value.replace(/\D/g, '');
                     if (secVal && secVal === val) {
-                        showFeedback('tutor-telefone-secundario', 'O número adicional não pode ser igual ao principal.', 'danger');
+                        showFeedback('responsavel-telefone-secundario', 'O número adicional não pode ser igual ao principal.', 'danger');
                         secInput.value = '';
                     }
                 } else {
                     // É o telefone secundário
-                    const mainVal = document.getElementById('tutor-telefone').value.replace(/\D/g, '');
+                    const mainVal = document.getElementById('responsavel-telefone').value.replace(/\D/g, '');
                     if (val === mainVal) {
                         showFeedback(input.id, 'O número adicional não pode ser igual ao WhatsApp Principal.', 'danger');
                         input.value = ''; // Limpa para não salvar duplicado
@@ -1697,7 +1702,7 @@ function validatePhoneLogic(phone) {
 // MÁSCARAS DE INPUT E VALIDAÇÃO DE NASCIMENTO
 // ==========================================
 function initDateMask() {
-    const dateInput = document.getElementById('tutor-data-nascimento');
+    const dateInput = document.getElementById('responsavel-data-nascimento');
     if (!dateInput) return;
 
     dateInput.addEventListener('input', (e) => {
@@ -1714,11 +1719,11 @@ function initDateMask() {
         e.target.value = v;
 
         if (clean.length === 0) {
-            clearFeedback('tutor-data-nascimento');
+            clearFeedback('responsavel-data-nascimento');
             formVerificationState.nascimento = false;
             validateFormState();
         } else if (clean.length < 8) {
-            clearFeedback('tutor-data-nascimento');
+            clearFeedback('responsavel-data-nascimento');
             formVerificationState.nascimento = false;
             validateFormState();
         }
@@ -1729,7 +1734,7 @@ function initDateMask() {
         const v = e.target.value;
         if (!v || v.trim().length === 0) {
             formVerificationState.nascimento = false;
-            showFeedback('tutor-data-nascimento', 'A data de nascimento é obrigatória.', 'danger');
+            showFeedback('responsavel-data-nascimento', 'A data de nascimento é obrigatória.', 'danger');
             checkFormOrder(dateInput);
             validateFormState();
             return;
@@ -1737,7 +1742,7 @@ function initDateMask() {
 
         if (v.length < 10) {
             formVerificationState.nascimento = false;
-            showFeedback('tutor-data-nascimento', 'Data de nascimento incompleta. Use DD/MM/AAAA.', 'danger');
+            showFeedback('responsavel-data-nascimento', 'Data de nascimento incompleta. Use DD/MM/AAAA.', 'danger');
             checkFormOrder(dateInput);
             validateFormState();
             return;
@@ -1753,7 +1758,7 @@ function initDateMask() {
                 // Valida data real (Ano base limite: 1920 para evitar testes com 1900)
                 if (month < 1 || month > 12 || day < 1 || day > 31 || year < 1920 || year > new Date().getFullYear()) {
                     formVerificationState.nascimento = false;
-                    showFeedback('tutor-data-nascimento', 'Data de nascimento inválida.', 'danger');
+                    showFeedback('responsavel-data-nascimento', 'Data de nascimento inválida.', 'danger');
                     validateFormState();
                     return;
                 }
@@ -1762,7 +1767,7 @@ function initDateMask() {
                 const birthDate = new Date(year, month - 1, day);
                 if (birthDate.getFullYear() !== year || birthDate.getMonth() !== month - 1 || birthDate.getDate() !== day) {
                     formVerificationState.nascimento = false;
-                    showFeedback('tutor-data-nascimento', 'Data inexistente no calendário.', 'danger');
+                    showFeedback('responsavel-data-nascimento', 'Data inexistente no calendário.', 'danger');
                     validateFormState();
                     return;
                 }
@@ -1776,7 +1781,7 @@ function initDateMask() {
 
                 if (age < 18) {
                     formVerificationState.nascimento = false;
-                    showFeedback('tutor-data-nascimento', 'Cadastro não permitido para menores de 18 anos.', 'danger');
+                    showFeedback('responsavel-data-nascimento', 'Cadastro não permitido para menores de 18 anos.', 'danger');
                 } else {
                     // Se houver dados da API Receita, faz verificação cruzada
                     if (state.officialCPFData) {
@@ -1795,23 +1800,23 @@ function initDateMask() {
 
                         if (formattedDate && v !== formattedDate) {
                             formVerificationState.nascimento = false;
-                            showFeedback('tutor-data-nascimento', 'Divergência: Nascimento difere do CPF oficial.', 'warning');
+                            showFeedback('responsavel-data-nascimento', 'Divergência: Nascimento difere do CPF oficial.', 'warning');
                         } else {
                             formVerificationState.nascimento = true;
-                            showFeedback('tutor-data-nascimento', '✓ Data de nascimento oficial verificada.', 'success');
+                            showFeedback('responsavel-data-nascimento', '✓ Data de nascimento oficial verificada.', 'success');
                         }
                     } else {
                         formVerificationState.nascimento = true;
-                        showFeedback('tutor-data-nascimento', '✓ Idade de maioridade elegível.', 'success');
+                        showFeedback('responsavel-data-nascimento', '✓ Idade de maioridade elegível.', 'success');
                     }
                 }
             } else {
                 formVerificationState.nascimento = false;
-                showFeedback('tutor-data-nascimento', 'Formato esperado: DD/MM/AAAA', 'danger');
+                showFeedback('responsavel-data-nascimento', 'Formato esperado: DD/MM/AAAA', 'danger');
             }
         } else {
             formVerificationState.nascimento = false;
-            showFeedback('tutor-data-nascimento', 'Data de nascimento incompleta.', 'danger');
+            showFeedback('responsavel-data-nascimento', 'Data de nascimento incompleta.', 'danger');
         }
 
         checkFormOrder(dateInput);
@@ -1823,7 +1828,7 @@ function initDateMask() {
 // BUSCA DE CEP (ViaCEP)
 // ==========================================
 function initCEPListener() {
-    const cepInput = document.getElementById('tutor-cep');
+    const cepInput = document.getElementById('responsavel-cep');
     if (!cepInput) return;
 
     // Busca o CEP quando o campo perde o foco (fallback/validação final)
@@ -1831,26 +1836,26 @@ function initCEPListener() {
         let cep = e.target.value.replace(/\D/g, '');
         if (cep.length === 0) {
             formVerificationState.cep = false;
-            showFeedback('tutor-cep', 'O CEP é obrigatório.', 'danger');
+            showFeedback('responsavel-cep', 'O CEP é obrigatório.', 'danger');
 
-            document.getElementById('tutor-endereco').value = '';
-            document.getElementById('tutor-bairro').value = '';
-            document.getElementById('tutor-cidade').value = '';
-            document.getElementById('tutor-uf').value = '';
+            document.getElementById('responsavel-endereco').value = '';
+            document.getElementById('responsavel-bairro').value = '';
+            document.getElementById('responsavel-cidade').value = '';
+            document.getElementById('responsavel-uf').value = '';
 
-            const numInput = document.getElementById('tutor-numero');
+            const numInput = document.getElementById('responsavel-numero');
             if (numInput) numInput.value = '';
-            const compInput = document.getElementById('tutor-complemento');
+            const compInput = document.getElementById('responsavel-complemento');
             if (compInput) compInput.value = '';
 
-            ['tutor-endereco', 'tutor-bairro', 'tutor-cidade', 'tutor-uf', 'tutor-numero', 'tutor-complemento'].forEach(id => {
+            ['responsavel-endereco', 'responsavel-bairro', 'responsavel-cidade', 'responsavel-uf', 'responsavel-numero', 'responsavel-complemento'].forEach(id => {
                 clearFeedback(id);
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('is-valid', 'is-invalid');
             });
 
-            document.getElementById('tutor-cidade').removeAttribute('readonly');
-            document.getElementById('tutor-uf').removeAttribute('readonly');
+            document.getElementById('responsavel-cidade').removeAttribute('readonly');
+            document.getElementById('responsavel-uf').removeAttribute('readonly');
 
             formVerificationState.logradouro = false;
             formVerificationState.bairro = false;
@@ -1864,7 +1869,7 @@ function initCEPListener() {
         }
         if (cep.length > 0 && cep.length < 8) {
             formVerificationState.cep = false;
-            showFeedback('tutor-cep', 'O CEP deve conter 8 dígitos.', 'danger');
+            showFeedback('responsavel-cep', 'O CEP deve conter 8 dígitos.', 'danger');
             validateFormState();
             return;
         }
@@ -1875,47 +1880,47 @@ function initCEPListener() {
 
     function fillAddressFields(data) {
         formVerificationState.cep = true;
-        document.getElementById('tutor-endereco').value = data.logradouro || '';
-        document.getElementById('tutor-bairro').value = data.bairro || '';
-        document.getElementById('tutor-cidade').value = data.localidade || '';
-        document.getElementById('tutor-uf').value = data.uf || '';
-        document.getElementById('tutor-complemento').value = data.complemento || '';
+        document.getElementById('responsavel-endereco').value = data.logradouro || '';
+        document.getElementById('responsavel-bairro').value = data.bairro || '';
+        document.getElementById('responsavel-cidade').value = data.localidade || '';
+        document.getElementById('responsavel-uf').value = data.uf || '';
+        document.getElementById('responsavel-complemento').value = data.complemento || '';
 
         if (data.bairro) {
             formVerificationState.bairro = true;
-            showFeedback('tutor-bairro', '', 'success');
+            showFeedback('responsavel-bairro', '', 'success');
         } else {
             formVerificationState.bairro = false;
-            clearFeedback('tutor-bairro');
+            clearFeedback('responsavel-bairro');
         }
         if (data.localidade) {
             formVerificationState.cidade = true;
-            showFeedback('tutor-cidade', '', 'success');
+            showFeedback('responsavel-cidade', '', 'success');
         } else {
             formVerificationState.cidade = false;
-            clearFeedback('tutor-cidade');
+            clearFeedback('responsavel-cidade');
         }
         if (data.uf) {
             formVerificationState.uf = true;
-            showFeedback('tutor-uf', '', 'success');
+            showFeedback('responsavel-uf', '', 'success');
         } else {
             formVerificationState.uf = false;
-            clearFeedback('tutor-uf');
+            clearFeedback('responsavel-uf');
         }
         if (data.logradouro) {
             formVerificationState.logradouro = true;
-            showFeedback('tutor-endereco', '', 'success');
+            showFeedback('responsavel-endereco', '', 'success');
         } else {
             formVerificationState.logradouro = false;
-            clearFeedback('tutor-endereco');
+            clearFeedback('responsavel-endereco');
         }
 
-        showFeedback('tutor-cep', '✓ CEP verificado com sucesso.', 'success');
+        showFeedback('responsavel-cep', '✓ CEP verificado com sucesso.', 'success');
 
-        document.getElementById('tutor-cidade').setAttribute('readonly', 'true');
-        document.getElementById('tutor-uf').setAttribute('readonly', 'true');
+        document.getElementById('responsavel-cidade').setAttribute('readonly', 'true');
+        document.getElementById('responsavel-uf').setAttribute('readonly', 'true');
 
-        const numeroInput = document.getElementById('tutor-numero');
+        const numeroInput = document.getElementById('responsavel-numero');
         if (numeroInput) numeroInput.focus();
     }
 
@@ -1934,7 +1939,7 @@ function initCEPListener() {
             console.error("Erro ao acessar cache local do CEP:", e);
         }
 
-        showFeedback('tutor-cep', 'Buscando CEP...', 'warning');
+        showFeedback('responsavel-cep', 'Buscando CEP...', 'warning');
 
         const fetchViaCEP = async () => {
             const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
@@ -1989,10 +1994,10 @@ function initCEPListener() {
         } catch (err) {
             console.error("Todas as APIs de CEP falharam ou o CEP é inválido:", err);
             formVerificationState.cep = true; // Permite que prossiga mesmo preenchendo manual
-            showFeedback('tutor-cep', 'Consulta indisponível ou CEP inexistente. Preencha o endereço manualmente.', 'warning');
+            showFeedback('responsavel-cep', 'Consulta indisponível ou CEP inexistente. Preencha o endereço manualmente.', 'warning');
 
-            document.getElementById('tutor-cidade').removeAttribute('readonly');
-            document.getElementById('tutor-uf').removeAttribute('readonly');
+            document.getElementById('responsavel-cidade').removeAttribute('readonly');
+            document.getElementById('responsavel-uf').removeAttribute('readonly');
         }
         checkFormOrder(cepInput);
         validateFormState();
@@ -2010,24 +2015,24 @@ function initCEPListener() {
 
         // 1. Se o usuário estiver alterando/apagando o CEP, limpa os campos antigos imediatamente (sem depender de ordem ou blur)
         if (cleanCep.length < 8) {
-            document.getElementById('tutor-endereco').value = '';
-            document.getElementById('tutor-bairro').value = '';
-            document.getElementById('tutor-cidade').value = '';
-            document.getElementById('tutor-uf').value = '';
+            document.getElementById('responsavel-endereco').value = '';
+            document.getElementById('responsavel-bairro').value = '';
+            document.getElementById('responsavel-cidade').value = '';
+            document.getElementById('responsavel-uf').value = '';
 
-            const numInput = document.getElementById('tutor-numero');
+            const numInput = document.getElementById('responsavel-numero');
             if (numInput) numInput.value = '';
-            const compInput = document.getElementById('tutor-complemento');
+            const compInput = document.getElementById('responsavel-complemento');
             if (compInput) compInput.value = '';
 
-            ['tutor-endereco', 'tutor-bairro', 'tutor-cidade', 'tutor-uf', 'tutor-numero', 'tutor-complemento'].forEach(id => {
+            ['responsavel-endereco', 'responsavel-bairro', 'responsavel-cidade', 'responsavel-uf', 'responsavel-numero', 'responsavel-complemento'].forEach(id => {
                 clearFeedback(id);
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('is-valid', 'is-invalid');
             });
 
-            document.getElementById('tutor-cidade').removeAttribute('readonly');
-            document.getElementById('tutor-uf').removeAttribute('readonly');
+            document.getElementById('responsavel-cidade').removeAttribute('readonly');
+            document.getElementById('responsavel-uf').removeAttribute('readonly');
 
             formVerificationState.cep = false;
             formVerificationState.logradouro = false;
@@ -2047,14 +2052,14 @@ function initCEPListener() {
         }
 
         if (value.length < 9) {
-            clearFeedback('tutor-cep');
+            clearFeedback('responsavel-cep');
             formVerificationState.cep = true; // temporário em digitação
             validateFormState();
         }
 
         // 3. Se atingiu exatamente 8 números, dispara a busca imediatamente
         if (cleanCep.length === 8) {
-            showFeedback('tutor-cep', 'Buscando CEP...', 'warning');
+            showFeedback('responsavel-cep', 'Buscando CEP...', 'warning');
             await fetchCEP(cleanCep);
         }
     });
@@ -2064,20 +2069,20 @@ function initCEPListener() {
 // VALIDAÇÃO DE LOGRADOURO
 // ==========================================
 function initLogradouroValidation() {
-    const endInput = document.getElementById('tutor-endereco');
+    const endInput = document.getElementById('responsavel-endereco');
     if (!endInput) return;
 
     endInput.addEventListener('blur', () => {
         const val = endInput.value.trim();
         if (val.length === 0) {
             formVerificationState.logradouro = false;
-            showFeedback('tutor-endereco', 'O Logradouro é obrigatório.', 'danger');
+            showFeedback('responsavel-endereco', 'O Logradouro é obrigatório.', 'danger');
         } else if (/[^a-zA-Z0-9À-ÿ\s\.,\-\/]/.test(val)) {
             formVerificationState.logradouro = false;
-            showFeedback('tutor-endereco', 'O Logradouro contém caracteres especiais não permitidos.', 'danger');
+            showFeedback('responsavel-endereco', 'O Logradouro contém caracteres especiais não permitidos.', 'danger');
         } else {
             formVerificationState.logradouro = true;
-            showFeedback('tutor-endereco', '', 'success');
+            showFeedback('responsavel-endereco', '', 'success');
         }
         checkFormOrder(endInput);
         validateFormState();
@@ -2087,7 +2092,7 @@ function initLogradouroValidation() {
         // Bloqueia caracteres inválidos em tempo real (mantém números, pontuação de endereço)
         if (/[^a-zA-Z0-9À-ÿ\s\.,\-\/]/.test(e.target.value)) {
             e.target.value = e.target.value.replace(/[^a-zA-Z0-9À-ÿ\s\.,\-\/]/g, '');
-            showFeedback('tutor-endereco', 'Caracteres inválidos removidos.', 'danger');
+            showFeedback('responsavel-endereco', 'Caracteres inválidos removidos.', 'danger');
         }
 
         if (checkFormOrder(endInput)) {
@@ -2101,7 +2106,7 @@ function initLogradouroValidation() {
             formVerificationState.logradouro = true;
             const fb = endInput.parentElement.querySelector('.field-feedback');
             if (!fb || fb.className !== 'field-feedback active danger') {
-                clearFeedback('tutor-endereco');
+                clearFeedback('responsavel-endereco');
             }
         } else {
             formVerificationState.logradouro = false;
@@ -2115,20 +2120,20 @@ document.addEventListener('DOMContentLoaded', initLogradouroValidation);
 // VALIDAÇÃO DE NÚMERO
 // ==========================================
 function initNumeroValidation() {
-    const numInput = document.getElementById('tutor-numero');
+    const numInput = document.getElementById('responsavel-numero');
     if (!numInput) return;
 
     numInput.addEventListener('blur', () => {
         const val = numInput.value.trim();
         if (val.length === 0) {
             formVerificationState.numero = false;
-            showFeedback('tutor-numero', 'O Número é obrigatório.', 'danger');
+            showFeedback('responsavel-numero', 'O Número é obrigatório.', 'danger');
         } else if (/\D/.test(val)) {
             formVerificationState.numero = false;
-            showFeedback('tutor-numero', 'O Número deve conter apenas dígitos.', 'danger');
+            showFeedback('responsavel-numero', 'O Número deve conter apenas dígitos.', 'danger');
         } else {
             formVerificationState.numero = true;
-            showFeedback('tutor-numero', '', 'success');
+            showFeedback('responsavel-numero', '', 'success');
         }
         checkFormOrder(numInput);
         validateFormState();
@@ -2138,7 +2143,7 @@ function initNumeroValidation() {
         // Bloqueia letras e caracteres especiais em tempo real
         if (/\D/.test(e.target.value)) {
             e.target.value = e.target.value.replace(/\D/g, '');
-            showFeedback('tutor-numero', 'Letras e caracteres especiais não são permitidos.', 'danger');
+            showFeedback('responsavel-numero', 'Letras e caracteres especiais não são permitidos.', 'danger');
         }
 
         if (checkFormOrder(numInput)) {
@@ -2153,7 +2158,7 @@ function initNumeroValidation() {
             // Se não houve alerta de caractere inválido, limpa
             const fb = numInput.parentElement.querySelector('.field-feedback');
             if (!fb || fb.className !== 'field-feedback active danger') {
-                clearFeedback('tutor-numero');
+                clearFeedback('responsavel-numero');
             }
         } else {
             formVerificationState.numero = false;
@@ -2167,17 +2172,17 @@ document.addEventListener('DOMContentLoaded', initNumeroValidation);
 // VALIDAÇÃO DE COMPLEMENTO
 // ==========================================
 function initComplementoValidation() {
-    const compInput = document.getElementById('tutor-complemento');
+    const compInput = document.getElementById('responsavel-complemento');
     if (!compInput) return;
 
     compInput.addEventListener('blur', () => {
         const val = compInput.value.trim();
         if (val.length === 0) {
-            clearFeedback('tutor-complemento');
+            clearFeedback('responsavel-complemento');
         } else if (/[^a-zA-ZÀ-ÿ0-9\s]/.test(val)) {
-            showFeedback('tutor-complemento', 'O Complemento deve conter apenas letras e números.', 'danger');
+            showFeedback('responsavel-complemento', 'O Complemento deve conter apenas letras e números.', 'danger');
         } else {
-            showFeedback('tutor-complemento', '', 'success');
+            showFeedback('responsavel-complemento', '', 'success');
         }
         checkFormOrder(compInput);
     });
@@ -2186,7 +2191,7 @@ function initComplementoValidation() {
         // Bloqueia caracteres especiais em tempo real
         if (/[^a-zA-ZÀ-ÿ0-9\s]/.test(e.target.value)) {
             e.target.value = e.target.value.replace(/[^a-zA-ZÀ-ÿ0-9\s]/g, '');
-            showFeedback('tutor-complemento', 'Caracteres especiais não são permitidos.', 'danger');
+            showFeedback('responsavel-complemento', 'Caracteres especiais não são permitidos.', 'danger');
         }
 
         if (checkFormOrder(compInput)) {
@@ -2198,7 +2203,7 @@ function initComplementoValidation() {
             // Se não houve alerta de caractere inválido, limpa
             const fb = compInput.parentElement.querySelector('.field-feedback');
             if (!fb || fb.className !== 'field-feedback active danger') {
-                clearFeedback('tutor-complemento');
+                clearFeedback('responsavel-complemento');
             }
         }
     });
@@ -2212,9 +2217,9 @@ function initLocationValidation() {
     const validUFs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
     const fields = [
-        { id: 'tutor-bairro', stateKey: 'bairro', label: 'Bairro', regex: /[^a-zA-Z0-9À-ÿ\s\.,\-]/ },
-        { id: 'tutor-cidade', stateKey: 'cidade', label: 'Cidade', regex: /[^a-zA-ZÀ-ÿ\s\.\-]/ },
-        { id: 'tutor-uf', stateKey: 'uf', label: 'UF', regex: /[^a-zA-Z]/, lengthCheck: true }
+        { id: 'responsavel-bairro', stateKey: 'bairro', label: 'Bairro', regex: /[^a-zA-Z0-9À-ÿ\s\.,\-]/ },
+        { id: 'responsavel-cidade', stateKey: 'cidade', label: 'Cidade', regex: /[^a-zA-ZÀ-ÿ\s\.\-]/ },
+        { id: 'responsavel-uf', stateKey: 'uf', label: 'UF', regex: /[^a-zA-Z]/, lengthCheck: true }
     ];
 
     fields.forEach(field => {
@@ -2277,7 +2282,7 @@ document.addEventListener('DOMContentLoaded', initLocationValidation);
 // VALIDAÇÃO DE USO DE IMAGEM
 // ==========================================
 function initUsoImagemValidation() {
-    const radios = document.querySelectorAll('input[name="tutor-autoriza-imagem"]');
+    const radios = document.querySelectorAll('input[name="responsavel-autoriza-imagem"]');
     if (radios.length === 0) return;
 
     radios.forEach(radio => {
@@ -2376,8 +2381,8 @@ function initTabs() {
                     targetPanel.classList.add('active');
                 }
 
-                if (tab === 'novo-tutor') {
-                    window.resetTutorForm();
+                if (tab === 'novo-responsavel') {
+                    window.resetResponsávelForm();
                 }
 
                 if (typeof onTabChanged === 'function') {
@@ -2388,7 +2393,7 @@ function initTabs() {
     });
 }
 
-function showTutoresList() {
+function showResponsaveisList() {
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
 
@@ -2404,8 +2409,8 @@ function showTutoresList() {
     }
 }
 
-function showNovoTutorForm() {
-    const tabLink = document.querySelector('.submenu-link[data-tab="novo-tutor"]');
+function showNovoResponsávelForm() {
+    const tabLink = document.querySelector('.submenu-link[data-tab="novo-responsavel"]');
     if (tabLink) {
         tabLink.click();
     }
@@ -2430,7 +2435,7 @@ function onTabChanged(tabName) {
             if (window.lucide) {
                 lucide.createIcons();
             }
-            loadTutores();
+            loadResponsaveis();
             break;
 
         case 'pets':
@@ -2456,15 +2461,15 @@ function onTabChanged(tabName) {
             title.textContent = "Terminal SQL Interativo";
             subtitle.textContent = "Escreva e execute comandos SQL nativos diretamente no banco de dados.";
             break;
-        case 'novo-tutor':
+        case 'novo-responsavel':
             title.textContent = "Cadastro do Responsável";
             subtitle.textContent = "Registre as informações pessoais, contato e localização do responsável.";
             break;
         case 'novo-pet':
             title.textContent = "Pets Cadastrados";
-            subtitle.textContent = "Preencha as informações para registrar o pet e associá-lo a um tutor.";
-            if (typeof window.populateTutoresSelect === 'function') {
-                window.populateTutoresSelect();
+            subtitle.textContent = "Preencha as informações para registrar o pet e associá-lo a um responsavel.";
+            if (typeof window.populateResponsaveisSelect === 'function') {
+                window.populateResponsaveisSelect();
             }
             break;
         case 'pets':
@@ -2520,10 +2525,14 @@ function initTheme() {
 // ==========================================
 async function loadDashboardData() {
     try {
-        if (state.tutores.length === 0) await loadTutores(true);
+        if (state.responsaveis.length === 0) await loadResponsaveis(true);
+        if (state.activeTab === 'pets') {
+            if (state.pets.length === 0) await loadPets(true);
+            else renderPetsList();
+        }
 
-        const tutores = state.tutores;
-        const tutoresAtivos = tutores.filter(t => !t.status || t.status.toLowerCase() === 'ativo').length;
+        const responsaveis = state.responsaveis;
+        const responsaveisAtivos = responsaveis.filter(t => !t.status || t.status.toLowerCase() === 'ativo').length;
 
         // Carrega Pets para o KPI
         if (!state.pets || state.pets.length === 0) {
@@ -2540,36 +2549,11 @@ async function loadDashboardData() {
         const petsAtivos = pets.filter(p => !p.status || p.status.toLowerCase() === 'ativo').length;
 
         // Atualiza os KPIs
-        const kpiFaturamento = document.getElementById('kpi-faturamento');
-        if (kpiFaturamento) kpiFaturamento.textContent = 'R$ 0,00';
-
-        const kpiClientes = document.getElementById('kpi-clientes');
-        if (kpiClientes) kpiClientes.textContent = tutoresAtivos;
+        const kpiResponsáveles = document.getElementById('kpi-responsaveis');
+        if (kpiResponsáveles) kpiResponsáveles.textContent = responsaveisAtivos;
 
         const kpiPetsAtivos = document.getElementById('kpi-pets-ativos');
         if (kpiPetsAtivos) kpiPetsAtivos.textContent = petsAtivos;
-
-        const kpiVendas = document.getElementById('kpi-vendas');
-        if (kpiVendas) kpiVendas.textContent = '0';
-
-        const alertCard = document.getElementById('kpi-estoque-alerta');
-        if (alertCard) alertCard.textContent = '0';
-
-        // Tenta buscar as outras stats da API se existirem
-        try {
-            const response = await fetch(`${API_BASE}/dashboard/stats`);
-            if (response.ok) {
-                const stats = await response.json();
-                renderSalesChart(stats.vendas_grafico || []);
-                renderCategoriesChart(stats.categorias_grafico || []);
-            } else {
-                renderSalesChart([]);
-                renderCategoriesChart([]);
-            }
-        } catch (e) {
-            renderSalesChart([]);
-            renderCategoriesChart([]);
-        }
 
     } catch (error) {
         console.error("Erro ao carregar métricas do dashboard:", error);
@@ -2684,19 +2668,20 @@ function renderCategoriesChart(data) {
 // ==========================================
 // CONTROLE DA TABELA DE TUTORES
 // ==========================================
-async function loadTutores() {
-    const spinner = document.getElementById('loading-tutores');
-    const table = document.getElementById('table-tutores-element');
+async function loadResponsaveis() {
+    const spinner = document.getElementById('loading-responsaveis');
+    const table = document.getElementById('table-responsaveis-element');
     if (spinner && table) {
         spinner.style.display = 'flex';
         table.style.opacity = '0.3';
     }
     try {
-        const response = await fetch(`${API_BASE}/tutores`);
-        state.tutores = await response.json();
-        renderTutoresTable(state.tutores);
+        const response = await fetch(`${API_BASE}/responsaveis?limit=10000`);
+        const resData = await response.json();
+        state.responsaveis = Array.isArray(resData) ? resData : (resData.items || []);
+        renderResponsaveisTable(state.responsaveis);
     } catch (error) {
-        console.error("Erro ao carregar tutores:", error);
+        console.error("Erro ao carregar responsaveis:", error);
     } finally {
         if (spinner && table) {
             spinner.style.display = 'none';
@@ -2712,9 +2697,9 @@ function getInitials(name) {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-function renderTutoresTable(list, isFiltered = false) {
-    const tbody = document.getElementById('tbody-tutores');
-    const emptyState = document.getElementById('empty-tutores');
+function renderResponsaveisTable(list, isFiltered = false) {
+    const tbody = document.getElementById('tbody-responsaveis');
+    const emptyState = document.getElementById('empty-responsaveis');
     tbody.innerHTML = '';
 
     if (list.length === 0) {
@@ -2726,16 +2711,16 @@ function renderTutoresTable(list, isFiltered = false) {
 
     // Se NÃO for renderização de filtro, resetamos os inputs de busca para estarem vazios
     if (!isFiltered) {
-        ['filter-tutor-nome', 'filter-tutor-cpf', 'filter-tutor-celular', 'filter-tutor-email', 'filter-tutor-status'].forEach(id => {
+        ['filter-responsavel-nome', 'filter-responsavel-cpf', 'filter-responsavel-celular', 'filter-responsavel-email', 'filter-responsavel-status'].forEach(id => {
             const input = document.getElementById(id);
             if (input) input.value = '';
         });
-        const selectAll = document.getElementById('select-all-tutores');
+        const selectAll = document.getElementById('select-all-responsaveis');
         if (selectAll) selectAll.checked = false;
-        state.tutoresFilteredList = null;
-        state.tutoresPage = 1;
+        state.responsaveisFilteredList = null;
+        state.responsaveisPage = 1;
     } else {
-        state.tutoresFilteredList = list;
+        state.responsaveisFilteredList = list;
     }
 
     let itemsToRender = list;
@@ -2745,12 +2730,12 @@ function renderTutoresTable(list, isFiltered = false) {
     let startItem = 0;
     let endItem = totalItems;
 
-    if (state.tutoresRowsPerPage !== 'all') {
-        const rows = parseInt(state.tutoresRowsPerPage);
+    if (state.responsaveisRowsPerPage !== 'all') {
+        const rows = parseInt(state.responsaveisRowsPerPage);
         const totalPages = Math.ceil(totalItems / rows);
-        if (state.tutoresPage > totalPages && totalPages > 0) state.tutoresPage = totalPages;
+        if (state.responsaveisPage > totalPages && totalPages > 0) state.responsaveisPage = totalPages;
 
-        startItem = (state.tutoresPage - 1) * rows;
+        startItem = (state.responsaveisPage - 1) * rows;
         endItem = Math.min(startItem + rows, totalItems);
         itemsToRender = list.slice(startItem, endItem);
     }
@@ -2760,8 +2745,8 @@ function renderTutoresTable(list, isFiltered = false) {
     itemsToRender.forEach(t => {
         const row = document.createElement('tr');
 
-        // Adiciona classe de destaque se este for o tutor salvo/editado recentemente
-        if (state.highlightedTutorId && t.id === state.highlightedTutorId) {
+        // Adiciona classe de destaque se este for o responsavel salvo/editado recentemente
+        if (state.highlightedResponsávelId && t.id === state.highlightedResponsávelId) {
             row.classList.add('highlighted-row');
         }
 
@@ -2782,8 +2767,8 @@ function renderTutoresTable(list, isFiltered = false) {
         row.innerHTML = `
             <td style="vertical-align: middle;">
                 <div style="display: flex; align-items: center; gap: 12px; height: 100%;">
-                    <input type="checkbox" class="custom-checkbox tutor-select-checkbox" data-id="${t.id}" onchange="window.toggleBulkDeleteBtn('tutores')">
-                    <button class="btn-table-edit" onclick="editTutor(${t.id})">
+                    <input type="checkbox" class="custom-checkbox responsavel-select-checkbox" data-id="${t.id}" onchange="window.toggleBulkDeleteBtn('responsaveis')">
+                    <button class="btn-table-edit" onclick="editResponsavel(${t.id})">
                         <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i> Editar
                     </button>
                     <div class="dropdown-options-container" id="dropdown-${t.id}">
@@ -2791,10 +2776,10 @@ function renderTutoresTable(list, isFiltered = false) {
                             Opções <i data-lucide="chevron-down" style="width: 14px; height: 14px; margin-left: 2px;"></i>
                         </button>
                         <div class="dropdown-menu-list">
-                            <button class="dropdown-item" onclick="viewTutor(${t.id}); closeAllDropdowns();">
+                            <button class="dropdown-item" onclick="viewResponsável(${t.id}); closeAllDropdowns();">
                                 <i data-lucide="eye" style="color: var(--primary);"></i> Visualizar
                             </button>
-                            <button class="dropdown-item delete" onclick="deleteTutor(${t.id}); closeAllDropdowns();">
+                            <button class="dropdown-item delete" onclick="deleteResponsavel(${t.id}); closeAllDropdowns();">
                                 <i data-lucide="trash-2" style="color: var(--danger);"></i> Excluir
                             </button>
                         </div>
@@ -2814,47 +2799,47 @@ function renderTutoresTable(list, isFiltered = false) {
             <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${formattedPhone || '<span class="text-muted">-</span>'}</td>
             <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${t.email}</td>
             <td style="text-align: center; vertical-align: middle;">
-                <span class="${t.status === 'Ativo' ? 'badge-green-tutor' : 'badge-red-tutor'}">${t.status === 'Ativo' ? 'CLIENTE' : 'INATIVO'}</span>
+                <span class="${t.status === 'Ativo' ? 'badge-green-responsavel' : 'badge-red-responsavel'}">${t.status === 'Ativo' ? 'CLIENTE' : 'INATIVO'}</span>
             </td>
         `;
         tbody.appendChild(row);
     });
 
     // Remove o destaque após 5 segundos e limpa o ID do estado global
-    if (state.highlightedTutorId) {
+    if (state.highlightedResponsávelId) {
         setTimeout(() => {
             const highlightedRow = document.querySelector('.highlighted-row');
             if (highlightedRow) {
                 highlightedRow.classList.remove('highlighted-row');
             }
-            state.highlightedTutorId = null;
+            state.highlightedResponsávelId = null;
         }, 5000);
     }
 
     // Vincula listeners de filtros rápidos
-    setupTutorFilters();
+    setupResponsávelFilters();
     setupSelectAllLogic();
 
     lucide.createIcons();
 }
 
 // Configura filtros de pesquisa em tempo real
-function setupTutorFilters() {
-    ['filter-tutor-nome', 'filter-tutor-cpf', 'filter-tutor-celular', 'filter-tutor-email', 'filter-tutor-status'].forEach(id => {
+function setupResponsávelFilters() {
+    ['filter-responsavel-nome', 'filter-responsavel-cpf', 'filter-responsavel-celular', 'filter-responsavel-email', 'filter-responsavel-status'].forEach(id => {
         const input = document.getElementById(id);
         if (input) {
-            input.removeEventListener('input', applyTutorFilters);
-            input.addEventListener('input', applyTutorFilters);
+            input.removeEventListener('input', applyResponsavelFilters);
+            input.addEventListener('input', applyResponsavelFilters);
         }
     });
 }
 
-window.applyTutorFilters = function () {
-    const nomeInput = document.getElementById('filter-tutor-nome');
-    const cpfInput = document.getElementById('filter-tutor-cpf');
-    const celularInput = document.getElementById('filter-tutor-celular');
-    const emailInput = document.getElementById('filter-tutor-email');
-    const statusInput = document.getElementById('filter-tutor-status');
+window.applyResponsavelFilters = function () {
+    const nomeInput = document.getElementById('filter-responsavel-nome');
+    const cpfInput = document.getElementById('filter-responsavel-cpf');
+    const celularInput = document.getElementById('filter-responsavel-celular');
+    const emailInput = document.getElementById('filter-responsavel-email');
+    const statusInput = document.getElementById('filter-responsavel-status');
 
     if (cpfInput && cpfInput.value) {
         let val = cpfInput.value.replace(/\D/g, '').substring(0, 11);
@@ -2872,7 +2857,7 @@ window.applyTutorFilters = function () {
     const emailF = (emailInput ? emailInput.value : '').toLowerCase();
     const statusF = (statusInput ? statusInput.value : '').toLowerCase();
 
-    const filtered = state.tutores.filter(t => {
+    const filtered = state.responsaveis.filter(t => {
         const tNome = t.nome ? t.nome.toLowerCase() : '';
         const matchNome = !nomeF || tNome.startsWith(nomeF);
 
@@ -2892,71 +2877,71 @@ window.applyTutorFilters = function () {
         return matchNome && matchCpf && matchCelular && matchEmail && matchStatus;
     });
 
-    renderTutoresTable(filtered, true);
+    renderResponsaveisTable(filtered, true);
 }
 
-// Pagination Logic for Tutores
+// Pagination Logic for Responsáveles
 function updatePaginationInfo(start, end, total) {
-    const elStart = document.getElementById('page-start-tutores');
-    const elEnd = document.getElementById('page-end-tutores');
-    const elTotal = document.getElementById('page-total-tutores');
-    const btnPrev = document.getElementById('btn-prev-tutores');
-    const btnNext = document.getElementById('btn-next-tutores');
+    const elStart = document.getElementById('page-start-responsaveis');
+    const elEnd = document.getElementById('page-end-responsaveis');
+    const elTotal = document.getElementById('page-total-responsaveis');
+    const btnPrev = document.getElementById('btn-prev-responsaveis');
+    const btnNext = document.getElementById('btn-next-responsaveis');
 
     if (elStart) elStart.textContent = start;
     if (elEnd) elEnd.textContent = end;
     if (elTotal) elTotal.textContent = total;
 
-    if (btnPrev) btnPrev.disabled = state.tutoresPage <= 1;
+    if (btnPrev) btnPrev.disabled = state.responsaveisPage <= 1;
 
     if (btnNext) {
-        if (state.tutoresRowsPerPage === 'all') {
+        if (state.responsaveisRowsPerPage === 'all') {
             btnNext.disabled = true;
         } else {
-            const rows = parseInt(state.tutoresRowsPerPage);
+            const rows = parseInt(state.responsaveisRowsPerPage);
             const totalPages = Math.ceil(total / rows);
-            btnNext.disabled = state.tutoresPage >= totalPages;
+            btnNext.disabled = state.responsaveisPage >= totalPages;
         }
     }
 }
 
 window.changeRowsPerPage = function (type, value) {
-    if (type === 'tutores') {
-        state.tutoresRowsPerPage = value;
-        state.tutoresPage = 1;
-        const listToRender = state.tutoresFilteredList || state.tutores;
-        renderTutoresTable(listToRender, state.tutoresFilteredList !== null);
+    if (type === 'responsaveis') {
+        state.responsaveisRowsPerPage = value;
+        state.responsaveisPage = 1;
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
     }
 };
 
 window.prevPage = function (type) {
-    if (type === 'tutores' && state.tutoresPage > 1) {
-        state.tutoresPage--;
-        const listToRender = state.tutoresFilteredList || state.tutores;
-        renderTutoresTable(listToRender, state.tutoresFilteredList !== null);
+    if (type === 'responsaveis' && state.responsaveisPage > 1) {
+        state.responsaveisPage--;
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
     }
 };
 
 window.nextPage = function (type) {
-    if (type === 'tutores' && state.tutoresRowsPerPage !== 'all') {
-        const listToRender = state.tutoresFilteredList || state.tutores;
-        const rows = parseInt(state.tutoresRowsPerPage);
+    if (type === 'responsaveis' && state.responsaveisRowsPerPage !== 'all') {
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        const rows = parseInt(state.responsaveisRowsPerPage);
         const totalPages = Math.ceil(listToRender.length / rows);
 
-        if (state.tutoresPage < totalPages) {
-            state.tutoresPage++;
-            renderTutoresTable(listToRender, state.tutoresFilteredList !== null);
+        if (state.responsaveisPage < totalPages) {
+            state.responsaveisPage++;
+            renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
         }
     }
 };
 
 // Lógica de seleção múltipla por Checkboxes
 function setupSelectAllLogic() {
-    window.toggleBulkDeleteBtn('tutores');
+    window.toggleBulkDeleteBtn('responsaveis');
 }
 
 window.toggleSelectAll = function (type, checked) {
-    let selector = type === 'pets' ? '.row-checkbox-pets' : '.tutor-select-checkbox';
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.responsavel-select-checkbox';
     document.querySelectorAll(selector).forEach(cb => {
         cb.checked = checked;
     });
@@ -2964,19 +2949,19 @@ window.toggleSelectAll = function (type, checked) {
 };
 
 window.toggleBulkDeleteBtn = function (type) {
-    let selector = type === 'pets' ? '.row-checkbox-pets' : '.tutor-select-checkbox';
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.responsavel-select-checkbox';
     const total = document.querySelectorAll(selector).length;
     const checkedCount = document.querySelectorAll(`${selector}:checked`).length;
 
     // update select-all checkbox
-    let selectAllId = type === 'pets' ? 'select-all-pets' : 'select-all-tutores';
+    let selectAllId = type === 'pets' ? 'select-all-pets' : 'select-all-responsaveis';
     const selectAllCheckbox = document.getElementById(selectAllId);
     if (selectAllCheckbox) {
         selectAllCheckbox.checked = (total > 0 && total === checkedCount);
     }
 
     // update bulk delete button visibility
-    let btnId = type === 'pets' ? 'btn-bulk-delete-pets' : 'btn-bulk-delete-tutores';
+    let btnId = type === 'pets' ? 'btn-bulk-delete-pets' : 'btn-bulk-delete-responsaveis';
     const btn = document.getElementById(btnId);
     if (btn) {
         btn.style.display = checkedCount > 0 ? 'inline-flex' : 'none';
@@ -3006,13 +2991,13 @@ document.addEventListener('click', () => {
     closeAllDropdowns();
 });
 
-async function viewTutor(id) {
+async function viewResponsável(id) {
     try {
-        const response = await fetch(`${API_BASE}/tutores/${id}`);
-        if (!response.ok) throw new Error("Erro ao buscar detalhes do tutor");
+        const response = await fetch(`${API_BASE}/responsaveis/${id}`);
+        if (!response.ok) throw new Error("Erro ao buscar detalhes do responsavel");
         const t = await response.json();
 
-        const content = document.getElementById('modal-view-tutor-content');
+        const content = document.getElementById('modal-view-responsavel-content');
         if (!content) return;
 
         // Formata data de nascimento
@@ -3103,15 +3088,15 @@ async function viewTutor(id) {
         `;
 
         // Associa ação ao botão de editar da modal
-        const editBtn = document.getElementById('btn-modal-edit-tutor');
+        const editBtn = document.getElementById('btn-modal-edit-responsavel');
         if (editBtn) {
             editBtn.onclick = () => {
-                closeViewTutorModal();
-                editTutor(t.id);
+                closeViewResponsávelModal();
+                editResponsavel(t.id);
             };
         }
 
-        const modal = document.getElementById('modal-view-tutor');
+        const modal = document.getElementById('modal-view-responsavel');
         if (modal) {
             modal.classList.add('active');
         }
@@ -3121,41 +3106,41 @@ async function viewTutor(id) {
         }
 
     } catch (error) {
-        console.error("Erro ao carregar detalhes do tutor para visualização:", error);
+        console.error("Erro ao carregar detalhes do responsavel para visualização:", error);
     }
 }
 
-function closeViewTutorModal() {
-    const modal = document.getElementById('modal-view-tutor');
+function closeViewResponsávelModal() {
+    const modal = document.getElementById('modal-view-responsavel');
     if (modal) {
         modal.classList.remove('active');
     }
 }
 
-window.resetTutorForm = function () {
-    const form = document.getElementById('form-tutor');
+window.resetResponsávelForm = function () {
+    const form = document.getElementById('form-responsavel');
     if (form) form.reset();
-    const tutorIdEl = document.getElementById('tutor-id');
-    if (tutorIdEl) tutorIdEl.value = '';
+    const responsavelIdEl = document.getElementById('responsavel-id');
+    if (responsavelIdEl) responsavelIdEl.value = '';
 
     // Limpa a foto
-    const uploadInput = document.getElementById('tutor-foto-upload');
+    const uploadInput = document.getElementById('responsavel-foto-upload');
     if (uploadInput) uploadInput.value = '';
-    const preview = document.getElementById('tutor-foto-preview');
+    const preview = document.getElementById('responsavel-foto-preview');
     if (preview) {
         preview.innerHTML = '<i data-lucide="camera" style="width: 24px; height: 24px; color: var(--text-muted);"></i><span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: center;">Selecionar<br>Foto</span>';
         preview.style.border = '1px dashed var(--border-glow)';
     }
-    const removeBtn = document.getElementById('tutor-foto-remove');
+    const removeBtn = document.getElementById('responsavel-foto-remove');
     if (removeBtn) removeBtn.style.display = 'none';
 
     // Restaura o título padrão
-    const titleEl = document.getElementById('tab-novo-tutor-title');
+    const titleEl = document.getElementById('tab-novo-responsavel-title');
     if (titleEl) titleEl.innerHTML = '<i data-lucide="user-plus"></i> Novo Responsável';
 
     // Limpa feedbacks e validações
     state.officialCPFData = null;
-    ['tutor-cpf', 'tutor-nome', 'tutor-data-nascimento', 'tutor-email', 'tutor-telefone', 'tutor-cep', 'tutor-sexo'].forEach(clearFeedback);
+    ['responsavel-cpf', 'responsavel-nome', 'responsavel-data-nascimento', 'responsavel-email', 'responsavel-telefone', 'responsavel-cep', 'responsavel-sexo'].forEach(clearFeedback);
     formVerificationState.cpf = false;
     formVerificationState.nome = false;
     formVerificationState.nascimento = false;
@@ -3164,14 +3149,14 @@ window.resetTutorForm = function () {
     formVerificationState.cep = true;
     formVerificationState.sexo = false;
 
-    const cidadeEl = document.getElementById('tutor-cidade');
+    const cidadeEl = document.getElementById('responsavel-cidade');
     if (cidadeEl) cidadeEl.removeAttribute('readonly');
-    const ufEl = document.getElementById('tutor-uf');
+    const ufEl = document.getElementById('responsavel-uf');
     if (ufEl) ufEl.removeAttribute('readonly');
 
     // Define status padrão como Ativo
     if (typeof setCustomSelectValue === 'function') {
-        setCustomSelectValue('tutor-status', 'Ativo');
+        setCustomSelectValue('responsavel-status', 'Ativo');
     }
 
     // Desativa a exibição de erros para evitar loops durante o reset
@@ -3181,13 +3166,13 @@ window.resetTutorForm = function () {
     if (window.lucide) lucide.createIcons();
 };
 
-async function editTutor(id) {
+async function editResponsavel(id) {
     try {
-        const response = await fetch(`${API_BASE}/tutores/${id}`);
+        const response = await fetch(`${API_BASE}/responsaveis/${id}`);
         const t = await response.json();
 
         // Limpa feedbacks anteriores e inicializa validações como verdadeiras para o modo de edição
-        ['tutor-cpf', 'tutor-nome', 'tutor-data-nascimento', 'tutor-email', 'tutor-telefone', 'tutor-telefone-secundario', 'tutor-cep', 'tutor-sexo'].forEach(clearFeedback);
+        ['responsavel-cpf', 'responsavel-nome', 'responsavel-data-nascimento', 'responsavel-email', 'responsavel-telefone', 'responsavel-telefone-secundario', 'responsavel-cep', 'responsavel-sexo'].forEach(clearFeedback);
         formVerificationState.cpf = true;
         formVerificationState.nome = true;
         formVerificationState.nascimento = true;
@@ -3200,40 +3185,40 @@ async function editTutor(id) {
         validateFormState();
         window.isSubmittingForm = false;
 
-        document.getElementById('tutor-id').value = t.id;
-        document.getElementById('tutor-nome').value = t.nome || '';
-        document.getElementById('tutor-cpf').value = t.cpf || '';
-        setCustomSelectValue('tutor-sexo', t.sexo || '');
-        document.getElementById('tutor-data-nascimento').value = formatDateWithSlashes(t.data_nascimento) || '';
-        document.getElementById('tutor-email').value = t.email || '';
-        document.getElementById('tutor-telefone').value = t.telefone || '';
+        document.getElementById('responsavel-id').value = t.id;
+        document.getElementById('responsavel-nome').value = t.nome || '';
+        document.getElementById('responsavel-cpf').value = t.cpf || '';
+        setCustomSelectValue('responsavel-sexo', t.sexo || '');
+        document.getElementById('responsavel-data-nascimento').value = formatDateWithSlashes(t.data_nascimento) || '';
+        document.getElementById('responsavel-email').value = t.email || '';
+        document.getElementById('responsavel-telefone').value = t.telefone || '';
 
-        document.getElementById('tutor-cep').value = t.cep || '';
-        document.getElementById('tutor-endereco').value = t.endereco || '';
-        document.getElementById('tutor-numero').value = t.numero || '';
-        document.getElementById('tutor-complemento').value = t.complemento || '';
-        document.getElementById('tutor-bairro').value = t.bairro || '';
-        document.getElementById('tutor-cidade').value = t.cidade || '';
-        document.getElementById('tutor-uf').value = t.uf || '';
+        document.getElementById('responsavel-cep').value = t.cep || '';
+        document.getElementById('responsavel-endereco').value = t.endereco || '';
+        document.getElementById('responsavel-numero').value = t.numero || '';
+        document.getElementById('responsavel-complemento').value = t.complemento || '';
+        document.getElementById('responsavel-bairro').value = t.bairro || '';
+        document.getElementById('responsavel-cidade').value = t.cidade || '';
+        document.getElementById('responsavel-uf').value = t.uf || '';
 
-        document.getElementById('tutor-indicacao').value = t.indicacao || '';
-        setCustomSelectValue('tutor-como-conheceu', t.como_conheceu || '');
-        setCustomSelectValue('tutor-dia-pagamento', t.dia_pagamento || '');
-        const obsInput = document.getElementById('tutor-observacoes');
+        document.getElementById('responsavel-indicacao').value = t.indicacao || '';
+        setCustomSelectValue('responsavel-como-conheceu', t.como_conheceu || '');
+        setCustomSelectValue('responsavel-dia-pagamento', t.dia_pagamento || '');
+        const obsInput = document.getElementById('responsavel-observacoes');
         if (obsInput) obsInput.value = t.observacoes || '';
-        setCustomSelectValue('tutor-forma-pgto', t.forma_pgto_preferencial || '');
+        setCustomSelectValue('responsavel-forma-pgto', t.forma_pgto_preferencial || '');
 
-        const autorizaImagemRad = document.querySelector(`input[name="tutor-autoriza-imagem"][value="${t.autoriza_imagem === true}"]`);
+        const autorizaImagemRad = document.querySelector(`input[name="responsavel-autoriza-imagem"][value="${t.autoriza_imagem === true}"]`);
         if (autorizaImagemRad) autorizaImagemRad.checked = true;
 
-        const assinaRad = document.querySelector(`input[name="tutor-assina"][value="${t.assina === true}"]`);
+        const assinaRad = document.querySelector(`input[name="responsavel-assina"][value="${t.assina === true}"]`);
         if (assinaRad) assinaRad.checked = true;
 
-        setCustomSelectValue('tutor-status', t.status || 'Ativo');
+        setCustomSelectValue('responsavel-status', t.status || 'Ativo');
 
         // Carrega a foto se cadastrada
-        const preview = document.getElementById('tutor-foto-preview');
-        const removeBtn = document.getElementById('tutor-foto-remove');
+        const preview = document.getElementById('responsavel-foto-preview');
+        const removeBtn = document.getElementById('responsavel-foto-remove');
         if (t.foto_url) {
             preview.innerHTML = `<img src="${t.foto_url}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             preview.style.border = 'none';
@@ -3244,10 +3229,10 @@ async function editTutor(id) {
             if (removeBtn) removeBtn.style.display = 'none';
         }
 
-        document.getElementById('tab-novo-tutor-title').innerHTML = '<i data-lucide="edit-3"></i> Editar Responsável';
+        document.getElementById('tab-novo-responsavel-title').innerHTML = '<i data-lucide="edit-3"></i> Editar Responsável';
         lucide.createIcons();
 
-        const tabLink = document.querySelector('.submenu-link[data-tab="novo-tutor"]');
+        const tabLink = document.querySelector('.submenu-link[data-tab="novo-responsavel"]');
         if (tabLink) {
             // Apenas ativa a aba programaticamente sem disparar o click que reseta o form
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -3261,7 +3246,7 @@ async function editTutor(id) {
             }
 
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            document.getElementById('tab-novo-tutor').classList.add('active');
+            document.getElementById('tab-novo-responsavel').classList.add('active');
         }
     } catch (error) {
         console.error(error);
@@ -3269,7 +3254,7 @@ async function editTutor(id) {
     }
 }
 
-async function saveTutor(e) {
+async function saveResponsavel(e) {
     e.preventDefault();
 
     window.isSubmittingForm = true;
@@ -3287,7 +3272,7 @@ async function saveTutor(e) {
     }
 
     // Validação de Nome Completo (Segurança e Anti-Fraude)
-    const nameInput = document.getElementById('tutor-nome');
+    const nameInput = document.getElementById('responsavel-nome');
     const nameResult = validateNameLogic(nameInput.value);
     if (!nameResult.isValid) {
         nameInput.style.border = '1px solid var(--danger)';
@@ -3297,7 +3282,7 @@ async function saveTutor(e) {
     nameInput.style.border = '';
 
     // Validação de CPF (Segurança e Anti-Fraude)
-    const cpfInput = document.getElementById('tutor-cpf');
+    const cpfInput = document.getElementById('responsavel-cpf');
     const cpfVal = cpfInput.value.replace(/\D/g, '');
     if (!cpfVal || cpfVal.length !== 11 || !validateCPF(cpfVal)) {
         cpfInput.style.borderColor = 'var(--danger)';
@@ -3309,7 +3294,7 @@ async function saveTutor(e) {
     cpfInput.style.boxShadow = '';
 
     // Validação de Idade (Maior de 18 anos)
-    const dateInput = document.getElementById('tutor-data-nascimento');
+    const dateInput = document.getElementById('responsavel-data-nascimento');
     const dataNascimentoStr = dateInput.value;
 
     if (!dataNascimentoStr || dataNascimentoStr.length < 10) {
@@ -3342,7 +3327,7 @@ async function saveTutor(e) {
     dateInput.style.border = '';
 
     // Validação do E-mail
-    const emailInput = document.getElementById('tutor-email');
+    const emailInput = document.getElementById('responsavel-email');
     if (emailInput.value && !validateEmailLogic(emailInput.value)) {
         emailInput.style.border = '1px solid var(--danger)';
         alert("Atenção: O e-mail informado parece conter erros de digitação. Por favor, verifique e corrija!");
@@ -3350,45 +3335,45 @@ async function saveTutor(e) {
     }
     emailInput.style.border = '';
 
-    const id = document.getElementById('tutor-id').value;
+    const id = document.getElementById('responsavel-id').value;
 
     // Captura valores dos radios com segurança
-    const autorizaImagemChecked = document.querySelector('input[name="tutor-autoriza-imagem"]:checked');
-    const assinaChecked = document.querySelector('input[name="tutor-assina"]:checked');
+    const autorizaImagemChecked = document.querySelector('input[name="responsavel-autoriza-imagem"]:checked');
+    const assinaChecked = document.querySelector('input[name="responsavel-assina"]:checked');
 
-    const previewImg = document.querySelector('#tutor-foto-preview img');
+    const previewImg = document.querySelector('#responsavel-foto-preview img');
     const foto_url = previewImg ? previewImg.src : null;
 
     const data = {
-        nome: document.getElementById('tutor-nome').value,
-        cpf: document.getElementById('tutor-cpf').value || null,
-        estado_civil: document.getElementById('tutor-estado-civil')?.value || null,
-        sexo: document.getElementById('tutor-sexo')?.value || null,
-        profissao: document.getElementById('tutor-profissao')?.value || null,
-        instagram: document.getElementById('tutor-instagram')?.value || null,
-        data_nascimento: document.getElementById('tutor-data-nascimento')?.value || null,
-        email: document.getElementById('tutor-email')?.value || null,
-        telefone: document.getElementById('tutor-telefone')?.value || null,
-        telefone_secundario: document.getElementById('tutor-telefone-secundario')?.value || null,
-        cep: document.getElementById('tutor-cep').value || null,
-        endereco: document.getElementById('tutor-endereco').value || null,
-        numero: document.getElementById('tutor-numero').value || null,
-        complemento: document.getElementById('tutor-complemento').value || null,
-        bairro: document.getElementById('tutor-bairro').value || null,
-        cidade: document.getElementById('tutor-cidade').value || null,
-        uf: document.getElementById('tutor-uf').value || null,
-        indicacao: document.getElementById('tutor-indicacao').value || null,
-        como_conheceu: document.getElementById('tutor-como-conheceu').value || null,
-        dia_pagamento: document.getElementById('tutor-dia-pagamento').value || null,
-        observacoes: document.getElementById('tutor-observacoes') ? (document.getElementById('tutor-observacoes').value || null) : null,
-        forma_pgto_preferencial: document.getElementById('tutor-forma-pgto').value || null,
+        nome: document.getElementById('responsavel-nome').value,
+        cpf: document.getElementById('responsavel-cpf').value || null,
+        estado_civil: document.getElementById('responsavel-estado-civil')?.value || null,
+        sexo: document.getElementById('responsavel-sexo')?.value || null,
+        profissao: document.getElementById('responsavel-profissao')?.value || null,
+        instagram: document.getElementById('responsavel-instagram')?.value || null,
+        data_nascimento: document.getElementById('responsavel-data-nascimento')?.value || null,
+        email: document.getElementById('responsavel-email')?.value || null,
+        telefone: document.getElementById('responsavel-telefone')?.value || null,
+        telefone_secundario: document.getElementById('responsavel-telefone-secundario')?.value || null,
+        cep: document.getElementById('responsavel-cep').value || null,
+        endereco: document.getElementById('responsavel-endereco').value || null,
+        numero: document.getElementById('responsavel-numero').value || null,
+        complemento: document.getElementById('responsavel-complemento').value || null,
+        bairro: document.getElementById('responsavel-bairro').value || null,
+        cidade: document.getElementById('responsavel-cidade').value || null,
+        uf: document.getElementById('responsavel-uf').value || null,
+        indicacao: document.getElementById('responsavel-indicacao').value || null,
+        como_conheceu: document.getElementById('responsavel-como-conheceu').value || null,
+        dia_pagamento: document.getElementById('responsavel-dia-pagamento').value || null,
+        observacoes: document.getElementById('responsavel-observacoes') ? (document.getElementById('responsavel-observacoes').value || null) : null,
+        forma_pgto_preferencial: document.getElementById('responsavel-forma-pgto').value || null,
         autoriza_imagem: autorizaImagemChecked ? autorizaImagemChecked.value === "true" : false,
         assina: assinaChecked ? assinaChecked.value === "true" : false,
-        status: document.getElementById('tutor-status').value,
+        status: document.getElementById('responsavel-status').value,
         foto_url: foto_url
     };
 
-    const url = id ? `${API_BASE}/tutores/${id}` : `${API_BASE}/tutores`;
+    const url = id ? `${API_BASE}/responsaveis/${id}` : `${API_BASE}/responsaveis`;
     const method = id ? 'PUT' : 'POST';
 
     try {
@@ -3399,66 +3384,66 @@ async function saveTutor(e) {
         });
 
         if (response.ok) {
-            const savedTutor = await response.json();
-            state.highlightedTutorId = savedTutor.id;
+            const savedResponsável = await response.json();
+            state.highlightedResponsávelId = savedResponsável.id;
 
-            window.resetTutorForm();
+            window.resetResponsávelForm();
 
-            // Redireciona de forma robusta para o submenu de Tutores onde fica a listagem
+            // Redireciona de forma robusta para o submenu de Responsáveles onde fica a listagem
             const tabLink = document.querySelector('.submenu-link[data-tab="clientes"]');
             if (tabLink) {
                 tabLink.click();
             } else {
-                showTutoresList();
+                showResponsaveisList();
             }
 
             CustomUI.toast("Sucesso", "Responsável salvo com sucesso!", "success");
-            loadTutores();
+            loadResponsaveis();
         } else {
             const err = await response.json();
             if (response.status === 409) {
                 // CPF duplicado: exibe feedback inline no campo CPF
                 formVerificationState.cpf = false;
-                showFeedback('tutor-cpf', `⚠️ CPF já cadastrado: ${err.detail}`, 'danger');
+                showFeedback('responsavel-cpf', `⚠️ CPF já cadastrado: ${err.detail}`, 'danger');
                 validateFormState();
                 // Rola o formulário até o campo CPF
-                const cpfInput = document.getElementById('tutor-cpf');
+                const cpfInput = document.getElementById('responsavel-cpf');
                 if (cpfInput) cpfInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                CustomUI.alert("Erro ao Salvar", `Erro ao salvar tutor: ${err.detail || 'Verifique os dados.'}`, "danger");
+                CustomUI.alert("Erro ao Salvar", `Erro ao salvar responsavel: ${err.detail || 'Verifique os dados.'}`, "danger");
             }
         }
     } catch (error) {
         console.error(error);
-        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar tutor.", "danger");
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar responsavel.", "danger");
     }
 }
 
-async function deleteTutor(id) {
+async function deleteResponsavel(id) {
     const confirmDelete = await CustomUI.confirm(
         "Excluir Responsável",
-        "Tem certeza que deseja excluir este tutor? Esta ação não poderá ser desfeita.",
+        "Tem certeza que deseja excluir este responsavel? Esta ação não poderá ser desfeita.",
         { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
     );
     if (!confirmDelete) return;
 
     try {
-        const response = await fetch(`${API_BASE}/tutores/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_BASE}/responsaveis/${id}`, { method: 'DELETE' });
         if (response.ok) {
             CustomUI.toast("Sucesso", "Responsável excluído com sucesso!", "success");
-            loadTutores();
-            window.toggleBulkDeleteBtn('tutores');
+            loadResponsaveis();
+            window.toggleBulkDeleteBtn('responsaveis');
         } else {
             const err = await response.json();
             CustomUI.alert("Erro ao Excluir", `Erro ao excluir: ${err.detail}`, "danger");
         }
     } catch (error) {
-        CustomUI.alert("Erro de Conexão", "Erro de conexão ao excluir tutor.", "danger");
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao excluir responsavel.", "danger");
     }
 }
 
-window.bulkDeleteTutores = async function () {
-    const checkboxes = document.querySelectorAll('.tutor-select-checkbox:checked');
+window.bulkDeleteResponsaveis = async function () {
+    const checkboxes = document.querySelectorAll('.responsavel-select-checkbox:checked');
     const ids = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
     if (ids.length === 0) return;
 
@@ -3470,15 +3455,15 @@ window.bulkDeleteTutores = async function () {
     if (!confirmDelete) return;
 
     try {
-        const response = await fetch(`${API_BASE}/tutores/batch-delete`, {
+        const response = await fetch(`${API_BASE}/responsaveis/batch-delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ids: ids })
         });
         if (response.ok) {
             CustomUI.toast("Sucesso", `${ids.length} responsáveis excluídos com sucesso!`, "success");
-            loadTutores();
-            window.toggleBulkDeleteBtn('tutores');
+            loadResponsaveis();
+            window.toggleBulkDeleteBtn('responsaveis');
         } else {
             const err = await response.json();
             CustomUI.alert("Erro ao Excluir", `Erro ao excluir em massa: ${err.detail || 'Erro desconhecido'}`, "danger");
@@ -4033,17 +4018,17 @@ function renderSQLResultTable(columns, rows, container) {
 // FILTROS DE PESQUISA RÁPIDA (CLIENT-SIDE)
 // ==========================================
 function initFilters() {
-    // Filtro Tutores
-    const searchTutores = document.getElementById('search-tutores');
-    if (searchTutores) {
-        searchTutores.addEventListener('input', (e) => {
+    // Filtro Responsáveles
+    const searchResponsáveles = document.getElementById('search-responsaveis');
+    if (searchResponsáveles) {
+        searchResponsáveles.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            const filtered = state.tutores.filter(t =>
+            const filtered = state.responsaveis.filter(t =>
                 t.nome.toLowerCase().includes(term) ||
                 t.email.toLowerCase().includes(term) ||
                 (t.cpf && t.cpf.includes(term))
             );
-            renderTutoresTable(filtered);
+            renderResponsaveisTable(filtered);
         });
     }
 
@@ -4093,8 +4078,8 @@ function initFilters() {
 function openModal(id) {
     document.getElementById(id).classList.add('active');
 
-    if (id === 'modal-tutor' && !document.getElementById('tutor-id').value) {
-        document.getElementById('modal-tutor-title').textContent = "Novo Responsável";
+    if (id === 'modal-responsavel' && !document.getElementById('responsavel-id').value) {
+        document.getElementById('modal-responsavel-title').textContent = "Novo Responsável";
     }
     if (id === 'modal-cliente' && !document.getElementById('cliente-id').value) {
         document.getElementById('modal-cliente-title').textContent = "Novo Cliente";
@@ -4111,8 +4096,8 @@ function closeModal(id) {
     document.getElementById(id).classList.remove('active');
 
     // Reseta formulários
-    if (id === 'modal-tutor') {
-        window.resetTutorForm();
+    if (id === 'modal-responsavel') {
+        window.resetResponsávelForm();
     }
     if (id === 'modal-cliente') {
         document.getElementById('form-cliente').reset();
@@ -4519,21 +4504,21 @@ window.saveUsuario = saveUsuario;
 window.deleteUsuario = deleteUsuario;
 window.generateLoginFromName = generateLoginFromName;
 window.toggleUsuarioPasswordVisibility = toggleUsuarioPasswordVisibility;
-window.showTutoresList = showTutoresList;
-window.showResponsáveisList = showTutoresList;
+window.showResponsaveisList = showResponsaveisList;
+window.showResponsáveisList = showResponsaveisList;
 
 // ==========================================
 // VISUALIZAÇÃO DE PERFIL DO TUTOR (RESUMO)
 // ==========================================
-window.viewTutor = async function (id) {
+window.viewResponsável = async function (id) {
     try {
         // Busca os dados completos no backend
-        const response = await fetch(`${API_BASE}/tutores/${id}`);
-        if (!response.ok) throw new Error("Erro ao buscar detalhes do tutor");
+        const response = await fetch(`${API_BASE}/responsaveis/${id}`);
+        if (!response.ok) throw new Error("Erro ao buscar detalhes do responsavel");
         const t = await response.json();
 
-        // Salva o tutor atual na visualização no estado global
-        state.currentTutorInView = t;
+        // Salva o responsavel atual na visualização no estado global
+        state.currentResponsávelInView = t;
 
         // Reseta o botão de ação para caneta cinza e limpa imagem temporária
         state.tempProfilePhotoBase64 = null;
@@ -4565,7 +4550,7 @@ window.viewTutor = async function (id) {
 
         document.getElementById('perf-nome').textContent = t.nome;
         document.getElementById('perf-status').textContent = t.status === 'Ativo' ? 'Cliente' : 'Inativo';
-        document.getElementById('perf-status').className = t.status === 'Ativo' ? 'badge-green-tutor' : 'badge-danger';
+        document.getElementById('perf-status').className = t.status === 'Ativo' ? 'badge-green-responsavel' : 'badge-danger';
 
         // Info Pessoais
         let formattedCpf = t.cpf || '-';
@@ -4669,16 +4654,16 @@ window.viewTutor = async function (id) {
         document.getElementById('perf-celular2').textContent = t.telefone_secundario || '-';
         document.getElementById('perf-obs').value = (t.observacao && t.observacao !== '-') ? t.observacao : '';
 
-        showTutorProfileTab();
+        showResponsávelProfileTab();
         lucide.createIcons(); // Recria os ícones caso algum seja novo
     } catch (error) {
         console.error("Erro ao carregar perfil:", error);
-        CustomUI.alert("Erro", "Não foi possível carregar os dados completos do tutor.", "danger");
+        CustomUI.alert("Erro", "Não foi possível carregar os dados completos do responsavel.", "danger");
     }
 };
 
 window.tempPreviewProfilePhoto = function (input) {
-    if (!state.currentTutorInView) return;
+    if (!state.currentResponsávelInView) return;
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function (e) {
@@ -4724,7 +4709,7 @@ window.handleProfilePhotoAction = async function () {
     if (!btn) return;
 
     if (btn.dataset.state === 'save') {
-        if (!state.currentTutorInView || !state.tempProfilePhotoBase64) return;
+        if (!state.currentResponsávelInView || !state.tempProfilePhotoBase64) return;
 
         const confirmed = await CustomUI.confirm("Alterar Foto", "Deseja realmente salvar a nova foto de perfil?", {
             type: 'warning',
@@ -4733,16 +4718,16 @@ window.handleProfilePhotoAction = async function () {
         });
         if (!confirmed) {
             // Restaura o avatar para a foto anterior (do banco)
-            const tutor = state.currentTutorInView;
+            const responsavel = state.currentResponsávelInView;
             state.tempProfilePhotoBase64 = null;
 
             const perfAvatar = document.getElementById('perf-avatar');
             if (perfAvatar) {
-                if (tutor.foto_url) {
-                    perfAvatar.innerHTML = `<img src="${tutor.foto_url}" alt="${tutor.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                if (responsavel.foto_url) {
+                    perfAvatar.innerHTML = `<img src="${responsavel.foto_url}" alt="${responsavel.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
                     perfAvatar.style.border = 'none';
                 } else {
-                    const parts = (tutor.nome || '?').trim().split(/\s+/);
+                    const parts = (responsavel.nome || '?').trim().split(/\s+/);
                     const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
                     perfAvatar.innerHTML = initials.toUpperCase();
                     perfAvatar.style.border = '2px solid var(--primary)';
@@ -4766,19 +4751,19 @@ window.handleProfilePhotoAction = async function () {
             return;
         }
 
-        const tutor = state.currentTutorInView;
-        const updatedTutor = { ...tutor, foto_url: state.tempProfilePhotoBase64 };
+        const responsavel = state.currentResponsávelInView;
+        const updatedResponsável = { ...responsavel, foto_url: state.tempProfilePhotoBase64 };
 
         try {
-            const response = await fetch(`${API_BASE}/tutores/${tutor.id}`, {
+            const response = await fetch(`${API_BASE}/responsaveis/${responsavel.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedTutor)
+                body: JSON.stringify(updatedResponsável)
             });
 
             if (response.ok) {
                 const saved = await response.json();
-                state.currentTutorInView = saved;
+                state.currentResponsávelInView = saved;
                 state.tempProfilePhotoBase64 = null;
 
                 // Restaura o botão para a caneta cinza
@@ -4794,7 +4779,7 @@ window.handleProfilePhotoAction = async function () {
                 if (removeBtn) removeBtn.style.display = 'flex';
 
                 CustomUI.toast("Sucesso", "Foto de perfil salva com sucesso!", "success");
-                loadTutores();
+                loadResponsaveis();
                 if (window.lucide) lucide.createIcons();
             } else {
                 CustomUI.alert("Erro", "Não foi possível salvar a foto no servidor.", "danger");
@@ -4811,7 +4796,7 @@ window.handleProfilePhotoAction = async function () {
 };
 
 window.removeProfilePhoto = async function () {
-    if (!state.currentTutorInView) return;
+    if (!state.currentResponsávelInView) return;
     const confirmed = await CustomUI.confirm("Remover Foto", "Deseja realmente remover a foto do responsável?", {
         type: 'danger',
         confirmText: 'Sim, remover',
@@ -4819,19 +4804,19 @@ window.removeProfilePhoto = async function () {
     });
     if (!confirmed) return;
 
-    const tutor = state.currentTutorInView;
-    const updatedTutor = { ...tutor, foto_url: null };
+    const responsavel = state.currentResponsávelInView;
+    const updatedResponsável = { ...responsavel, foto_url: null };
 
     try {
-        const response = await fetch(`${API_BASE}/tutores/${tutor.id}`, {
+        const response = await fetch(`${API_BASE}/responsaveis/${responsavel.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedTutor)
+            body: JSON.stringify(updatedResponsável)
         });
 
         if (response.ok) {
             const saved = await response.json();
-            state.currentTutorInView = saved;
+            state.currentResponsávelInView = saved;
             state.tempProfilePhotoBase64 = null;
 
             const perfAvatar = document.getElementById('perf-avatar');
@@ -4855,7 +4840,7 @@ window.removeProfilePhoto = async function () {
             }
 
             CustomUI.toast("Sucesso", "Foto de perfil removida!", "success");
-            loadTutores();
+            loadResponsaveis();
             if (window.lucide) lucide.createIcons();
         } else {
             CustomUI.alert("Erro", "Não foi possível remover a foto no servidor.", "danger");
@@ -4909,34 +4894,34 @@ window.toggleEditObsEntrega = function () {
 // ==========================================
 // CONTROLE DE PETS
 // ==========================================
-window.populateTutoresSelect = async function () {
+window.populateResponsaveisSelect = async function () {
     try {
-        const response = await fetch(`${API_BASE}/tutores`);
+        const response = await fetch(`${API_BASE}/responsaveis`);
         if (response.ok) {
             const data = await response.json();
-            window.allTutores = Array.isArray(data) ? data : (data.data || []);
-            window.renderTutorDropdown(window.allTutores);
+            window.allResponsáveles = Array.isArray(data) ? data : (data.items || data.data || []);
+            window.renderResponsávelDropdown(window.allResponsáveles);
         }
     } catch (e) {
-        console.error("Erro ao carregar tutores para o select:", e);
+        console.error("Erro ao carregar responsaveis para o select:", e);
     }
 };
 
-window.renderTutorDropdown = function (tutoresArray) {
-    const listDiv = document.getElementById('tutores-custom-list');
+window.renderResponsávelDropdown = function (responsaveisArray) {
+    const listDiv = document.getElementById('responsaveis-custom-list');
     if (!listDiv) return;
     listDiv.innerHTML = '';
 
-    if (tutoresArray.length === 0) {
+    if (responsaveisArray.length === 0) {
         const div = document.createElement('div');
         div.style.padding = '10px 14px';
         div.style.color = 'var(--text-muted)';
-        div.textContent = 'Nenhum tutor encontrado';
+        div.textContent = 'Nenhum responsavel encontrado';
         listDiv.appendChild(div);
         return;
     }
 
-    tutoresArray.forEach(tutor => {
+    responsaveisArray.forEach(responsavel => {
         const div = document.createElement('div');
         div.style.padding = '6px 12px';
         div.style.fontSize = '14px';
@@ -4944,7 +4929,7 @@ window.renderTutorDropdown = function (tutoresArray) {
         div.style.color = 'var(--text-main)';
         div.style.transition = 'none';
 
-        div.textContent = tutor.nome;
+        div.textContent = responsavel.nome;
 
         div.onmouseover = () => {
             div.style.background = '#1a73e8';
@@ -4956,8 +4941,8 @@ window.renderTutorDropdown = function (tutoresArray) {
         };
 
         div.onclick = function () {
-            document.getElementById('pet-tutor-name').value = tutor.nome;
-            document.getElementById('pet-tutor').value = tutor.id;
+            document.getElementById('pet-responsavel-name').value = responsavel.nome;
+            document.getElementById('pet-responsavel').value = responsavel.id;
             listDiv.style.display = 'none';
         };
 
@@ -4965,35 +4950,35 @@ window.renderTutorDropdown = function (tutoresArray) {
     });
 };
 
-window.openTutorDropdown = function () {
-    const listDiv = document.getElementById('tutores-custom-list');
+window.openResponsávelDropdown = function () {
+    const listDiv = document.getElementById('responsaveis-custom-list');
     if (listDiv) {
         listDiv.style.display = 'block';
-        if (!window.allTutores || window.allTutores.length === 0) {
-            window.populateTutoresSelect();
+        if (!window.allResponsáveles || window.allResponsáveles.length === 0) {
+            window.populateResponsaveisSelect();
         } else {
-            window.renderTutorDropdown(window.allTutores);
+            window.renderResponsávelDropdown(window.allResponsáveles);
         }
     }
 };
 
-window.filterTutorDropdown = function (searchTerm) {
-    if (!window.allTutores) return;
+window.filterResponsávelDropdown = function (searchTerm) {
+    if (!window.allResponsáveles) return;
 
-    document.getElementById('pet-tutor').value = '';
+    document.getElementById('pet-responsavel').value = '';
 
-    const listDiv = document.getElementById('tutores-custom-list');
+    const listDiv = document.getElementById('responsaveis-custom-list');
     if (listDiv) listDiv.style.display = 'block';
 
     const lowerTerm = searchTerm.toLowerCase();
-    const filtered = window.allTutores.filter(t => t.nome.toLowerCase().includes(lowerTerm) || (t.cpf && t.cpf.includes(lowerTerm)));
-    window.renderTutorDropdown(filtered);
+    const filtered = window.allResponsáveles.filter(t => t.nome.toLowerCase().includes(lowerTerm) || (t.cpf && t.cpf.includes(lowerTerm)));
+    window.renderResponsávelDropdown(filtered);
 };
 
 // Fechar o dropdown ao clicar fora dele
 document.addEventListener('click', function (e) {
-    const input = document.getElementById('pet-tutor-name');
-    const listDiv = document.getElementById('tutores-custom-list');
+    const input = document.getElementById('pet-responsavel-name');
+    const listDiv = document.getElementById('responsaveis-custom-list');
     if (input && listDiv) {
         if (e.target !== input && e.target !== listDiv && !listDiv.contains(e.target)) {
             listDiv.style.display = 'none';
@@ -5001,11 +4986,11 @@ document.addEventListener('click', function (e) {
     }
 });
 
-// Escuta cliques para carregar a lista de tutores ao abrir a aba
+// Escuta cliques para carregar a lista de responsaveis ao abrir a aba
 document.addEventListener('click', function (e) {
     const tabTarget = e.target.closest('[data-tab="novo-pet"]');
     if (tabTarget) {
-        window.populateTutoresSelect();
+        window.populateResponsaveisSelect();
     }
 });
 
@@ -5017,7 +5002,7 @@ window.savePet = async function (e) {
     const treinadoChecked = document.querySelector('input[name="pet-treinado"]:checked');
 
     const data = {
-        tutor_id: document.getElementById('pet-tutor').value,
+        responsavel_id: document.getElementById('pet-responsavel').value,
         nome: document.getElementById('pet-nome').value,
         apelido: document.getElementById('pet-apelido').value || null,
         sexo: document.getElementById('pet-sexo').value || null,
@@ -5116,7 +5101,7 @@ window.savePetObs = async function () {
 
         const payload = {
             nome: pet.nome,
-            tutor_id: pet.tutor_id,
+            responsavel_id: pet.responsavel_id,
             especie: pet.especie,
             raca: pet.raca,
             sexo: pet.sexo,
@@ -5153,10 +5138,10 @@ window.savePetObs = async function () {
     }
 };
 
-window.toggleEditTutorObs = function () {
+window.toggleEditResponsávelObs = function () {
     const el = document.getElementById('perf-obs');
-    const btnEdit = document.getElementById('btn-edit-tutor-obs');
-    const btnSave = document.getElementById('btn-save-tutor-obs');
+    const btnEdit = document.getElementById('btn-edit-responsavel-obs');
+    const btnSave = document.getElementById('btn-save-responsavel-obs');
 
     if (el.hasAttribute('readonly')) {
         el.removeAttribute('readonly');
@@ -5177,16 +5162,16 @@ window.toggleEditTutorObs = function () {
     }
 };
 
-window.saveTutorObs = function () {
+window.saveResponsavelObs = function () {
     // Aqui podemos futuramente adicionar uma chamada real para salvar no banco
-    window.toggleEditTutorObs();
+    window.toggleEditResponsávelObs();
     CustomUI.toast('Sucesso', 'Observações salvas localmente!', 'success');
 };
 
-window.toggleEditTutorFormObs = function () {
-    const el = document.getElementById('tutor-observacoes');
-    const btnEdit = document.getElementById('btn-edit-tutor-form-obs');
-    const btnSave = document.getElementById('btn-save-tutor-form-obs');
+window.toggleEditResponsávelFormObs = function () {
+    const el = document.getElementById('responsavel-observacoes');
+    const btnEdit = document.getElementById('btn-edit-responsavel-form-obs');
+    const btnSave = document.getElementById('btn-save-responsavel-form-obs');
 
     if (el.hasAttribute('readonly')) {
         el.removeAttribute('readonly');
@@ -5207,8 +5192,8 @@ window.toggleEditTutorFormObs = function () {
     }
 };
 
-window.saveTutorFormObs = function () {
-    window.toggleEditTutorFormObs();
+window.saveResponsavelFormObs = function () {
+    window.toggleEditResponsávelFormObs();
     CustomUI.toast('Sucesso', 'Observações confirmadas!', 'success');
 };
 
@@ -5255,14 +5240,14 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-window.showTutorProfileTab = function () {
+window.showResponsávelProfileTab = function () {
     // Esconder tudo
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
     document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
 
-    // Exibir apenas o tab-tutor-perfil
-    const tabPerfil = document.getElementById('tab-tutor-perfil');
+    // Exibir apenas o tab-responsavel-perfil
+    const tabPerfil = document.getElementById('tab-responsavel-perfil');
     if (tabPerfil) {
         tabPerfil.classList.add('active');
     }
@@ -5277,13 +5262,13 @@ window.showTutorProfileTab = function () {
     const title = document.getElementById('current-tab-title');
     const subtitle = document.getElementById('current-tab-subtitle');
     title.innerHTML = 'Perfil do Cliente';
-    subtitle.textContent = 'Resumo completo, dados cadastrais e acessos do tutor.';
+    subtitle.textContent = 'Resumo completo, dados cadastrais e acessos do responsavel.';
     if (window.lucide) {
         lucide.createIcons();
     }
 };
 
-window.updatePaginationInfo = function (start, end, total, tab = 'tutores') {
+window.updatePaginationInfo = function (start, end, total, tab = 'responsaveis') {
     const startEl = document.getElementById('page-start-' + tab);
     const endEl = document.getElementById('page-end-' + tab);
     const totalEl = document.getElementById('page-total-' + tab);
@@ -5305,37 +5290,37 @@ window.updatePaginationInfo = function (start, end, total, tab = 'tutores') {
 };
 
 window.changeRowsPerPage = function (tab, value) {
-    if (tab === 'tutores') {
-        state.tutoresRowsPerPage = value;
-        state.tutoresPage = 1;
-        const listToRender = state.tutoresFilteredList || state.tutores;
-        renderTutoresTable(listToRender, true);
-        const container = document.getElementById('pagination-tutores');
+    if (tab === 'responsaveis') {
+        state.responsaveisRowsPerPage = value;
+        state.responsaveisPage = 1;
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        renderResponsaveisTable(listToRender, true);
+        const container = document.getElementById('pagination-responsaveis');
         if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     }
 };
 
 window.prevPage = function (tab) {
-    if (tab === 'tutores') {
-        if (state.tutoresPage > 1) {
-            state.tutoresPage--;
-            const listToRender = state.tutoresFilteredList || state.tutores;
-            renderTutoresTable(listToRender, true);
-            const container = document.getElementById('pagination-tutores');
+    if (tab === 'responsaveis') {
+        if (state.responsaveisPage > 1) {
+            state.responsaveisPage--;
+            const listToRender = state.responsaveisFilteredList || state.responsaveis;
+            renderResponsaveisTable(listToRender, true);
+            const container = document.getElementById('pagination-responsaveis');
             if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
         }
     }
 };
 
 window.nextPage = function (tab) {
-    if (tab === 'tutores') {
-        const listToRender = state.tutoresFilteredList || state.tutores;
-        const rows = state.tutoresRowsPerPage === 'all' ? listToRender.length : parseInt(state.tutoresRowsPerPage);
+    if (tab === 'responsaveis') {
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        const rows = state.responsaveisRowsPerPage === 'all' ? listToRender.length : parseInt(state.responsaveisRowsPerPage);
         const totalPages = Math.ceil(listToRender.length / rows);
-        if (state.tutoresPage < totalPages) {
-            state.tutoresPage++;
-            renderTutoresTable(listToRender, true);
-            const container = document.getElementById('pagination-tutores');
+        if (state.responsaveisPage < totalPages) {
+            state.responsaveisPage++;
+            renderResponsaveisTable(listToRender, true);
+            const container = document.getElementById('pagination-responsaveis');
             if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
         }
     }
@@ -5505,14 +5490,14 @@ async function loadPets(force = false) {
         const loading = document.getElementById('loading-pets');
         if (loading) loading.style.display = 'flex';
 
-        const response = await fetch(`${API_BASE}/pets`, {
+        const response = await fetch(`${API_BASE}/pets?limit=10000`, {
             headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         });
 
         if (!response.ok) throw new Error('Falha ao carregar pets');
 
         const data = await response.json();
-        state.pets = data;
+        state.pets = Array.isArray(data) ? data : (data.items || []);
         state.petsFilteredList = null; // reseta filtros
 
         if (state.activeTab === 'pets') {
@@ -5528,125 +5513,24 @@ async function loadPets(force = false) {
 }
 
 function renderPetsList() {
-    const tbody = document.getElementById('tbody-pets');
-    const emptyState = document.getElementById('empty-pets');
-
-    if (!tbody) return;
-
-    const listToRender = state.petsFilteredList || state.pets;
-
-    // Pagination logic
-    const totalItems = listToRender.length;
-    let itemsPerPage = state.petsRowsPerPage;
-
-    if (itemsPerPage === 'all') {
-        itemsPerPage = totalItems;
-        state.petsPage = 1;
-    }
-
-    const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-    if (state.petsPage > totalPages) state.petsPage = totalPages;
-
-    const startIndex = (state.petsPage - 1) * itemsPerPage;
-    const endIndex = itemsPerPage === totalItems ? totalItems : Math.min(startIndex + itemsPerPage, totalItems);
-
-    const pageItems = listToRender.slice(startIndex, endIndex);
-
-    const pageStartElem = document.getElementById('page-start-pets');
-    if (pageStartElem) pageStartElem.textContent = totalItems === 0 ? 0 : startIndex + 1;
-
-    const pageEndElem = document.getElementById('page-end-pets');
-    if (pageEndElem) pageEndElem.textContent = endIndex;
-
-    const pageTotalElem = document.getElementById('page-total-pets');
-    if (pageTotalElem) pageTotalElem.textContent = totalItems;
-
-    const btnPrev = document.getElementById('btn-prev-pets');
-    if (btnPrev) btnPrev.disabled = state.petsPage === 1;
-
-    const btnNext = document.getElementById('btn-next-pets');
-    if (btnNext) btnNext.disabled = state.petsPage === totalPages;
-
-    tbody.innerHTML = '';
-
-    if (pageItems.length === 0) {
-        if (emptyState) emptyState.style.display = 'flex';
-    } else {
-        if (emptyState) emptyState.style.display = 'none';
-
-        pageItems.forEach(pet => {
-            const tr = document.createElement('tr');
-
-            // Buscar nome do tutor correspondente
-            const tutor = state.tutores.find(t => t.id === pet.tutor_id);
-            const tutorNome = tutor ? tutor.nome : 'Desconhecido';
-
-            // Formatar espécie/raça
-            const especieDisplay = pet.especie || '-';
-            const racaDisplay = pet.raca || '-';
-
-            tr.innerHTML = `
-                <td style="vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 12px; height: 100%;">
-                        <input type="checkbox" class="custom-checkbox row-checkbox-pets" data-id="${pet.id}" onchange="toggleBulkDeleteBtn('pets')">
-                        <button class="btn-table-edit" onclick="editPet(${pet.id})">
-                            <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i> Editar
-                        </button>
-                        <div class="dropdown-options-container" id="dropdown-pet-${pet.id}">
-                            <button class="btn-table-options" onclick="toggleDropdown('pet-${pet.id}', event)">
-                                Opções <i data-lucide="chevron-down" style="width: 14px; height: 14px; margin-left: 2px;"></i>
-                            </button>
-                            <div class="dropdown-menu-list">
-                                <button class="dropdown-item" onclick="viewPet(${pet.id}); closeAllDropdowns();">
-                                    <i data-lucide="eye" style="color: var(--primary);"></i> Visualizar
-                                </button>
-                                <button class="dropdown-item delete" onclick="deletePet(${pet.id}); closeAllDropdowns();">
-                                    <i data-lucide="trash-2" style="color: var(--danger);"></i> Excluir
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">
-                    <div style="display: flex; align-items: center; gap: 14px; height: 100%;">
-                        ${pet.foto_url
-                    ? `<img src="${pet.foto_url}" alt="${pet.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
-                    : (() => { const parts = (pet.nome || '?').trim().split(/\s+/); const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0]; return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials.toUpperCase()}</div>`; })()
-                }
-                        <span>${pet.nome || '-'}</span>
-                    </div>
-                </td>
-                <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${tutorNome}</td>
-                <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${especieDisplay}</td>
-                <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${racaDisplay}</td>
-                <td style="text-align: center; vertical-align: middle;">
-                    <span class="${pet.status === 'Ativo' ? 'badge-green-tutor' : 'badge-red-tutor'}">${pet.status === 'Ativo' ? 'ATIVO' : 'INATIVO'}</span>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        if (window.lucide) {
-            window.lucide.createIcons();
-        }
-    }
+    renderPetsTable(state.petsFilteredList || state.pets, state.petsFilteredList !== null);
 }
 
 function applyPetFilters() {
     const searchNome = removeDiacritics(document.getElementById('filter-pet-nome')?.value.toLowerCase() || '');
-    const searchTutor = removeDiacritics(document.getElementById('filter-pet-tutor')?.value.toLowerCase() || '');
+    const searchResponsável = removeDiacritics(document.getElementById('filter-pet-responsavel')?.value.toLowerCase() || '');
     const searchEspecie = removeDiacritics(document.getElementById('filter-pet-especie')?.value.toLowerCase() || '');
     const searchRaca = removeDiacritics(document.getElementById('filter-pet-raca')?.value.toLowerCase() || '');
     const searchStatus = removeDiacritics(document.getElementById('filter-pet-status')?.value.toLowerCase() || '');
 
-    if (!searchNome && !searchTutor && !searchEspecie && !searchRaca && !searchStatus) {
+    if (!searchNome && !searchResponsável && !searchEspecie && !searchRaca && !searchStatus) {
         state.petsFilteredList = null;
     } else {
         state.petsFilteredList = state.pets.filter(pet => {
-            const tutor = state.tutores.find(t => t.id === pet.tutor_id);
-            const tutorNome = tutor ? removeDiacritics(tutor.nome.toLowerCase()) : '';
-            const tutorCpf = tutor && tutor.cpf ? tutor.cpf.replace(/\D/g, '') : '';
-            const searchTutorNumbersOnly = searchTutor.replace(/\D/g, '');
+            const responsavel = state.responsaveis.find(t => t.id === pet.responsavel_id);
+            const responsavelNome = responsavel ? removeDiacritics(responsavel.nome.toLowerCase()) : '';
+            const responsavelCpf = responsavel && responsavel.cpf ? responsavel.cpf.replace(/\D/g, '') : '';
+            const searchResponsávelNumbersOnly = searchResponsável.replace(/\D/g, '');
 
             const petNome = pet.nome ? removeDiacritics(pet.nome.toLowerCase()) : '';
             const petEspecie = pet.especie ? removeDiacritics(pet.especie.toLowerCase()) : '';
@@ -5654,12 +5538,12 @@ function applyPetFilters() {
             const petStatus = pet.status ? removeDiacritics(pet.status.toLowerCase()) : '';
 
             const matchNome = !searchNome || petNome.startsWith(searchNome);
-            const matchTutor = !searchTutor || tutorNome.startsWith(searchTutor) || (searchTutorNumbersOnly && tutorCpf.startsWith(searchTutorNumbersOnly));
+            const matchResponsável = !searchResponsável || responsavelNome.startsWith(searchResponsável) || (searchResponsávelNumbersOnly && responsavelCpf.startsWith(searchResponsávelNumbersOnly));
             const matchEspecie = !searchEspecie || petEspecie.startsWith(searchEspecie);
             const matchRaca = !searchRaca || petRaca.startsWith(searchRaca);
             const matchStatus = !searchStatus || petStatus.startsWith(searchStatus);
 
-            return matchNome && matchTutor && matchEspecie && matchRaca && matchStatus;
+            return matchNome && matchResponsável && matchEspecie && matchRaca && matchStatus;
         });
     }
 
@@ -5707,7 +5591,7 @@ window.savePet = async function (event) {
     try {
         const id = document.getElementById('pet-id') ? document.getElementById('pet-id').value : '';
         const nome = document.getElementById('pet-nome').value;
-        const tutor_id = parseInt(document.getElementById('pet-tutor').value);
+        const responsavel_id = parseInt(document.getElementById('pet-responsavel').value);
         const especie = document.getElementById('pet-especie').value;
         const raca = especie === 'Cachorro' || especie === 'Gato' ? document.getElementById('pet-raca').value : document.getElementById('pet-raca-input').value;
         const sexo = document.querySelector('input[name="pet-sexo"]:checked')?.value || '';
@@ -5726,7 +5610,7 @@ window.savePet = async function (event) {
         const foto_url = previewImg ? previewImg.src : null;
 
         const payload = {
-            nome, tutor_id, especie, raca, sexo, peso, data_nascimento: nascimento, cor, status, castrado, porte, agressivo, treinado, autoriza_imagem: uso_imagem, observacoes, foto_url
+            nome, responsavel_id, especie, raca, sexo, peso, data_nascimento: nascimento, cor, status, castrado, porte, agressivo, treinado, autoriza_imagem: uso_imagem, observacoes, foto_url
         };
 
         const url = id ? `${API_BASE}/pets/${id}` : `${API_BASE}/pets`;
@@ -5759,7 +5643,7 @@ window.savePet = async function (event) {
 };
 
 window.editPet = async function (id) {
-    if (state.tutores.length === 0) await loadTutores();
+    if (state.responsaveis.length === 0) await loadResponsaveis();
     const pet = state.pets.find(p => p.id === id);
     if (!pet) return;
 
@@ -5776,18 +5660,18 @@ window.editPet = async function (id) {
             document.getElementById('form-pet').appendChild(hiddenId);
         }
 
-        const tutorSelect = document.getElementById('pet-tutor');
-        if (tutorSelect && tutorSelect.options.length <= 1) {
-            state.tutores.forEach(t => {
+        const responsavelSelect = document.getElementById('pet-responsavel');
+        if (responsavelSelect && responsavelSelect.options.length <= 1) {
+            state.responsaveis.forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t.id;
                 opt.textContent = t.nome;
-                tutorSelect.appendChild(opt);
+                responsavelSelect.appendChild(opt);
             });
         }
 
         if (document.getElementById('pet-nome')) document.getElementById('pet-nome').value = pet.nome;
-        if (document.getElementById('pet-tutor')) document.getElementById('pet-tutor').value = pet.tutor_id;
+        if (document.getElementById('pet-responsavel')) document.getElementById('pet-responsavel').value = pet.responsavel_id;
         if (document.getElementById('pet-especie')) {
             document.getElementById('pet-especie').value = pet.especie;
             document.getElementById('pet-especie').dispatchEvent(new Event('change'));
@@ -5896,7 +5780,7 @@ window.viewPet = async function (id) {
         const statusEl = document.getElementById('perf-pet-status');
         if (statusEl) {
             statusEl.textContent = pet.status || 'Ativo';
-            statusEl.className = pet.status === 'Ativo' ? 'badge-green-tutor' : 'badge-danger';
+            statusEl.className = pet.status === 'Ativo' ? 'badge-green-responsavel' : 'badge-danger';
         }
 
         const avatarEl = document.getElementById('perf-pet-avatar');
@@ -5979,22 +5863,22 @@ window.viewPet = async function (id) {
         const treinadoEl = document.getElementById('perf-pet-treinado');
         if (treinadoEl) treinadoEl.textContent = pet.treinado ? 'Sim' : 'Não';
 
-        // Responsável (Tutor)
-        const tutor = state.tutores.find(t => t.id === pet.tutor_id);
-        const tutorNome = tutor ? tutor.nome : 'Desconhecido';
+        // Responsável (Responsável)
+        const responsavel = state.responsaveis.find(t => t.id === pet.responsavel_id);
+        const responsavelNome = responsavel ? responsavel.nome : 'Desconhecido';
 
-        document.getElementById('perf-pet-tutor-nome').textContent = tutorNome;
-        document.getElementById('stat-pet-tutor').textContent = tutorNome.split(' ')[0]; // Primeiro nome no stat
+        document.getElementById('perf-pet-responsavel-nome').textContent = responsavelNome;
+        document.getElementById('stat-pet-responsavel').textContent = responsavelNome.split(' ')[0]; // Primeiro nome no stat
 
-        let tutorCpf = '-';
-        if (tutor && tutor.cpf && tutor.cpf.length === 11) {
-            tutorCpf = `${tutor.cpf.substring(0, 3)}.${tutor.cpf.substring(3, 6)}.${tutor.cpf.substring(6, 9)}-${tutor.cpf.substring(9, 11)}`;
+        let responsavelCpf = '-';
+        if (responsavel && responsavel.cpf && responsavel.cpf.length === 11) {
+            responsavelCpf = `${responsavel.cpf.substring(0, 3)}.${responsavel.cpf.substring(3, 6)}.${responsavel.cpf.substring(6, 9)}-${responsavel.cpf.substring(9, 11)}`;
         }
-        document.getElementById('perf-pet-tutor-cpf').textContent = tutorCpf;
+        document.getElementById('perf-pet-responsavel-cpf').textContent = responsavelCpf;
 
-        document.getElementById('perf-pet-tutor-cel').textContent = tutor ? (tutor.celular || tutor.telefone || '-') : '-';
-        const emailEl = document.getElementById('perf-pet-tutor-email');
-        if (emailEl) emailEl.textContent = tutor ? (tutor.email || '-') : '-';
+        document.getElementById('perf-pet-responsavel-cel').textContent = responsavel ? (responsavel.celular || responsavel.telefone || '-') : '-';
+        const emailEl = document.getElementById('perf-pet-responsavel-email');
+        if (emailEl) emailEl.textContent = responsavel ? (responsavel.email || '-') : '-';
 
         // Botão Editar
         const btnEdit = document.getElementById('btn-edit-pet-profile');
@@ -6028,3 +5912,2868 @@ window.showPetsList = function () {
     document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
     document.getElementById('tab-pets').classList.add('active');
 };
+
+
+// ==========================================
+// ROTAS E LÓGICA DE PETS
+
+async function loadPets() {
+    const spinner = document.getElementById('loading-pets');
+    const table = document.getElementById('table-pets-element');
+    if (spinner && table) {
+        spinner.style.display = 'flex';
+        table.style.opacity = '0.3';
+    }
+    try {
+        const response = await fetch(`${API_BASE}/pets?limit=10000`);
+        const resData = await response.json();
+        state.pets = Array.isArray(resData) ? resData : (resData.items || []);
+        renderPetsTable(state.pets);
+    } catch (error) {
+        console.error("Erro ao carregar pets:", error);
+    } finally {
+        if (spinner && table) {
+            spinner.style.display = 'none';
+            table.style.opacity = '1';
+        }
+    }
+}
+
+function getInitials(name) {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function renderPetsTable(list, isFiltered = false) {
+    const tbody = document.getElementById('tbody-pets');
+    const emptyState = document.getElementById('empty-pets');
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        emptyState.style.display = 'block';
+        updatePaginationInfo(0, 0, 0);
+        return;
+    }
+    emptyState.style.display = 'none';
+
+    // Se NÃO for renderização de filtro, resetamos os inputs de busca para estarem vazios
+    if (!isFiltered) {
+        ['filter-pet-nome', 'filter-pet-responsavel', 'filter-pet-especie', 'filter-pet-raca', 'filter-pet-status'].forEach(id => {
+            const input = document.getElementById(id);
+            if (input) input.value = '';
+        });
+        const selectAll = document.getElementById('select-all-pets');
+        if (selectAll) selectAll.checked = false;
+        state.petsFilteredList = null;
+        state.petsPage = 1;
+    } else {
+        state.petsFilteredList = list;
+    }
+
+    let itemsToRender = list;
+
+    // Pagination logic
+    const totalItems = list.length;
+    let startItem = 0;
+    let endItem = totalItems;
+
+    if (state.petsRowsPerPage !== 'all') {
+        const rows = parseInt(state.petsRowsPerPage);
+        const totalPages = Math.ceil(totalItems / rows);
+        if (state.petsPage > totalPages && totalPages > 0) state.petsPage = totalPages;
+
+        startItem = (state.petsPage - 1) * rows;
+        endItem = Math.min(startItem + rows, totalItems);
+        itemsToRender = list.slice(startItem, endItem);
+    }
+
+    updatePaginationInfo(totalItems > 0 ? startItem + 1 : 0, endItem, totalItems);
+
+    itemsToRender.forEach(t => {
+        const row = document.createElement('tr');
+
+        // Adiciona classe de destaque se este for o pet salvo/editado recentemente
+        if (state.highlightedPetId && t.id === state.highlightedPetId) {
+            row.classList.add('highlighted-row');
+        }
+
+        const responsavel = state.responsaveis.find(responsavel => responsavel.id === t.responsavel_id);
+        const responsavelName = responsavel ? responsavel.nome : 'Desconhecido';
+
+        row.innerHTML = `
+            <td style="vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 12px; height: 100%;">
+                    <input type="checkbox" class="custom-checkbox pet-select-checkbox" data-id="${t.id}" onchange="window.toggleBulkDeleteBtn('pets')">
+                    <button class="btn-table-edit" onclick="editPet(${t.id})">
+                        <i data-lucide="edit-3" style="width: 15px; height: 15px;"></i> Editar
+                    </button>
+                    <div class="dropdown-options-container" id="dropdown-${t.id}">
+                        <button class="btn-table-options" onclick="toggleDropdown(${t.id}, event)">
+                            Opções <i data-lucide="chevron-down" style="width: 14px; height: 14px; margin-left: 2px;"></i>
+                        </button>
+                        <div class="dropdown-menu-list">
+                            <button class="dropdown-item" onclick="viewPet(${t.id}); closeAllDropdowns();">
+                                <i data-lucide="eye" style="color: var(--primary);"></i> Visualizar
+                            </button>
+                            <button class="dropdown-item delete" onclick="deletePet(${t.id}); closeAllDropdowns();">
+                                <i data-lucide="trash-2" style="color: var(--danger);"></i> Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">
+                <div style="display: flex; align-items: center; gap: 14px; height: 100%;">
+                    ${t.foto_url
+                ? `<img src="${t.foto_url}" alt="${t.nome}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-glow);">`
+                : (() => { const initials = getInitials(t.nome); return `<div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary-glow); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; font-weight: 700; color: var(--primary);">${initials}</div>`; })()
+            }
+                    <span>${t.nome}</span>
+                </div>
+            </td>
+            <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${responsavelName}</td>
+            <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${t.especie || '-'}</td>
+            <td style="font-size: 14px; color: var(--text-main); vertical-align: middle;">${t.raca || '-'}</td>
+            <td style="text-align: center; vertical-align: middle;">
+                <span class="${t.status === 'Ativo' ? 'badge-green-pet' : 'badge-red-pet'}">${t.status === 'Ativo' ? 'CLIENTE' : 'INATIVO'}</span>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    // Remove o destaque após 5 segundos e limpa o ID do estado global
+    if (state.highlightedPetId) {
+        setTimeout(() => {
+            const highlightedRow = document.querySelector('.highlighted-row');
+            if (highlightedRow) {
+                highlightedRow.classList.remove('highlighted-row');
+            }
+            state.highlightedPetId = null;
+        }, 5000);
+    }
+
+    // Vincula listeners de filtros rápidos
+    setupPetFilters();
+    setupSelectAllLogic();
+
+    lucide.createIcons();
+}
+
+// Configura filtros de pesquisa em tempo real
+function setupPetFilters() {
+    ['filter-pet-nome', 'filter-pet-responsavel', 'filter-pet-especie', 'filter-pet-raca', 'filter-pet-status'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.removeEventListener('input', applyPetFilters);
+            input.addEventListener('input', applyPetFilters);
+        }
+    });
+}
+
+window.applyPetFilters = function () {
+    const nomeInput = document.getElementById('filter-pet-nome');
+    const responsavelInput = document.getElementById('filter-pet-responsavel');
+    const especieInput = document.getElementById('filter-pet-especie');
+    const racaInput = document.getElementById('filter-pet-raca');
+    const statusInput = document.getElementById('filter-pet-status');
+
+    const nomeF = (nomeInput ? nomeInput.value : '').toLowerCase();
+    const responsavelF = (responsavelInput ? responsavelInput.value : '').toLowerCase();
+    const especieF = (especieInput ? especieInput.value : '').toLowerCase();
+    const racaF = (racaInput ? racaInput.value : '').toLowerCase();
+    const statusF = (statusInput ? statusInput.value : '').toLowerCase();
+
+    const filtered = state.pets.filter(t => {
+        const tNome = t.nome ? t.nome.toLowerCase() : '';
+        const matchNome = !nomeF || tNome.startsWith(nomeF);
+
+        const responsavelObj = state.responsaveis.find(responsavel => responsavel.id === t.responsavel_id);
+        const responsavelName = responsavelObj ? responsavelObj.nome.toLowerCase() : '';
+        const matchResponsável = !responsavelF || responsavelName.startsWith(responsavelF);
+
+        const tEspecie = t.especie ? t.especie.toLowerCase() : '';
+        const matchEspecie = !especieF || tEspecie.startsWith(especieF);
+
+        const tRaca = t.raca ? t.raca.toLowerCase() : '';
+        const matchRaca = !racaF || tRaca.startsWith(racaF);
+
+        const statusStr = t.status ? t.status.toLowerCase() : '';
+        const matchStatus = !statusF ||
+            (statusStr === 'ativo' ? 'ativo' : 'inativo').startsWith(statusF);
+
+        return matchNome && matchResponsável && matchEspecie && matchRaca && matchStatus;
+    });
+
+    renderPetsTable(filtered, true);
+}
+
+// Pagination Logic for Pets
+function updatePaginationInfo(start, end, total) {
+    const elStart = document.getElementById('page-start-pets');
+    const elEnd = document.getElementById('page-end-pets');
+    const elTotal = document.getElementById('page-total-pets');
+    const btnPrev = document.getElementById('btn-prev-pets');
+    const btnNext = document.getElementById('btn-next-pets');
+
+    if (elStart) elStart.textContent = start;
+    if (elEnd) elEnd.textContent = end;
+    if (elTotal) elTotal.textContent = total;
+
+    if (btnPrev) btnPrev.disabled = state.petsPage <= 1;
+
+    if (btnNext) {
+        if (state.petsRowsPerPage === 'all') {
+            btnNext.disabled = true;
+        } else {
+            const rows = parseInt(state.petsRowsPerPage);
+            const totalPages = Math.ceil(total / rows);
+            btnNext.disabled = state.petsPage >= totalPages;
+        }
+    }
+}
+
+window.changeRowsPerPage = function (type, value) {
+    if (type === 'pets') {
+        state.petsRowsPerPage = value;
+        state.petsPage = 1;
+        const listToRender = state.petsFilteredList || state.pets;
+        renderPetsTable(listToRender, state.petsFilteredList !== null);
+    }
+};
+
+window.prevPage = function (type) {
+    if (type === 'pets' && state.petsPage > 1) {
+        state.petsPage--;
+        const listToRender = state.petsFilteredList || state.pets;
+        renderPetsTable(listToRender, state.petsFilteredList !== null);
+    }
+};
+
+window.nextPage = function (type) {
+    if (type === 'pets' && state.petsRowsPerPage !== 'all') {
+        const listToRender = state.petsFilteredList || state.pets;
+        const rows = parseInt(state.petsRowsPerPage);
+        const totalPages = Math.ceil(listToRender.length / rows);
+
+        if (state.petsPage < totalPages) {
+            state.petsPage++;
+            renderPetsTable(listToRender, state.petsFilteredList !== null);
+        }
+    }
+};
+
+// Lógica de seleção múltipla por Checkboxes
+function setupSelectAllLogic() {
+    window.toggleBulkDeleteBtn('pets');
+}
+
+window.toggleSelectAll = function (type, checked) {
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.pet-select-checkbox';
+    document.querySelectorAll(selector).forEach(cb => {
+        cb.checked = checked;
+    });
+    window.toggleBulkDeleteBtn(type);
+};
+
+window.toggleBulkDeleteBtn = function (type) {
+    let selector = type === 'pets' ? '.row-checkbox-pets' : '.pet-select-checkbox';
+    const total = document.querySelectorAll(selector).length;
+    const checkedCount = document.querySelectorAll(`${selector}:checked`).length;
+
+    // update select-all checkbox
+    let selectAllId = type === 'pets' ? 'select-all-pets' : 'select-all-pets';
+    const selectAllCheckbox = document.getElementById(selectAllId);
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = (total > 0 && total === checkedCount);
+    }
+
+    // update bulk delete button visibility
+    let btnId = type === 'pets' ? 'btn-bulk-delete-pets' : 'btn-bulk-delete-pets';
+    const btn = document.getElementById(btnId);
+    if (btn) {
+        btn.style.display = checkedCount > 0 ? 'inline-flex' : 'none';
+    }
+};
+
+// Lógica para controle dos Dropdowns de Opções na tabela
+window.toggleDropdown = function (id, event) {
+    event.stopPropagation();
+    const container = document.getElementById(`dropdown-${id}`);
+    const isActive = container.classList.contains('active');
+
+    closeAllDropdowns();
+
+    if (!isActive) {
+        container.classList.add('active');
+    }
+};
+
+window.closeAllDropdowns = function () {
+    document.querySelectorAll('.dropdown-options-container').forEach(el => {
+        el.classList.remove('active');
+    });
+};
+
+document.addEventListener('click', () => {
+    closeAllDropdowns();
+});
+
+async function viewPet(id) {
+    try {
+        const response = await fetch(`${API_BASE}/pets/${id}`);
+        if (!response.ok) throw new Error("Erro ao buscar detalhes do pet");
+        const t = await response.json();
+
+        const content = document.getElementById('modal-view-pet-content');
+        if (!content) return;
+
+        // Formata data de nascimento
+        let nascimento = 'N/A';
+        if (t.data_nascimento) {
+            nascimento = formatDateWithSlashes(t.data_nascimento);
+        }
+
+        // Formata CPF
+        let formattedCpf = t.cpf || 'N/A';
+        if (t.cpf && t.cpf.length === 11) {
+            formattedCpf = t.cpf.substring(0, 3) + '.' + t.cpf.substring(3, 6) + '.' + t.cpf.substring(6, 9) + '-' + t.cpf.substring(9, 11);
+        }
+
+        // Formata CEP
+        let formattedCep = t.cep || 'N/A';
+        if (t.cep && t.cep.length === 8) {
+            formattedCep = t.cep.substring(0, 5) + '-' + t.cep.substring(5, 8);
+        }
+
+        const badgeClass = t.status === 'Ativo' ? 'badge-success' : 'badge-danger';
+
+        content.innerHTML = `
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Código (ID)</span>
+                    <span class="info-value"><strong>#${String(t.id).padStart(3, '0')}</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value"><span class="badge ${badgeClass}">${t.status}</span></span>
+                </div>
+                <div class="info-item full-width">
+                    <span class="info-label">Nome Completo</span>
+                    <span class="info-value" style="font-size: 16px; font-weight: 700; color: var(--text-main);">${t.nome}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">CPF</span>
+                    <span class="info-value" style="font-family: monospace; font-size: 14px;">${formattedCpf}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Data de Nascimento</span>
+                    <span class="info-value">${nascimento}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Sexo</span>
+                    <span class="info-value">${t.sexo || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Estado Civil</span>
+                    <span class="info-value">${t.estado_civil || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">E-mail</span>
+                    <span class="info-value" style="word-break: break-all;">${t.email}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Telefone Principal</span>
+                    <span class="info-value">${t.telefone || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Telefone Secundário</span>
+                    <span class="info-value">${t.telefone_secundario || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Profissão</span>
+                    <span class="info-value">${t.profissao || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Instagram</span>
+                    <span class="info-value">${t.instagram || 'N/A'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Como nos Conheceu?</span>
+                    <span class="info-value">${t.como_conheceu || 'N/A'}</span>
+                </div>
+                
+                <div class="info-item full-width" style="margin-top: 12px; border-color: rgba(16, 185, 129, 0.25); background: rgba(16, 185, 129, 0.05);">
+                    <span class="info-label" style="color: var(--primary); font-weight: 700;">Endereço Completo</span>
+                    <span class="info-value" style="line-height: 1.5; color: var(--text-main);">
+                        ${t.endereco || 'Sem endereço'}${t.numero ? `, Nº ${t.numero}` : ''}
+                        ${t.complemento ? ` (${t.complemento})` : ''} <br>
+                        ${t.bairro ? `${t.bairro} - ` : ''}${t.cidade || ''}/${t.uf || ''} <br>
+                        <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">CEP: ${formattedCep}</span>
+                    </span>
+                </div>
+            </div>
+        `;
+
+        // Associa ação ao botão de editar da modal
+        const editBtn = document.getElementById('btn-modal-edit-pet');
+        if (editBtn) {
+            editBtn.onclick = () => {
+                closeViewPetModal();
+                editPet(t.id);
+            };
+        }
+
+        const modal = document.getElementById('modal-view-pet');
+        if (modal) {
+            modal.classList.add('active');
+        }
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+    } catch (error) {
+        console.error("Erro ao carregar detalhes do pet para visualização:", error);
+    }
+}
+
+function closeViewPetModal() {
+    const modal = document.getElementById('modal-view-pet');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
+window.resetPetForm = function () {
+    const form = document.getElementById('form-pet');
+    if (form) form.reset();
+    const petIdEl = document.getElementById('pet-id');
+    if (petIdEl) petIdEl.value = '';
+
+    // Limpa a foto
+    const uploadInput = document.getElementById('pet-foto-upload');
+    if (uploadInput) uploadInput.value = '';
+    const preview = document.getElementById('pet-foto-preview');
+    if (preview) {
+        preview.innerHTML = '<i data-lucide="camera" style="width: 24px; height: 24px; color: var(--text-muted);"></i><span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: center;">Selecionar<br>Foto</span>';
+        preview.style.border = '1px dashed var(--border-glow)';
+    }
+    const removeBtn = document.getElementById('pet-foto-remove');
+    if (removeBtn) removeBtn.style.display = 'none';
+
+    // Restaura o título padrão
+    const titleEl = document.getElementById('tab-novo-pet-title');
+    if (titleEl) titleEl.innerHTML = '<i data-lucide="user-plus"></i> Novo Responsável';
+
+    // Limpa feedbacks e validações
+    state.officialCPFData = null;
+    ['pet-cpf', 'pet-nome', 'pet-data-nascimento', 'pet-email', 'pet-telefone', 'pet-cep', 'pet-sexo'].forEach(clearFeedback);
+    formVerificationState.cpf = false;
+    formVerificationState.nome = false;
+    formVerificationState.nascimento = false;
+    formVerificationState.email = true;
+    formVerificationState.telefone = true;
+    formVerificationState.cep = true;
+    formVerificationState.sexo = false;
+
+    const cidadeEl = document.getElementById('pet-cidade');
+    if (cidadeEl) cidadeEl.removeAttribute('readonly');
+    const ufEl = document.getElementById('pet-uf');
+    if (ufEl) ufEl.removeAttribute('readonly');
+
+    // Define status padrão como Ativo
+    if (typeof setCustomSelectValue === 'function') {
+        setCustomSelectValue('pet-status', 'Ativo');
+    }
+
+    // Desativa a exibição de erros para evitar loops durante o reset
+    window.showSubmitError = false;
+    validateFormState();
+
+    if (window.lucide) lucide.createIcons();
+};
+
+async function editPet(id) {
+    try {
+        const response = await fetch(`${API_BASE}/pets/${id}`);
+        const t = await response.json();
+
+        // Limpa feedbacks anteriores e inicializa validações como verdadeiras para o modo de edição
+        ['pet-cpf', 'pet-nome', 'pet-data-nascimento', 'pet-email', 'pet-telefone', 'pet-telefone-secundario', 'pet-cep', 'pet-sexo'].forEach(clearFeedback);
+        formVerificationState.cpf = true;
+        formVerificationState.nome = true;
+        formVerificationState.nascimento = true;
+        formVerificationState.email = true;
+        formVerificationState.telefone = true;
+        formVerificationState.cep = true;
+        formVerificationState.sexo = true;
+        state.officialCPFData = null;
+        window.isSubmittingForm = true;
+        validateFormState();
+        window.isSubmittingForm = false;
+
+        document.getElementById('pet-id').value = t.id;
+        document.getElementById('pet-nome').value = t.nome || '';
+        document.getElementById('pet-cpf').value = t.cpf || '';
+        setCustomSelectValue('pet-sexo', t.sexo || '');
+        document.getElementById('pet-data-nascimento').value = formatDateWithSlashes(t.data_nascimento) || '';
+        document.getElementById('pet-email').value = t.email || '';
+        document.getElementById('pet-telefone').value = t.telefone || '';
+
+        document.getElementById('pet-cep').value = t.cep || '';
+        document.getElementById('pet-endereco').value = t.endereco || '';
+        document.getElementById('pet-numero').value = t.numero || '';
+        document.getElementById('pet-complemento').value = t.complemento || '';
+        document.getElementById('pet-bairro').value = t.bairro || '';
+        document.getElementById('pet-cidade').value = t.cidade || '';
+        document.getElementById('pet-uf').value = t.uf || '';
+
+        document.getElementById('pet-indicacao').value = t.indicacao || '';
+        setCustomSelectValue('pet-como-conheceu', t.como_conheceu || '');
+        setCustomSelectValue('pet-dia-pagamento', t.dia_pagamento || '');
+        const obsInput = document.getElementById('pet-observacoes');
+        if (obsInput) obsInput.value = t.observacoes || '';
+        setCustomSelectValue('pet-forma-pgto', t.forma_pgto_preferencial || '');
+
+        const autorizaImagemRad = document.querySelector(`input[name="pet-autoriza-imagem"][value="${t.autoriza_imagem === true}"]`);
+        if (autorizaImagemRad) autorizaImagemRad.checked = true;
+
+        const assinaRad = document.querySelector(`input[name="pet-assina"][value="${t.assina === true}"]`);
+        if (assinaRad) assinaRad.checked = true;
+
+        setCustomSelectValue('pet-status', t.status || 'Ativo');
+
+        // Carrega a foto se cadastrada
+        const preview = document.getElementById('pet-foto-preview');
+        const removeBtn = document.getElementById('pet-foto-remove');
+        if (t.foto_url) {
+            preview.innerHTML = `<img src="${t.foto_url}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            preview.style.border = 'none';
+            if (removeBtn) removeBtn.style.display = 'flex';
+        } else {
+            preview.innerHTML = '<i data-lucide="camera" style="width: 24px; height: 24px; color: var(--text-muted);"></i><span style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; text-align: center;">Selecionar<br>Foto</span>';
+            preview.style.border = '1px dashed var(--border-glow)';
+            if (removeBtn) removeBtn.style.display = 'none';
+        }
+
+        document.getElementById('tab-novo-pet-title').innerHTML = '<i data-lucide="edit-3"></i> Editar Responsável';
+        lucide.createIcons();
+
+        const tabLink = document.querySelector('.submenu-link[data-tab="novo-pet"]');
+        if (tabLink) {
+            // Apenas ativa a aba programaticamente sem disparar o click que reseta o form
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
+            tabLink.classList.add('active');
+
+            const parentGroup = tabLink.closest('.nav-group');
+            if (parentGroup) {
+                const parentLink = parentGroup.querySelector('.nav-link');
+                if (parentLink) parentLink.classList.add('active');
+            }
+
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-novo-pet').classList.add('active');
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Erro ao buscar dados do responsável para edição.");
+    }
+}
+
+async function savePet(e) {
+    e.preventDefault();
+
+    window.isSubmittingForm = true;
+    window.showSubmitError = true;
+    const isValid = validateFormState();
+    window.isSubmittingForm = false; // Desativa imediatamente após rodar para bloquear loops de eventos assíncronos
+
+    if (!isValid) {
+        // Encontra o primeiro input inválido e rola até ele
+        const firstError = document.querySelector('.field-feedback.active.danger');
+        if (firstError && firstError.parentElement) {
+            firstError.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+    }
+
+    // Validação de Nome Completo (Segurança e Anti-Fraude)
+    const nameInput = document.getElementById('pet-nome');
+    const nameResult = validateNameLogic(nameInput.value);
+    if (!nameResult.isValid) {
+        nameInput.style.border = '1px solid var(--danger)';
+        alert("Erro de Validação - Nome Completo:\n\n" + nameResult.reason);
+        return;
+    }
+    nameInput.style.border = '';
+
+    // Validação de CPF (Segurança e Anti-Fraude)
+    const cpfInput = document.getElementById('pet-cpf');
+    const cpfVal = cpfInput.value.replace(/\D/g, '');
+    if (!cpfVal || cpfVal.length !== 11 || !validateCPF(cpfVal)) {
+        cpfInput.style.borderColor = 'var(--danger)';
+        cpfInput.style.boxShadow = '0 0 0 2px var(--danger-glow)';
+        alert("Erro de Validação - CPF:\n\nPor favor, informe um CPF válido de 11 dígitos numéricos.");
+        return;
+    }
+    cpfInput.style.borderColor = '';
+    cpfInput.style.boxShadow = '';
+
+    // Validação de Idade (Maior de 18 anos)
+    const dateInput = document.getElementById('pet-data-nascimento');
+    const dataNascimentoStr = dateInput.value;
+
+    if (!dataNascimentoStr || dataNascimentoStr.length < 10) {
+        dateInput.style.border = '1px solid var(--danger)';
+        alert("A Data de Nascimento é obrigatória e deve estar completa.");
+        return;
+    }
+
+    const parts = dataNascimentoStr.split('/');
+    if (parts.length === 3) {
+        const birthDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        if (age < 18) {
+            dateInput.style.border = '1px solid var(--danger)';
+            alert("Atenção: O cadastro não é permitido para menores de 18 anos.");
+            return;
+        }
+    } else {
+        dateInput.style.border = '1px solid var(--danger)';
+        alert("Data de nascimento inválida.");
+        return;
+    }
+
+    // Limpa a borda se estiver tudo ok
+    dateInput.style.border = '';
+
+    // Validação do E-mail
+    const emailInput = document.getElementById('pet-email');
+    if (emailInput.value && !validateEmailLogic(emailInput.value)) {
+        emailInput.style.border = '1px solid var(--danger)';
+        alert("Atenção: O e-mail informado parece conter erros de digitação. Por favor, verifique e corrija!");
+        return;
+    }
+    emailInput.style.border = '';
+
+    const id = document.getElementById('pet-id').value;
+
+    // Captura valores dos radios com segurança
+    const autorizaImagemChecked = document.querySelector('input[name="pet-autoriza-imagem"]:checked');
+    const assinaChecked = document.querySelector('input[name="pet-assina"]:checked');
+
+    const previewImg = document.querySelector('#pet-foto-preview img');
+    const foto_url = previewImg ? previewImg.src : null;
+
+    const data = {
+        nome: document.getElementById('pet-nome').value,
+        cpf: document.getElementById('pet-cpf').value || null,
+        estado_civil: document.getElementById('pet-estado-civil')?.value || null,
+        sexo: document.getElementById('pet-sexo')?.value || null,
+        profissao: document.getElementById('pet-profissao')?.value || null,
+        instagram: document.getElementById('pet-instagram')?.value || null,
+        data_nascimento: document.getElementById('pet-data-nascimento')?.value || null,
+        email: document.getElementById('pet-email')?.value || null,
+        telefone: document.getElementById('pet-telefone')?.value || null,
+        telefone_secundario: document.getElementById('pet-telefone-secundario')?.value || null,
+        cep: document.getElementById('pet-cep').value || null,
+        endereco: document.getElementById('pet-endereco').value || null,
+        numero: document.getElementById('pet-numero').value || null,
+        complemento: document.getElementById('pet-complemento').value || null,
+        bairro: document.getElementById('pet-bairro').value || null,
+        cidade: document.getElementById('pet-cidade').value || null,
+        uf: document.getElementById('pet-uf').value || null,
+        indicacao: document.getElementById('pet-indicacao').value || null,
+        como_conheceu: document.getElementById('pet-como-conheceu').value || null,
+        dia_pagamento: document.getElementById('pet-dia-pagamento').value || null,
+        observacoes: document.getElementById('pet-observacoes') ? (document.getElementById('pet-observacoes').value || null) : null,
+        forma_pgto_preferencial: document.getElementById('pet-forma-pgto').value || null,
+        autoriza_imagem: autorizaImagemChecked ? autorizaImagemChecked.value === "true" : false,
+        assina: assinaChecked ? assinaChecked.value === "true" : false,
+        status: document.getElementById('pet-status').value,
+        foto_url: foto_url
+    };
+
+    const url = id ? `${API_BASE}/pets/${id}` : `${API_BASE}/pets`;
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            const savedPet = await response.json();
+            state.highlightedPetId = savedPet.id;
+
+            window.resetPetForm();
+
+            // Redireciona de forma robusta para o submenu de Pets onde fica a listagem
+            const tabLink = document.querySelector('.submenu-link[data-tab="clientes"]');
+            if (tabLink) {
+                tabLink.click();
+            } else {
+                showPetsList();
+            }
+
+            CustomUI.toast("Sucesso", "Responsável salvo com sucesso!", "success");
+            loadPets();
+        } else {
+            const err = await response.json();
+            if (response.status === 409) {
+                // CPF duplicado: exibe feedback inline no campo CPF
+                formVerificationState.cpf = false;
+                showFeedback('pet-cpf', `⚠️ CPF já cadastrado: ${err.detail}`, 'danger');
+                validateFormState();
+                // Rola o formulário até o campo CPF
+                const cpfInput = document.getElementById('pet-cpf');
+                if (cpfInput) cpfInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                CustomUI.alert("Erro ao Salvar", `Erro ao salvar pet: ${err.detail || 'Verifique os dados.'}`, "danger");
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar pet.", "danger");
+    }
+}
+
+async function deletePet(id) {
+    const confirmDelete = await CustomUI.confirm(
+        "Excluir Responsável",
+        "Tem certeza que deseja excluir este pet? Esta ação não poderá ser desfeita.",
+        { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
+    );
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/pets/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            CustomUI.toast("Sucesso", "Responsável excluído com sucesso!", "success");
+            loadPets();
+            window.toggleBulkDeleteBtn('pets');
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Excluir", `Erro ao excluir: ${err.detail}`, "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao excluir pet.", "danger");
+    }
+}
+
+window.bulkDeletePets = async function () {
+    const checkboxes = document.querySelectorAll('.pet-select-checkbox:checked');
+    const ids = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+    if (ids.length === 0) return;
+
+    const confirmDelete = await CustomUI.confirm(
+        "Excluir em Massa",
+        `Tem certeza que deseja excluir os ${ids.length} responsáveis selecionados? Esta ação não poderá ser desfeita e removerá todos os registros associados.`,
+        { type: "danger", confirmText: "Excluir Selecionados", cancelText: "Cancelar" }
+    );
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/pets/batch-delete`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: ids })
+        });
+        if (response.ok) {
+            CustomUI.toast("Sucesso", `${ids.length} responsáveis excluídos com sucesso!`, "success");
+            loadPets();
+            window.toggleBulkDeleteBtn('pets');
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Excluir", `Erro ao excluir em massa: ${err.detail || 'Erro desconhecido'}`, "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao excluir responsáveis em massa.", "danger");
+    }
+};
+
+// ==========================================
+// CONTROLE DA TABELA DE CLIENTES
+// ==========================================
+async function loadClientes() {
+    showLoading('clientes', true);
+    try {
+        const response = await fetch(`${API_BASE}/clientes`);
+        state.clientes = await response.json();
+        renderClientesTable(state.clientes);
+    } catch (error) {
+        console.error("Erro ao carregar clientes:", error);
+    } finally {
+        showLoading('clientes', false);
+    }
+}
+
+function renderClientesTable(list) {
+    const tbody = document.getElementById('tbody-clientes');
+    const emptyState = document.getElementById('empty-clientes');
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+    }
+    emptyState.style.display = 'none';
+
+    list.forEach(c => {
+        const row = document.createElement('tr');
+        const badgeClass = c.status === 'Ativo' ? 'badge-success' : 'badge-danger';
+
+        row.innerHTML = `
+            <td><strong>${String(c.id).padStart(3, '0')}</strong></td>
+            <td>${c.nome}</td>
+            <td>${c.email}</td>
+            <td>${c.telefone || '<span class="text-muted">Não inf.</span>'}</td>
+            <td><span class="badge ${badgeClass}">${c.status}</span></td>
+            <td>${formatDateString(c.data_cadastro)}</td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-action btn-edit" onclick="editCliente(${c.id})" title="Editar Cliente">
+                        <i data-lucide="edit-3"></i>
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deleteCliente(${c.id})" title="Excluir Cliente">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    lucide.createIcons();
+}
+
+async function editCliente(id) {
+    try {
+        const response = await fetch(`${API_BASE}/clientes/${id}`);
+        const c = await response.json();
+
+        document.getElementById('cliente-id').value = c.id;
+        if (document.getElementById('cliente-cpf')) {
+            document.getElementById('cliente-cpf').value = c.cpf || '';
+        }
+        document.getElementById('cliente-nome').value = c.nome;
+        document.getElementById('cliente-email').value = c.email;
+        document.getElementById('cliente-telefone').value = c.telefone || '';
+        setCustomSelectValue('cliente-status', c.status);
+
+        document.getElementById('modal-cliente-title').textContent = "Editar Cliente";
+        openModal('modal-cliente');
+    } catch (error) {
+        alert("Erro ao buscar dados do cliente para edição.");
+    }
+}
+
+async function saveCliente(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('cliente-id').value;
+    const data = {
+        nome: document.getElementById('cliente-nome').value,
+        email: document.getElementById('cliente-email').value,
+        telefone: document.getElementById('cliente-telefone').value,
+        status: document.getElementById('cliente-status').value,
+        cpf: document.getElementById('cliente-cpf') ? (document.getElementById('cliente-cpf').value || null) : null
+    };
+
+    const url = id ? `${API_BASE}/clientes/${id}` : `${API_BASE}/clientes`;
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('modal-cliente');
+            CustomUI.toast("Sucesso", "Cliente salvo com sucesso!", "success");
+            loadClientes();
+        } else {
+            const err = await response.json();
+            if (response.status === 409) {
+                CustomUI.alert("CPF Já Cadastrado", `⚠️ CPF já cadastrado!\n\n${err.detail}\n\nVerifique o CPF informado antes de prosseguir.`, "warning");
+            } else {
+                CustomUI.alert("Erro ao Salvar", `Erro ao salvar cliente: ${err.detail || 'Verifique os dados.'}`, "danger");
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar cliente.", "danger");
+    }
+}
+
+async function deleteCliente(id) {
+    const confirmDelete = await CustomUI.confirm(
+        "Excluir Cliente",
+        "Tem certeza que deseja excluir este cliente? Esta ação também poderá falhar se existirem vendas vinculadas a ele.",
+        { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
+    );
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/clientes/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            CustomUI.toast("Sucesso", "Cliente excluído com sucesso!", "success");
+            loadClientes();
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Excluir", `Erro ao excluir: ${err.detail}`, "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao excluir cliente.", "danger");
+    }
+}
+
+// ==========================================
+// CONTROLE DA TABELA DE PRODUTOS
+// ==========================================
+async function loadProdutos() {
+    showLoading('produtos', true);
+    try {
+        const response = await fetch(`${API_BASE}/produtos`);
+        state.produtos = await response.json();
+        renderProdutosTable(state.produtos);
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+    } finally {
+        showLoading('produtos', false);
+    }
+}
+
+function renderProdutosTable(list) {
+    const tbody = document.getElementById('tbody-produtos');
+    const emptyState = document.getElementById('empty-produtos');
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+    }
+    emptyState.style.display = 'none';
+
+    list.forEach(p => {
+        const row = document.createElement('tr');
+        const badgeClass = p.estoque > 0 ? 'badge-success' : 'badge-danger';
+
+        row.innerHTML = `
+            <td><strong>#${p.id}</strong></td>
+            <td>${p.nome}</td>
+            <td><span class="badge" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-glow);">${p.categoria}</span></td>
+            <td><strong>${formatCurrency(p.preco)}</strong></td>
+            <td>${p.estoque} unidades</td>
+            <td><span class="badge ${badgeClass}">${p.status}</span></td>
+            <td>
+                <div class="table-actions">
+                    <button class="btn-action btn-edit" onclick="editProduto(${p.id})" title="Editar Produto">
+                        <i data-lucide="edit-3"></i>
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deleteProduto(${p.id})" title="Excluir Produto">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+    lucide.createIcons();
+}
+
+async function editProduto(id) {
+    try {
+        const response = await fetch(`${API_BASE}/produtos/${id}`);
+        const p = await response.json();
+
+        document.getElementById('produto-id').value = p.id;
+        document.getElementById('produto-nome').value = p.nome;
+        document.getElementById('produto-categoria').value = p.categoria;
+        document.getElementById('produto-preco').value = p.preco;
+        document.getElementById('produto-estoque').value = p.estoque;
+
+        document.getElementById('modal-produto-title').textContent = "Editar Produto";
+        openModal('modal-produto');
+    } catch (error) {
+        alert("Erro ao buscar dados do produto.");
+    }
+}
+
+async function saveProduto(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('produto-id').value;
+    const data = {
+        nome: document.getElementById('produto-nome').value,
+        categoria: document.getElementById('produto-categoria').value,
+        preco: parseFloat(document.getElementById('produto-preco').value),
+        estoque: parseInt(document.getElementById('produto-estoque').value)
+    };
+
+    const url = id ? `${API_BASE}/produtos/${id}` : `${API_BASE}/produtos`;
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('modal-produto');
+            CustomUI.toast("Sucesso", "Produto salvo com sucesso!", "success");
+            loadProdutos();
+        } else {
+            CustomUI.alert("Erro ao Salvar", "Ocorreu um erro ao salvar o produto.", "danger");
+        }
+    } catch (error) {
+        console.error(error);
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar produto.", "danger");
+    }
+}
+
+async function deleteProduto(id) {
+    const confirmDelete = await CustomUI.confirm(
+        "Excluir Produto",
+        "Deseja realmente excluir este produto? Esta ação não poderá ser desfeita.",
+        { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
+    );
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/produtos/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            CustomUI.toast("Sucesso", "Produto excluído com sucesso!", "success");
+            loadProdutos();
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Excluir", `Erro ao excluir: ${err.detail}`, "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro ao tentar deletar o produto.", "danger");
+    }
+}
+
+// ==========================================
+// CONTROLE DA TABELA E REGISTRO DE VENDAS
+// ==========================================
+async function loadVendas() {
+    showLoading('vendas', true);
+    try {
+        const response = await fetch(`${API_BASE}/vendas`);
+        state.vendas = await response.json();
+        renderVendasTable(state.vendas);
+    } catch (error) {
+        console.error("Erro ao carregar vendas:", error);
+    } finally {
+        showLoading('vendas', false);
+    }
+}
+
+function renderVendasTable(list) {
+    const tbody = document.getElementById('tbody-vendas');
+    const emptyState = document.getElementById('empty-vendas');
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+    }
+    emptyState.style.display = 'none';
+
+    list.forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>#${v.id}</strong></td>
+            <td>${v.cliente_nome}</td>
+            <td>${v.produto_nome}</td>
+            <td>${formatCurrency(v.produto_preco)}</td>
+            <td>${v.quantidade}x</td>
+            <td><strong class="text-success">${formatCurrency(v.valor_total)}</strong></td>
+            <td>${formatDateString(v.data_venda)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Carrega as opções de Clientes e Produtos no modal de vendas
+async function loadVendaDropdowns() {
+    const clientSelect = document.getElementById('venda-cliente-select');
+    const productSelect = document.getElementById('venda-produto-select');
+
+    clientSelect.innerHTML = '<option value="" disabled selected>Selecione um cliente...</option>';
+    productSelect.innerHTML = '<option value="" disabled selected>Selecione um produto...</option>';
+
+    try {
+        // Carrega clientes do servidor
+        const clientRes = await fetch(`${API_BASE}/clientes`);
+        const clients = await clientRes.json();
+        // Apenas clientes Ativos podem comprar
+        clients.filter(c => c.status === 'Ativo').forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.nome} (#${c.id})`;
+            clientSelect.appendChild(opt);
+        });
+
+        // Carrega produtos
+        const prodRes = await fetch(`${API_BASE}/produtos`);
+        state.produtos = await prodRes.json();
+        // Apenas produtos com estoque podem ser vendidos
+        state.produtos.filter(p => p.estoque > 0).forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.dataset.price = p.preco;
+            opt.dataset.stock = p.estoque;
+            opt.textContent = `${p.nome} - R$ ${p.preco.toFixed(2)} (Estoque: ${p.estoque})`;
+            productSelect.appendChild(opt);
+        });
+
+    } catch (e) {
+        console.error("Erro ao carregar dropdowns de vendas:", e);
+    }
+}
+
+// Atualiza o valor estimado e valida o estoque no preview do formulário
+function updateVendaPreview() {
+    const productSelect = document.getElementById('venda-produto-select');
+    const qtyInput = document.getElementById('venda-quantidade');
+    const previewDiv = document.getElementById('venda-price-preview');
+    const warningDiv = document.getElementById('venda-warning-stock');
+    const btnSubmit = document.getElementById('btn-submit-venda');
+
+    const selectedOption = productSelect.options[productSelect.selectedIndex];
+
+    if (!selectedOption || !selectedOption.value) {
+        previewDiv.textContent = 'R$ 0,00';
+        warningDiv.style.display = 'none';
+        btnSubmit.removeAttribute('disabled');
+        return;
+    }
+
+    const preco = parseFloat(selectedOption.dataset.price);
+    const estoque = parseInt(selectedOption.dataset.stock);
+    const quantidade = parseInt(qtyInput.value) || 0;
+
+    // Calcula o total
+    const total = preco * quantidade;
+    previewDiv.textContent = formatCurrency(total);
+
+    // Alerta de limite de estoque
+    if (quantidade > estoque) {
+        warningDiv.style.display = 'flex';
+        btnSubmit.setAttribute('disabled', 'true');
+    } else {
+        warningDiv.style.display = 'none';
+        btnSubmit.removeAttribute('disabled');
+    }
+}
+
+async function saveVenda(e) {
+    e.preventDefault();
+
+    const data = {
+        cliente_id: parseInt(document.getElementById('venda-cliente-select').value),
+        produto_id: parseInt(document.getElementById('venda-produto-select').value),
+        quantidade: parseInt(document.getElementById('venda-quantidade').value),
+        valor_total: 0.0 // Backend recalcula para segurança
+    };
+
+    try {
+        const response = await fetch(`${API_BASE}/vendas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('modal-venda');
+            CustomUI.toast("Sucesso", "Venda registrada com sucesso!", "success");
+            loadVendas();
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Registrar Venda", `Falha ao registrar venda: ${err.detail}`, "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao registrar venda.", "danger");
+    }
+}
+
+// ==========================================
+// TERMINAL SQL INTERATIVO (CONSOLE PLAYGROUND)
+// ==========================================
+function initSQLTerminal() {
+    const btnRun = document.getElementById('btn-run-sql');
+    if (btnRun) {
+        btnRun.addEventListener('click', runCustomSQL);
+    }
+}
+
+function setSQL(queryText) {
+    document.getElementById('sql-query-input').value = queryText;
+}
+
+async function runCustomSQL() {
+    const queryInput = document.getElementById('sql-query-input');
+    const queryText = queryInput.value.trim();
+    const statusSpan = document.getElementById('sql-result-status');
+    const tableContainer = document.getElementById('sql-results-table-container');
+
+    if (!queryText) {
+        alert("Por favor, insira uma instrução SQL primeiro!");
+        return;
+    }
+
+    statusSpan.className = "status-empty";
+    statusSpan.textContent = "Executando...";
+    tableContainer.innerHTML = `
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    `;
+
+    try {
+        const response = await fetch(`${API_BASE}/query`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: queryText })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            statusSpan.className = "status-success";
+            statusSpan.textContent = "Sucesso";
+
+            if (result.type === 'select') {
+                renderSQLResultTable(result.columns, result.rows, tableContainer);
+            } else {
+                tableContainer.innerHTML = `
+                    <div class="sql-empty-state" style="color: var(--success)">
+                        <i data-lucide="check-circle" style="opacity: 1"></i>
+                        <h4>Operação de Escrita Concluída</h4>
+                        <p>${result.message}</p>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+        } else {
+            statusSpan.className = "status-error";
+            statusSpan.textContent = "Erro de Sintaxe";
+            tableContainer.innerHTML = `
+                <div class="sql-empty-state" style="color: var(--danger)">
+                    <i data-lucide="x-circle" style="opacity: 1"></i>
+                    <h4>Erro no Banco de Dados</h4>
+                    <p style="font-family: monospace; font-size: 11px; margin-top: 8px; max-width: 90%">${result.message}</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+    } catch (e) {
+        statusSpan.className = "status-error";
+        statusSpan.textContent = "Erro de Conexão";
+        tableContainer.innerHTML = `<p style="padding: 20px;">Falha ao comunicar com o servidor da API.</p>`;
+    }
+}
+
+function renderSQLResultTable(columns, rows, container) {
+    container.innerHTML = '';
+
+    if (rows.length === 0) {
+        container.innerHTML = `
+            <div class="sql-empty-state">
+                <i data-lucide="info"></i>
+                <p>Nenhuma linha correspondente retornada pela consulta.</p>
+            </div>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.className = "data-table";
+    table.style.width = "max-content";
+    table.style.minWidth = "100%";
+
+    // Cabeçalho da tabela
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    columns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Corpo da tabela
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        columns.forEach(col => {
+            const td = document.createElement('td');
+            const val = row[col];
+
+            if (val === null || val === undefined) {
+                td.innerHTML = '<span class="text-muted">NULL</span>';
+            } else if (typeof val === 'number' && (col.includes('preco') || col.includes('total') || col.includes('faturado') || col.includes('valor'))) {
+                td.textContent = formatCurrency(val);
+            } else {
+                td.textContent = val;
+            }
+
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
+// ==========================================
+// FILTROS DE PESQUISA RÁPIDA (CLIENT-SIDE)
+// ==========================================
+function initFilters() {
+    // Filtro Pets
+    const searchPets = document.getElementById('search-pets');
+    if (searchPets) {
+        searchPets.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = state.pets.filter(t =>
+                t.nome.toLowerCase().includes(term) ||
+                t.email.toLowerCase().includes(term) ||
+                (t.cpf && t.cpf.includes(term))
+            );
+            renderPetsTable(filtered);
+        });
+    }
+
+    // Filtro Clientes
+    const searchClientes = document.getElementById('search-clientes');
+    if (searchClientes) {
+        searchClientes.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = state.clientes.filter(c =>
+                c.nome.toLowerCase().includes(term) ||
+                c.email.toLowerCase().includes(term)
+            );
+            renderClientesTable(filtered);
+        });
+    }
+
+    // Filtro Produtos
+    const searchProdutos = document.getElementById('search-produtos');
+    if (searchProdutos) {
+        searchProdutos.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = state.produtos.filter(p =>
+                p.nome.toLowerCase().includes(term) ||
+                p.categoria.toLowerCase().includes(term)
+            );
+            renderProdutosTable(filtered);
+        });
+    }
+
+    // Filtro Vendas
+    const searchVendas = document.getElementById('search-vendas');
+    if (searchVendas) {
+        searchVendas.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = state.vendas.filter(v =>
+                v.cliente_nome.toLowerCase().includes(term) ||
+                v.produto_nome.toLowerCase().includes(term)
+            );
+            renderVendasTable(filtered);
+        });
+    }
+}
+
+// ==========================================
+// UTILITÁRIOS E DIÁLOGOS DE MODAL
+// ==========================================
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+
+    if (id === 'modal-pet' && !document.getElementById('pet-id').value) {
+        document.getElementById('modal-pet-title').textContent = "Novo Responsável";
+    }
+    if (id === 'modal-cliente' && !document.getElementById('cliente-id').value) {
+        document.getElementById('modal-cliente-title').textContent = "Novo Cliente";
+    }
+    if (id === 'modal-produto' && !document.getElementById('produto-id').value) {
+        document.getElementById('modal-produto-title').textContent = "Novo Produto";
+    }
+    if (id === 'modal-venda') {
+        loadVendaDropdowns();
+    }
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+
+    // Reseta formulários
+    if (id === 'modal-pet') {
+        window.resetPetForm();
+    }
+    if (id === 'modal-cliente') {
+        document.getElementById('form-cliente').reset();
+        document.getElementById('cliente-id').value = '';
+    }
+    if (id === 'modal-produto') {
+        document.getElementById('form-produto').reset();
+        document.getElementById('produto-id').value = '';
+    }
+    if (id === 'modal-venda') {
+        document.getElementById('form-venda').reset();
+        document.getElementById('venda-price-preview').textContent = 'R$ 0,00';
+        document.getElementById('venda-warning-stock').style.display = 'none';
+        document.getElementById('btn-submit-venda').removeAttribute('disabled');
+    }
+}
+
+function showLoading(panelName, show) {
+    const spinner = document.getElementById(`loading-${panelName}`);
+    const table = document.getElementById(`table-${panelName}-element`);
+
+    if (spinner && table) {
+        spinner.style.display = show ? 'flex' : 'none';
+        table.style.opacity = show ? '0.3' : '1';
+    }
+}
+
+// Utilitários de Formatação
+function formatCurrency(val) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+}
+
+function formatDateString(str) {
+    if (!str) return '';
+    try {
+        const parts = str.split(' ');
+        const dateParts = parts[0].split('-');
+        return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]} ${parts[1] || ''}`.trim();
+    } catch (e) {
+        return str;
+    }
+}
+
+function formatDateShort(str) {
+    if (!str) return '';
+    try {
+        const dateParts = str.split('-');
+        return `${dateParts[2]}/${dateParts[1]}`;
+    } catch (e) {
+        return str;
+    }
+}
+
+// ==========================================
+// CONTROLE DE USUÁRIOS (CONFIGURAÇÃO)
+// ==========================================
+function checkUserPermissions() {
+    const is_admin = localStorage.getItem('user_cargo') === 'Administrador';
+
+    // Mostra/oculta botão de criar usuário
+    const btnNovoUsuario = document.getElementById('btn-novo-usuario');
+    if (btnNovoUsuario) {
+        btnNovoUsuario.style.display = (is_admin && state.activeTab === 'usuarios') ? 'inline-flex' : 'none';
+    }
+
+    // Mostra/oculta cabeçalho de ações
+    const thAcoes = document.getElementById('th-usuario-acoes');
+    if (thAcoes) {
+        thAcoes.style.display = is_admin ? 'table-cell' : 'none';
+    }
+}
+
+async function verifySession() {
+    try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('user_nome', data.nome);
+            localStorage.setItem('user_username', data.username);
+            localStorage.setItem('user_cargo', data.cargo);
+
+            // Atualiza o display do profile no header
+            const displayUserName = document.getElementById('display-user-name');
+            const displayUserAvatar = document.getElementById('display-user-avatar');
+            if (displayUserName) {
+                displayUserName.textContent = data.nome;
+            }
+            if (displayUserAvatar) {
+                const initials = data.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                displayUserAvatar.textContent = initials;
+            }
+
+            // Executa verificação de permissões na UI
+            checkUserPermissions();
+        }
+    } catch (e) {
+        console.error("Erro ao validar sessão:", e);
+    }
+}
+
+async function loadUsuarios() {
+    // Garante que as permissões estejam atualizadas ao abrir a aba
+    checkUserPermissions();
+
+    showLoading('usuarios', true);
+    try {
+        const response = await fetch(`${API_BASE}/users`);
+        const list = await response.json();
+        renderUsuariosTable(list);
+    } catch (error) {
+        console.error("Erro ao carregar usuários:", error);
+    } finally {
+        showLoading('usuarios', false);
+    }
+}
+
+function renderUsuariosTable(list) {
+    const tbody = document.getElementById('tbody-usuarios');
+    const emptyState = document.getElementById('empty-usuarios');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (list.length === 0) {
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+    }
+    if (emptyState) emptyState.style.display = 'none';
+
+    const is_admin = localStorage.getItem('user_cargo') === 'Administrador';
+
+    list.forEach(u => {
+        const row = document.createElement('tr');
+
+        // Badge colorida para o cargo
+        let badgeStyle = 'background: rgba(148, 163, 184, 0.08); border: 1px solid var(--border-glow); color: var(--text-muted);';
+        if (u.cargo === 'Administrador') {
+            badgeStyle = 'background: rgba(16, 185, 129, 0.08); border: 1px solid var(--success-glow); color: var(--primary);';
+        }
+
+        let actionsHTML = '';
+        if (is_admin) {
+            actionsHTML = `
+                <td style="text-align: center;">
+                    <div style="display: flex; gap: 18px; justify-content: center; align-items: center;">
+                        <a href="#" onclick="event.preventDefault(); openUsuarioModal(${u.id})" class="flat-action-btn edit" title="Editar Usuário" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i data-lucide="edit-2" style="width: 18px; height: 18px;"></i>
+                        </a>
+                        <a href="#" onclick="event.preventDefault(); deleteUsuario(${u.id})" class="flat-action-btn delete" title="Excluir Usuário" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i>
+                        </a>
+                    </div>
+                </td>
+            `;
+        }
+
+        row.innerHTML = `
+            <td><strong>${String(u.id).padStart(3, '0')}</strong></td>
+            <td>${u.nome}</td>
+            <td><span class="badge" style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-glow); color: var(--text-main); font-weight: 500;">${u.username}</span></td>
+            <td><span class="badge" style="${badgeStyle} font-weight: 600; font-size: 11px;">${u.cargo}</span></td>
+            ${actionsHTML}
+        `;
+        tbody.appendChild(row);
+    });
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+// Gera o login padrão: 1ª letra do primeiro nome + '.' + último sobrenome
+// Ex: "Guilherme Kamaroski" → "g.kamaroski"
+function generateLoginFromName(fullName) {
+    if (!fullName || !fullName.trim()) return '';
+    // Remove diacritics e converte para minúsculas
+    const clean = removeDiacritics(fullName.trim()).toLowerCase();
+    // Divide por espaços, ignorando preposições curtas e vazios
+    const ignoredWords = ['de', 'da', 'do', 'dos', 'das', 'e', 'del', 'al', 'van', 'von'];
+    const parts = clean.split(/\s+/).filter(p => p.length > 0);
+    // Filtra preposições mas mantém ao menos a primeira e última palavra com significado
+    const meaningfulParts = parts.filter(p => !ignoredWords.includes(p));
+
+    if (meaningfulParts.length === 0) return '';
+    if (meaningfulParts.length === 1) return meaningfulParts[0].replace(/[^a-z0-9]/g, '');
+
+    const initial = meaningfulParts[0][0]; // Primeira letra do primeiro nome
+    const lastName = meaningfulParts[meaningfulParts.length - 1].replace(/[^a-z0-9]/g, ''); // Último sobrenome
+
+    return `${initial}.${lastName}`;
+}
+
+// Abre o modal de cadastro/edição de usuário
+async function openUsuarioModal(id = null) {
+    const modal = document.getElementById('modal-usuario');
+    const form = document.getElementById('form-usuario');
+    if (!modal || !form) return;
+
+    form.reset();
+    document.getElementById('usuario-id').value = '';
+
+    const title = document.getElementById('modal-usuario-title');
+    const inputPassword = document.getElementById('usuario-password');
+    inputPassword.setAttribute('type', 'password');
+    const toggleBtn = document.getElementById('toggle-usuario-password');
+    if (toggleBtn) {
+        toggleBtn.innerHTML = '<i data-lucide="eye"></i>';
+    }
+    const helpPassword = document.getElementById('help-usuario-password');
+
+    if (id) {
+        // Modo Edição
+        title.textContent = "Editar Usuário";
+        inputPassword.removeAttribute('required');
+        helpPassword.style.display = 'block';
+
+        try {
+            // Busca a lista para encontrar os dados do usuário a editar
+            const response = await fetch(`${API_BASE}/users`);
+            const list = await response.json();
+            const u = list.find(user => user.id === id);
+
+            if (u) {
+                document.getElementById('usuario-id').value = u.id;
+                document.getElementById('usuario-nome').value = u.nome;
+                document.getElementById('usuario-username').value = u.username;
+                document.getElementById('usuario-email').value = u.email || '';
+                setCustomSelectValue('usuario-cargo', u.cargo);
+            }
+        } catch (e) {
+            console.error("Erro ao carregar usuário:", e);
+            CustomUI.alert("Erro", "Não foi possível carregar os dados do usuário", "danger");
+            return;
+        }
+    } else {
+        // Modo Criação
+        title.textContent = "Novo Usuário";
+        inputPassword.setAttribute('required', 'true');
+        helpPassword.style.display = 'none';
+    }
+
+    // === AUTO-GERAÇÃO DE LOGIN A PARTIR DO NOME ===
+    const inputNome = document.getElementById('usuario-nome');
+    const inputUsername = document.getElementById('usuario-username');
+
+    // Remove listeners anteriores para evitar duplicatas
+    if (inputNome._loginAutoHandler) {
+        inputNome.removeEventListener('input', inputNome._loginAutoHandler);
+    }
+    if (inputUsername._loginManualHandler) {
+        inputUsername.removeEventListener('input', inputUsername._loginManualHandler);
+    }
+
+    if (!id) {
+        // Apenas no modo de criação: geração automática ativa
+        let userManuallyEdited = false;
+        let listenerReady = false; // Só ativa após o modal abrir (evita que form.reset() dispare)
+
+        // Aguarda um frame para garantir que o reset já aconteceu
+        requestAnimationFrame(() => { listenerReady = true; });
+
+        const manualHandler = () => {
+            if (!listenerReady) return;
+            userManuallyEdited = true;
+        };
+        inputUsername._loginManualHandler = manualHandler;
+        inputUsername.addEventListener('input', manualHandler);
+
+        const loginAutoHandler = () => {
+            if (userManuallyEdited) return;
+            const generated = generateLoginFromName(inputNome.value);
+            inputUsername.value = generated;
+            // Remove o placeholder quando há valor gerado para não sobrepor o texto
+            inputUsername.placeholder = generated ? '' : 'Gerado automaticamente ao digitar o nome';
+        };
+
+        inputNome._loginAutoHandler = loginAutoHandler;
+        inputNome.addEventListener('input', loginAutoHandler);
+    }
+
+
+    openModal('modal-usuario');
+    // Re-renderiza ícones Lucide após abrir o modal
+    if (window.lucide) lucide.createIcons();
+}
+
+// Salva o cadastro do usuário (Novo ou Edição)
+async function saveUsuario(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('usuario-id').value;
+    const nome = document.getElementById('usuario-nome').value.trim();
+    const username = document.getElementById('usuario-username').value.trim();
+    const email = document.getElementById('usuario-email').value.trim();
+    const cargo = document.getElementById('usuario-cargo').value;
+    const password = document.getElementById('usuario-password').value;
+
+    // Validação básica do username (sem espaços)
+    if (username.includes(' ')) {
+        CustomUI.alert("Usuário Inválido", "O nome de usuário (login) não deve conter espaços.", "warning");
+        return;
+    }
+
+    const data = { nome, username, email, cargo };
+
+    // Se for novo, senha é obrigatória. Se for edição, só manda a senha se for alterada
+    if (password && password.trim()) {
+        data.password = password;
+    } else if (!id) {
+        CustomUI.alert("Campo Obrigatório", "A senha é obrigatória para novos usuários.", "warning");
+        return;
+    }
+
+    const url = id ? `${API_BASE}/users/${id}` : `${API_BASE}/users`;
+    const method = id ? 'PUT' : 'POST';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            closeModal('modal-usuario');
+            CustomUI.toast("Sucesso", id ? "Usuário atualizado com sucesso!" : "Usuário cadastrado com sucesso!", "success");
+            loadUsuarios();
+
+            // Se o próprio usuário editou seu cadastro, atualiza o localStorage e UI
+            const loggedInUsername = localStorage.getItem('user_username');
+            if (username === loggedInUsername) {
+                localStorage.setItem('user_nome', nome);
+                localStorage.setItem('user_cargo', cargo);
+                const displayUserName = document.getElementById('display-user-name');
+                if (displayUserName) displayUserName.textContent = nome;
+                checkUserPermissions();
+            }
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Salvar", err.detail || "Não foi possível salvar o usuário.", "danger");
+        }
+    } catch (error) {
+        console.error(error);
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar usuário.", "danger");
+    }
+}
+
+// Exclui um usuário
+async function deleteUsuario(id) {
+    // Impede auto-exclusão no front-end por segurança
+    const currentUsername = localStorage.getItem('user_username');
+
+    try {
+        const response = await fetch(`${API_BASE}/users`);
+        const list = await response.json();
+        const u = list.find(user => user.id === id);
+
+        if (u && u.username === currentUsername) {
+            CustomUI.alert("Ação Negada", "Você não pode excluir o seu próprio usuário logado no sistema.", "warning");
+            return;
+        }
+    } catch (e) { }
+
+    const confirmDelete = await CustomUI.confirm(
+        "Excluir Usuário",
+        "Tem certeza de que deseja excluir este usuário? Esta ação não poderá ser desfeita.",
+        { type: "danger", confirmText: "Excluir", cancelText: "Cancelar" }
+    );
+    if (!confirmDelete) return;
+
+    try {
+        const response = await fetch(`${API_BASE}/users/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            CustomUI.toast("Sucesso", "Usuário excluído com sucesso!", "success");
+            loadUsuarios();
+        } else {
+            const err = await response.json();
+            CustomUI.alert("Erro ao Excluir", err.detail || "Não foi possível excluir o usuário.", "danger");
+        }
+    } catch (error) {
+        CustomUI.alert("Erro de Conexão", "Erro ao tentar deletar o usuário.", "danger");
+    }
+}
+
+function toggleUsuarioPasswordVisibility() {
+    const passwordInput = document.getElementById('usuario-password');
+    const toggleBtn = document.getElementById('toggle-usuario-password');
+    if (!passwordInput || !toggleBtn) return;
+    const isPrivate = passwordInput.getAttribute('type') === 'password';
+
+    passwordInput.setAttribute('type', isPrivate ? 'text' : 'password');
+    toggleBtn.innerHTML = isPrivate ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+// Vincula ao escopo global para chamada a partir de eventos inline onclick
+window.checkUserPermissions = checkUserPermissions;
+window.verifySession = verifySession;
+window.loadUsuarios = loadUsuarios;
+window.openUsuarioModal = openUsuarioModal;
+window.saveUsuario = saveUsuario;
+window.deleteUsuario = deleteUsuario;
+window.generateLoginFromName = generateLoginFromName;
+window.toggleUsuarioPasswordVisibility = toggleUsuarioPasswordVisibility;
+window.showPetsList = showPetsList;
+window.showResponsáveisList = showPetsList;
+
+// ==========================================
+// VISUALIZAÇÃO DE PERFIL DO PET (RESUMO)
+// ==========================================
+window.viewPet = async function (id) {
+    try {
+        // Busca os dados completos no backend
+        const response = await fetch(`${API_BASE}/pets/${id}`);
+        if (!response.ok) throw new Error("Erro ao buscar detalhes do pet");
+        const t = await response.json();
+
+        // Salva o pet atual na visualização no estado global
+        state.currentPetInView = t;
+
+        // Reseta o botão de ação para caneta cinza e limpa imagem temporária
+        state.tempProfilePhotoBase64 = null;
+        const actionBtn = document.getElementById('perf-foto-action-btn');
+        if (actionBtn) {
+            actionBtn.dataset.state = 'edit';
+            actionBtn.style.background = '#555';
+            actionBtn.style.borderColor = '#333';
+            actionBtn.title = "Mudar Foto";
+            actionBtn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
+            actionBtn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+            actionBtn.onmouseout = function () { this.style.transform = 'scale(1)'; };
+        }
+
+        // Popula Dados Principais
+        const perfAvatar = document.getElementById('perf-avatar');
+        const perfFotoRemove = document.getElementById('perf-foto-remove');
+        if (t.foto_url) {
+            perfAvatar.innerHTML = `<img src="${t.foto_url}" alt="${t.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            perfAvatar.style.border = 'none';
+            if (perfFotoRemove) perfFotoRemove.style.display = 'flex';
+        } else {
+            const parts = (t.nome || '?').trim().split(/\s+/);
+            const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
+            perfAvatar.innerHTML = initials.toUpperCase();
+            perfAvatar.style.border = '2px solid var(--primary)';
+            if (perfFotoRemove) perfFotoRemove.style.display = 'none';
+        }
+
+        document.getElementById('perf-nome').textContent = t.nome;
+        document.getElementById('perf-status').textContent = t.status === 'Ativo' ? 'Cliente' : 'Inativo';
+        document.getElementById('perf-status').className = t.status === 'Ativo' ? 'badge-green-pet' : 'badge-danger';
+
+        // Info Pessoais
+        let formattedCpf = t.cpf || '-';
+        if (t.cpf && t.cpf.length === 11) {
+            formattedCpf = t.cpf.substring(0, 3) + '.' + t.cpf.substring(3, 6) + '.' + t.cpf.substring(6, 9) + '-' + t.cpf.substring(9, 11);
+        }
+        document.getElementById('perf-cpf').textContent = formattedCpf;
+        document.getElementById('perf-nasc').textContent = t.data_nascimento ? t.data_nascimento.split('-').reverse().join('/') : '-';
+        document.getElementById('perf-sexo').textContent = t.sexo || '-';
+        document.getElementById('perf-canal').textContent = t.canal_marketing || 'Indicação';
+        document.getElementById('perf-estcivil').textContent = t.estado_civil || '-';
+
+        // Próximo Aniversário
+        let proxNasc = '-';
+        if (t.data_nascimento) {
+            // Handle both YYYY-MM-DD, DD-MM-YYYY, and DD/MM/YYYY formats
+            let sep = t.data_nascimento.includes('/') ? '/' : '-';
+            const parts = t.data_nascimento.split(sep);
+
+            if (parts.length === 3) {
+                let dia, mes;
+                if (parts[0].length === 4) {
+                    // YYYY-MM-DD
+                    mes = parseInt(parts[1], 10);
+                    dia = parseInt(parts[2], 10);
+                } else {
+                    // DD/MM/YYYY or DD-MM-YYYY
+                    dia = parseInt(parts[0], 10);
+                    mes = parseInt(parts[1], 10);
+                }
+
+                if (!isNaN(dia) && !isNaN(mes)) {
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+
+                    let anoAniv = hoje.getFullYear();
+                    const dataAnivEsteAno = new Date(anoAniv, mes - 1, dia);
+
+                    let corAniv = '#ebed88'; // Amarelinho (não passou ainda neste ano)
+                    if (dataAnivEsteAno < hoje) {
+                        anoAniv++;
+                        corAniv = 'var(--primary)'; // Verde (já passou neste ano, próximo é no ano que vem)
+                    }
+                    proxNasc = `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${anoAniv}`;
+                    document.getElementById('perf-prox-nasc').style.color = corAniv;
+                }
+            }
+        }
+        document.getElementById('perf-prox-nasc').textContent = proxNasc;
+
+        // Endereço (Padrão Google Maps em linha única)
+        let formattedCep = '';
+        if (t.cep) {
+            formattedCep = t.cep.length === 8 ? t.cep.substring(0, 5) + '-' + t.cep.substring(5, 8) : t.cep;
+        }
+
+        let partsLogradouro = [];
+        if (t.endereco) partsLogradouro.push(t.endereco);
+        if (t.numero) partsLogradouro.push(t.numero);
+
+        let enderecoGoogle = partsLogradouro.join(', ');
+
+        // Complement removed for Google Maps compatibility
+        let partsCidade = [];
+        if (t.bairro) partsCidade.push(t.bairro);
+
+        let cidadeUf = '';
+        if (t.cidade) cidadeUf = t.cidade;
+        if (t.uf) cidadeUf += cidadeUf ? ` - ${t.uf}` : t.uf;
+
+        if (cidadeUf) partsCidade.push(cidadeUf);
+
+        if (partsCidade.length > 0) {
+            enderecoGoogle += (enderecoGoogle ? ', ' : '') + partsCidade.join(', ');
+        }
+
+        if (formattedCep) {
+            enderecoGoogle += (enderecoGoogle ? ', ' : '') + formattedCep;
+        }
+
+        // Versão sem complemento para o botão de copiar
+        let enderecoGoogleSemComplemento = partsLogradouro.join(', ');
+        if (partsCidade.length > 0) {
+            enderecoGoogleSemComplemento += (enderecoGoogleSemComplemento ? ', ' : '') + partsCidade.join(', ');
+        }
+        if (formattedCep) {
+            enderecoGoogleSemComplemento += (enderecoGoogleSemComplemento ? ', ' : '') + formattedCep;
+        }
+
+        document.getElementById('perf-endereco').innerText = enderecoGoogle || '-';
+        const btnCopy = document.getElementById('btn-copy-endereco');
+        if (btnCopy) {
+            btnCopy.dataset.copyText = enderecoGoogleSemComplemento || '-';
+        }
+        document.getElementById('perf-cadastro').textContent = t.data_cadastro ? formatDateString(t.data_cadastro).split(' ')[0] : '-';
+
+        // Contatos
+        document.getElementById('perf-email').textContent = t.email || '-';
+        document.getElementById('perf-app-email').textContent = t.email || '-';
+        document.getElementById('perf-celular').textContent = t.telefone || '-';
+        document.getElementById('perf-celular2').textContent = t.telefone_secundario || '-';
+        document.getElementById('perf-obs').value = (t.observacao && t.observacao !== '-') ? t.observacao : '';
+
+        showPetProfileTab();
+        lucide.createIcons(); // Recria os ícones caso algum seja novo
+    } catch (error) {
+        console.error("Erro ao carregar perfil:", error);
+        CustomUI.alert("Erro", "Não foi possível carregar os dados completos do pet.", "danger");
+    }
+};
+
+window.tempPreviewProfilePhoto = function (input) {
+    if (!state.currentPetInView) return;
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const base64Data = e.target.result;
+            state.tempProfilePhotoBase64 = base64Data;
+
+            // Preview local da foto no avatar do perfil
+            const perfAvatar = document.getElementById('perf-avatar');
+            if (perfAvatar) {
+                perfAvatar.innerHTML = `<img src="${base64Data}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                perfAvatar.style.border = 'none';
+            }
+
+            // Altera o botão da caneta cinza para o disquete cinza igual o X
+            const btn = document.getElementById('perf-foto-action-btn');
+            if (btn) {
+                btn.dataset.state = 'save';
+                btn.style.background = '#333';
+                btn.style.borderColor = '#555';
+                btn.title = "Salvar Foto";
+                btn.innerHTML = '<i data-lucide="save" style="width: 15px; height: 15px; color: #aaa;"></i>';
+                btn.onmouseover = function () {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.background = '#444';
+                    const icon = this.querySelector('svg, i');
+                    if (icon) icon.style.color = '#fff';
+                };
+                btn.onmouseout = function () {
+                    this.style.transform = 'scale(1)';
+                    this.style.background = '#333';
+                    const icon = this.querySelector('svg, i');
+                    if (icon) icon.style.color = '#aaa';
+                };
+                if (window.lucide) lucide.createIcons();
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+};
+
+window.handleProfilePhotoAction = async function () {
+    const btn = document.getElementById('perf-foto-action-btn');
+    if (!btn) return;
+
+    if (btn.dataset.state === 'save') {
+        if (!state.currentPetInView || !state.tempProfilePhotoBase64) return;
+
+        const confirmed = await CustomUI.confirm("Alterar Foto", "Deseja realmente salvar a nova foto de perfil?", {
+            type: 'warning',
+            confirmText: 'Sim, salvar',
+            cancelText: 'Cancelar'
+        });
+        if (!confirmed) {
+            // Restaura o avatar para a foto anterior (do banco)
+            const pet = state.currentPetInView;
+            state.tempProfilePhotoBase64 = null;
+
+            const perfAvatar = document.getElementById('perf-avatar');
+            if (perfAvatar) {
+                if (pet.foto_url) {
+                    perfAvatar.innerHTML = `<img src="${pet.foto_url}" alt="${pet.nome}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+                    perfAvatar.style.border = 'none';
+                } else {
+                    const parts = (pet.nome || '?').trim().split(/\s+/);
+                    const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
+                    perfAvatar.innerHTML = initials.toUpperCase();
+                    perfAvatar.style.border = '2px solid var(--primary)';
+                }
+            }
+
+            // Restaura o botão para a caneta cinza
+            btn.dataset.state = 'edit';
+            btn.style.background = '#555';
+            btn.style.borderColor = '#333';
+            btn.title = "Mudar Foto";
+            btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
+            btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+            btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
+            if (window.lucide) lucide.createIcons();
+
+            // Limpa o input de upload
+            const fileUpload = document.getElementById('perf-foto-upload');
+            if (fileUpload) fileUpload.value = '';
+
+            return;
+        }
+
+        const pet = state.currentPetInView;
+        const updatedPet = { ...pet, foto_url: state.tempProfilePhotoBase64 };
+
+        try {
+            const response = await fetch(`${API_BASE}/pets/${pet.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedPet)
+            });
+
+            if (response.ok) {
+                const saved = await response.json();
+                state.currentPetInView = saved;
+                state.tempProfilePhotoBase64 = null;
+
+                // Restaura o botão para a caneta cinza
+                btn.dataset.state = 'edit';
+                btn.style.background = '#555'; // Cinza
+                btn.style.borderColor = '#333';
+                btn.title = "Mudar Foto";
+                btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
+                btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+                btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
+
+                const removeBtn = document.getElementById('perf-foto-remove');
+                if (removeBtn) removeBtn.style.display = 'flex';
+
+                CustomUI.toast("Sucesso", "Foto de perfil salva com sucesso!", "success");
+                loadPets();
+                if (window.lucide) lucide.createIcons();
+            } else {
+                CustomUI.alert("Erro", "Não foi possível salvar a foto no servidor.", "danger");
+            }
+        } catch (err) {
+            console.error(err);
+            CustomUI.alert("Erro", "Erro ao salvar foto de perfil.", "danger");
+        }
+    } else {
+        // Abre o seletor de arquivos
+        const fileUpload = document.getElementById('perf-foto-upload');
+        if (fileUpload) fileUpload.click();
+    }
+};
+
+window.removeProfilePhoto = async function () {
+    if (!state.currentPetInView) return;
+    const confirmed = await CustomUI.confirm("Remover Foto", "Deseja realmente remover a foto do responsável?", {
+        type: 'danger',
+        confirmText: 'Sim, remover',
+        cancelText: 'Cancelar'
+    });
+    if (!confirmed) return;
+
+    const pet = state.currentPetInView;
+    const updatedPet = { ...pet, foto_url: null };
+
+    try {
+        const response = await fetch(`${API_BASE}/pets/${pet.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedPet)
+        });
+
+        if (response.ok) {
+            const saved = await response.json();
+            state.currentPetInView = saved;
+            state.tempProfilePhotoBase64 = null;
+
+            const perfAvatar = document.getElementById('perf-avatar');
+            const parts = (saved.nome || '?').trim().split(/\s+/);
+            const initials = parts.length >= 2 ? parts[0][0] + parts[parts.length - 1][0] : parts[0][0];
+            perfAvatar.innerHTML = initials.toUpperCase();
+            perfAvatar.style.border = '2px solid var(--primary)';
+            document.getElementById('perf-foto-remove').style.display = 'none';
+            document.getElementById('perf-foto-upload').value = '';
+
+            // Garante que o botão volte para o estado edit (caneta cinza)
+            const btn = document.getElementById('perf-foto-action-btn');
+            if (btn) {
+                btn.dataset.state = 'edit';
+                btn.style.background = '#555';
+                btn.style.borderColor = '#333';
+                btn.title = "Mudar Foto";
+                btn.innerHTML = '<i data-lucide="edit-3" style="width: 15px; height: 15px; color: #fff;"></i>';
+                btn.onmouseover = function () { this.style.transform = 'scale(1.1)'; };
+                btn.onmouseout = function () { this.style.transform = 'scale(1)'; };
+            }
+
+            CustomUI.toast("Sucesso", "Foto de perfil removida!", "success");
+            loadPets();
+            if (window.lucide) lucide.createIcons();
+        } else {
+            CustomUI.alert("Erro", "Não foi possível remover a foto no servidor.", "danger");
+        }
+    } catch (err) {
+        console.error(err);
+        CustomUI.alert("Erro", "Erro ao remover foto de perfil.", "danger");
+    }
+};
+
+window.copyTextToClipboard = function (textId, label) {
+    const el = document.getElementById(textId);
+    const text = el ? (el.value !== undefined ? el.value : el.innerText) : '';
+    if (text && text !== '-') {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                CustomUI.toast('Copiado', `${label} copiado para a área de transferência!`, 'success');
+            }).catch(err => {
+                fallbackCopyTextToClipboard(text);
+            });
+        } else {
+            fallbackCopyTextToClipboard(text);
+        }
+    }
+};
+
+window.toggleEditObsEntrega = function () {
+    const el = document.getElementById('perf-obs-entrega');
+    const btnEdit = document.getElementById('btn-edit-obs');
+    const btnSave = document.getElementById('btn-save-obs');
+
+    if (el.hasAttribute('readonly')) {
+        el.removeAttribute('readonly');
+        el.style.border = '1px solid var(--border-glow)';
+        el.style.background = 'rgba(0,0,0,0.02)';
+        el.style.padding = '8px';
+        el.style.borderRadius = '4px';
+        el.focus();
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+    } else {
+        el.setAttribute('readonly', 'true');
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+    }
+};
+
+// ==========================================
+// CONTROLE DE PETS
+// ==========================================
+window.populatePetsSelect = async function () {
+    try {
+        const response = await fetch(`${API_BASE}/pets`);
+        if (response.ok) {
+            const data = await response.json();
+            window.allPets = Array.isArray(data) ? data : (data.items || data.data || []);
+            window.renderPetDropdown(window.allPets);
+        }
+    } catch (e) {
+        console.error("Erro ao carregar pets para o select:", e);
+    }
+};
+
+window.renderPetDropdown = function (petsArray) {
+    const listDiv = document.getElementById('pets-custom-list');
+    if (!listDiv) return;
+    listDiv.innerHTML = '';
+
+    if (petsArray.length === 0) {
+        const div = document.createElement('div');
+        div.style.padding = '10px 14px';
+        div.style.color = 'var(--text-muted)';
+        div.textContent = 'Nenhum pet encontrado';
+        listDiv.appendChild(div);
+        return;
+    }
+
+    petsArray.forEach(pet => {
+        const div = document.createElement('div');
+        div.style.padding = '6px 12px';
+        div.style.fontSize = '14px';
+        div.style.cursor = 'default';
+        div.style.color = 'var(--text-main)';
+        div.style.transition = 'none';
+
+        div.textContent = pet.nome;
+
+        div.onmouseover = () => {
+            div.style.background = '#1a73e8';
+            div.style.color = '#ffffff';
+        };
+        div.onmouseout = () => {
+            div.style.background = 'transparent';
+            div.style.color = 'var(--text-main)';
+        };
+
+        div.onclick = function () {
+            document.getElementById('pet-pet-name').value = pet.nome;
+            document.getElementById('pet-pet').value = pet.id;
+            listDiv.style.display = 'none';
+        };
+
+        listDiv.appendChild(div);
+    });
+};
+
+window.openPetDropdown = function () {
+    const listDiv = document.getElementById('pets-custom-list');
+    if (listDiv) {
+        listDiv.style.display = 'block';
+        if (!window.allPets || window.allPets.length === 0) {
+            window.populatePetsSelect();
+        } else {
+            window.renderPetDropdown(window.allPets);
+        }
+    }
+};
+
+window.filterPetDropdown = function (searchTerm) {
+    if (!window.allPets) return;
+
+    document.getElementById('pet-pet').value = '';
+
+    const listDiv = document.getElementById('pets-custom-list');
+    if (listDiv) listDiv.style.display = 'block';
+
+    const lowerTerm = searchTerm.toLowerCase();
+    const filtered = window.allPets.filter(t => t.nome.toLowerCase().includes(lowerTerm) || (t.cpf && t.cpf.includes(lowerTerm)));
+    window.renderPetDropdown(filtered);
+};
+
+// Fechar o dropdown ao clicar fora dele
+document.addEventListener('click', function (e) {
+    const input = document.getElementById('pet-pet-name');
+    const listDiv = document.getElementById('pets-custom-list');
+    if (input && listDiv) {
+        if (e.target !== input && e.target !== listDiv && !listDiv.contains(e.target)) {
+            listDiv.style.display = 'none';
+        }
+    }
+});
+
+// Escuta cliques para carregar a lista de pets ao abrir a aba
+document.addEventListener('click', function (e) {
+    const tabTarget = e.target.closest('[data-tab="novo-pet"]');
+    if (tabTarget) {
+        window.populatePetsSelect();
+    }
+});
+
+window.savePet = async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('pet-id').value;
+
+    const castradoChecked = document.querySelector('input[name="pet-castrado"]:checked');
+    const treinadoChecked = document.querySelector('input[name="pet-treinado"]:checked');
+
+    const data = {
+        pet_id: document.getElementById('pet-pet').value,
+        nome: document.getElementById('pet-nome').value,
+        apelido: document.getElementById('pet-apelido').value || null,
+        sexo: document.getElementById('pet-sexo').value || null,
+        castrado: castradoChecked ? castradoChecked.value === "Sim" : false,
+        especie: document.getElementById('pet-especie').value || null,
+        raca: document.getElementById('pet-raca').value || null,
+        cor: document.getElementById('pet-cor').value || null,
+        data_nascimento: document.getElementById('pet-data-nascimento').value || null,
+        treinado: treinadoChecked ? treinadoChecked.value === "Sim" : false,
+        peso: parseFloat(document.getElementById('pet-peso').value) || null,
+        porte: document.getElementById('pet-porte').value || null,
+        data_cio: document.getElementById('pet-data-cio').value || null,
+        pelagem: document.getElementById('pet-pelagem').value || null,
+        data_obito: null,
+        restricao_alimentar: document.getElementById('pet-restricao').value || null,
+        racao: document.getElementById('pet-racao').value || null
+    };
+
+    console.log("Saving Pet:", data);
+
+    try {
+        const url = id ? `${API_BASE}/pets/${id}` : `${API_BASE}/pets`;
+        const method = id ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+            CustomUI.toast("Sucesso", "Pet salvo com sucesso!", "success");
+            document.getElementById('form-pet').reset();
+            const dashLink = document.querySelector('[data-tab="dashboard"]');
+            if (dashLink) dashLink.click();
+        } else {
+            const err = await response.json().catch(() => ({}));
+            if (response.status === 404) {
+                console.log("API de Pets ainda não implementada. Simulando sucesso no frontend.");
+                CustomUI.toast("Sucesso", "Pet validado no frontend. (API pendente de implementação completa)", "success");
+                document.getElementById('form-pet').reset();
+                const dashLink = document.querySelector('[data-tab="dashboard"]');
+                if (dashLink) dashLink.click();
+            } else {
+                CustomUI.alert("Erro", `Erro ao salvar pet: ${err.detail || 'Verifique os dados.'}`, "danger");
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        CustomUI.alert("Erro de Conexão", "Erro de conexão ao salvar pet.", "danger");
+    }
+};
+
+window.saveObsEntrega = function () {
+    // Aqui podemos futuramente adicionar uma chamada real para salvar no banco
+    window.toggleEditObsEntrega();
+    CustomUI.toast('Sucesso', 'Observação de entrega salva localmente!', 'success');
+};
+
+window.toggleEditPetObs = function () {
+    const el = document.getElementById('perf-pet-obs');
+    const btnEdit = document.getElementById('btn-edit-pet-obs');
+    const btnSave = document.getElementById('btn-save-pet-obs');
+
+    if (el.hasAttribute('readonly')) {
+        el.removeAttribute('readonly');
+        el.style.border = '1px solid var(--border-glow)';
+        el.style.background = 'rgba(0,0,0,0.02)';
+        el.style.padding = '8px';
+        el.style.borderRadius = '4px';
+        el.focus();
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+    } else {
+        el.setAttribute('readonly', 'true');
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+    }
+};
+
+window.savePetObs = async function () {
+    const el = document.getElementById('perf-pet-obs');
+    const newObs = el.value;
+
+    if (!state.currentPetInView) {
+        window.toggleEditPetObs();
+        return;
+    }
+
+    try {
+        const pet = state.currentPetInView;
+        pet.observacoes = newObs;
+
+        const payload = {
+            nome: pet.nome,
+            pet_id: pet.pet_id,
+            especie: pet.especie,
+            raca: pet.raca,
+            sexo: pet.sexo,
+            peso: pet.peso,
+            data_nascimento: pet.nascimento,
+            cor: pet.cor,
+            status: pet.status,
+            castrado: pet.castrado,
+            porte: pet.porte,
+            agressivo: pet.agressivo,
+            treinado: pet.treinado,
+            autoriza_imagem: pet.uso_imagem,
+            observacoes: newObs,
+            foto_url: pet.foto_url
+        };
+
+        const response = await fetch(`${API_BASE}/pets/${pet.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            window.toggleEditPetObs();
+            CustomUI.toast('Sucesso', 'Observações atualizadas!', 'success');
+            if (typeof window.loadPets === 'function') window.loadPets();
+        } else {
+            CustomUI.alert('Erro', 'Falha ao atualizar as observações do pet.', 'danger');
+        }
+    } catch (e) {
+        console.error(e);
+        window.toggleEditPetObs();
+        CustomUI.toast('Aviso', 'Erro de conexão ou API indisponível. Observação salva localmente.', 'warning');
+    }
+};
+
+window.toggleEditPetObs = function () {
+    const el = document.getElementById('perf-obs');
+    const btnEdit = document.getElementById('btn-edit-pet-obs');
+    const btnSave = document.getElementById('btn-save-pet-obs');
+
+    if (el.hasAttribute('readonly')) {
+        el.removeAttribute('readonly');
+        el.style.border = '1px solid var(--border-glow)';
+        el.style.background = 'rgba(0,0,0,0.02)';
+        el.style.padding = '8px';
+        el.style.borderRadius = '4px';
+        el.focus();
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+    } else {
+        el.setAttribute('readonly', 'true');
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+    }
+};
+
+window.savePetObs = function () {
+    // Aqui podemos futuramente adicionar uma chamada real para salvar no banco
+    window.toggleEditPetObs();
+    CustomUI.toast('Sucesso', 'Observações salvas localmente!', 'success');
+};
+
+window.toggleEditPetFormObs = function () {
+    const el = document.getElementById('pet-observacoes');
+    const btnEdit = document.getElementById('btn-edit-pet-form-obs');
+    const btnSave = document.getElementById('btn-save-pet-form-obs');
+
+    if (el.hasAttribute('readonly')) {
+        el.removeAttribute('readonly');
+        el.style.border = '1px solid var(--border-glow)';
+        el.style.background = 'rgba(0,0,0,0.02)';
+        el.style.padding = '8px';
+        el.style.borderRadius = '4px';
+        el.focus();
+        btnEdit.style.display = 'none';
+        btnSave.style.display = 'inline-block';
+    } else {
+        el.setAttribute('readonly', 'true');
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        btnEdit.style.display = 'inline-block';
+        btnSave.style.display = 'none';
+    }
+};
+
+window.savePetFormObs = function () {
+    window.toggleEditPetFormObs();
+    CustomUI.toast('Sucesso', 'Observações confirmadas!', 'success');
+};
+
+window.copyAddressToClipboard = function () {
+    const btn = document.getElementById('btn-copy-endereco');
+    const enderecoParaCopiar = btn ? btn.dataset.copyText : document.getElementById('perf-endereco').innerText;
+
+    if (enderecoParaCopiar && enderecoParaCopiar !== '-') {
+        // Fallback robusto para navegadores sem suporte a clipboard ou rodando em HTTP (não local)
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(enderecoParaCopiar).then(() => {
+                CustomUI.toast('Copiado', 'Endereço copiado para a área de transferência!', 'success');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                fallbackCopyTextToClipboard(enderecoParaCopiar);
+            });
+        } else {
+            fallbackCopyTextToClipboard(enderecoParaCopiar);
+        }
+    }
+};
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            CustomUI.toast('Copiado', 'Endereço copiado para a área de transferência!', 'success');
+        } else {
+            CustomUI.toast('Erro', 'Não foi possível copiar o endereço.', 'danger');
+        }
+    } catch (err) {
+        console.error('Fallback: Erro ao copiar', err);
+        CustomUI.toast('Erro', 'Não foi possível copiar o endereço.', 'danger');
+    }
+    document.body.removeChild(textArea);
+}
+
+window.showPetProfileTab = function () {
+    // Esconder tudo
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.submenu-link').forEach(l => l.classList.remove('active'));
+
+    // Exibir apenas o tab-pet-perfil
+    const tabPerfil = document.getElementById('tab-pet-perfil');
+    if (tabPerfil) {
+        tabPerfil.classList.add('active');
+    }
+
+    // Manter a aba pai de clientes ativa para contexto visual
+    const clientesLink = document.querySelector(".nav-link[data-tab='clientes']");
+    if (clientesLink) {
+        clientesLink.classList.add('active');
+    }
+
+    // Atualizar Cabeçalho Global
+    const title = document.getElementById('current-tab-title');
+    const subtitle = document.getElementById('current-tab-subtitle');
+    title.innerHTML = 'Perfil do Cliente';
+    subtitle.textContent = 'Resumo completo, dados cadastrais e acessos do pet.';
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+};
+
+window.updatePaginationInfo = function (start, end, total, tab = 'pets') {
+    const startEl = document.getElementById('page-start-' + tab);
+    const endEl = document.getElementById('page-end-' + tab);
+    const totalEl = document.getElementById('page-total-' + tab);
+
+    if (startEl) startEl.textContent = start;
+    if (endEl) endEl.textContent = end;
+    if (totalEl) totalEl.textContent = total;
+
+    const prevBtn = document.getElementById('btn-prev-' + tab);
+    const nextBtn = document.getElementById('btn-next-' + tab);
+
+    if (prevBtn) {
+        prevBtn.disabled = start <= 1;
+    }
+
+    if (nextBtn) {
+        nextBtn.disabled = end >= total;
+    }
+};
+
+window.changeRowsPerPage = function (tab, value) {
+    if (tab === 'pets') {
+        state.petsRowsPerPage = value;
+        state.petsPage = 1;
+        const listToRender = state.petsFilteredList || state.pets;
+        renderPetsTable(listToRender, state.petsFilteredList !== null);
+        const container = document.getElementById('pagination-pets');
+        if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+    } else if (tab === 'responsaveis') {
+        state.responsaveisRowsPerPage = value;
+        state.responsaveisPage = 1;
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
+        const container = document.getElementById('pagination-responsaveis');
+        if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+    }
+};
+
+window.prevPage = function (tab) {
+    if (tab === 'pets') {
+        if (state.petsPage > 1) {
+            state.petsPage--;
+            const listToRender = state.petsFilteredList || state.pets;
+            renderPetsTable(listToRender, state.petsFilteredList !== null);
+            const container = document.getElementById('pagination-pets');
+            if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        }
+    } else if (tab === 'responsaveis') {
+        if (state.responsaveisPage > 1) {
+            state.responsaveisPage--;
+            const listToRender = state.responsaveisFilteredList || state.responsaveis;
+            renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
+            const container = document.getElementById('pagination-responsaveis');
+            if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        }
+    }
+};
+
+window.nextPage = function (tab) {
+    if (tab === 'pets') {
+        const listToRender = state.petsFilteredList || state.pets;
+        const rows = state.petsRowsPerPage === 'all' ? listToRender.length : parseInt(state.petsRowsPerPage);
+        const totalPages = Math.ceil(listToRender.length / rows);
+        if (state.petsPage < totalPages) {
+            state.petsPage++;
+            renderPetsTable(listToRender, state.petsFilteredList !== null);
+            const container = document.getElementById('pagination-pets');
+            if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        }
+    } else if (tab === 'responsaveis') {
+        const listToRender = state.responsaveisFilteredList || state.responsaveis;
+        const rows = state.responsaveisRowsPerPage === 'all' ? listToRender.length : parseInt(state.responsaveisRowsPerPage);
+        const totalPages = Math.ceil(listToRender.length / rows);
+        if (state.responsaveisPage < totalPages) {
+            state.responsaveisPage++;
+            renderResponsaveisTable(listToRender, state.responsaveisFilteredList !== null);
+            const container = document.getElementById('pagination-responsaveis');
+            if (container) container.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        }
+    }
+};
+
+
+
+window.allRacas = ['SRD (Sem Raça Definida)', 'Abissínio (Gato)', 'Affenpinscher', 'Afghan Hound', 'Airedale Terrier', 'Akita Americano', 'Akita Inu', 'American Bully', 'American Hairless Terrier', 'American Pit Bull Terrier', 'American Shorthair (Gato)', 'American Staffordshire Terrier', 'Angorá (Gato)', 'Ashera (Gato)', 'Azawakh', 'Basset Hound', 'Beagle', 'Bengal (Gato)', 'Bichon Frisé', 'Bichon Havanês', 'Bloodhound', 'Bobtail', 'Boerboel', 'Border Collie', 'Border Terrier', 'Borzoi', 'Boston Terrier', 'Boxer', 'Braco Alemão', 'Braco Italiano', 'Buldogue Campeiro', 'Bull Terrier', 'Bulldog Francês', 'Bulldog Inglês', 'Bullmastiff', 'Burmês (Gato)', 'Cairn Terrier', 'Cane Corso', 'Cavalier King Charles Spaniel', 'Chesapeake Bay Retriever', 'Chihuahua', 'Chow Chow', 'Cocker Spaniel Americano', 'Cocker Spaniel Inglês', 'Collie', 'Corgi (Cardigan)', 'Corgi (Pembroke)', 'Cão de Crista Chinês', 'Cão de Santo Humberto', 'Cão de Água Português', 'Dachshund (Salsicha)', 'Doberman', 'Dogo Argentino', 'Dogue Alemão', 'Dogue Brasileiro', 'Dogue de Bordeaux', 'Dálmata', 'Fila Brasileiro', 'Fox Terrier', 'Foxhound Inglês', 'Galgo Espanhol', 'Golden Retriever', 'Greyhound', 'Grifo da Bélgica', 'Himalaio (Gato)', 'Husky Siberiano', 'Jack Russell Terrier', 'Kuvasz', 'Labrador Retriever', 'Leão da Rodésia', 'Lhasa Apso', 'Lulu da Pomerânia (Spitz Alemão)', 'Maine Coon (Gato)', 'Malamute do Alasca', 'Maltês', 'Mastiff Inglês', 'Mastim Napolitano', 'Mastim Tibetano', 'Munchkin (Gato)', 'Norwich Terrier', 'Ovelheiro Gaúcho', 'Papillon', 'Pastor Alemão', 'Pastor Australiano', 'Pastor Belga', 'Pastor Branco Suíço', 'Pastor Maremano', 'Pastor de Beauce', 'Pastor de Shetland', 'Pequinês', 'Persa (Gato)', 'Pinscher', 'Pit Bull', 'Pointer Inglês', 'Poodle', 'Pug', 'Puli', 'Ragdoll (Gato)', 'Rastreador Brasileiro', 'Rottweiler', 'Sagrado da Birmânia (Gato)', 'Saluki', 'Samoieda', 'Schnauzer Gigante', 'Schnauzer Miniatura', 'Schnauzer Standard', 'Scottish Fold (Gato)', 'Setter Inglês', 'Setter Irlandês', 'Shar-Pei', 'Shiba Inu', 'Shih Tzu', 'Siamês (Gato)', 'Sphynx (Gato)', 'Spitz Japonês', 'Staffordshire Bull Terrier', 'São Bernardo', 'Terra Nova', 'Terrier Brasileiro (Fox Paulistinha)', 'Terrier Tibetano', 'Tosa Inu', 'Veadeiro Pampeano', 'Vizsla', 'Weimaraner', 'West Highland White Terrier', 'Whippet', 'Yorkshire Terrier'];
+
+
+window.getRacasForEspecie = function () {
+    const especie = document.getElementById('pet-especie').value;
+    if (especie === 'Felino') {
+        return window.allRacas.filter(r => r.includes('(Gato)') || r.includes('SRD')).map(r => r.replace(' (Gato)', ''));
+    } else if (especie === 'Canino') {
+        return window.allRacas.filter(r => !r.includes('(Gato)'));
+    }
+    return window.allRacas.map(r => r.replace(' (Gato)', ''));
+};
+
+window.openRacaDropdown = function () {
+    const listDiv = document.getElementById('racas-custom-list');
+    if (listDiv) {
+        listDiv.style.display = 'block';
+        window.renderRacaDropdown(window.getRacasForEspecie());
+    }
+};
+
+window.renderRacaDropdown = function (racas) {
+    const listDiv = document.getElementById('racas-custom-list');
+    listDiv.innerHTML = '';
+    if (racas.length === 0) {
+        listDiv.innerHTML = '<div style="padding: 8px 12px; color: var(--text-muted); font-size: 14px;">Nenhuma raça encontrada</div>';
+        return;
+    }
+    racas.forEach(r => {
+        const div = document.createElement('div');
+        div.textContent = r;
+        div.style.padding = '8px 12px';
+        div.style.cursor = 'pointer';
+        div.style.fontSize = '14px';
+        div.style.color = '#fff';
+        div.onmouseover = () => div.style.backgroundColor = 'var(--primary)';
+        div.onmouseout = () => div.style.backgroundColor = 'transparent';
+        div.onclick = function (e) {
+            e.stopPropagation();
+            document.getElementById('pet-raca-input').value = r;
+            document.getElementById('pet-raca').value = r;
+            listDiv.style.display = 'none';
+        };
+        listDiv.appendChild(div);
+    });
+};
+
+window.filterRacaDropdown = function (text) {
+    const baseRacas = window.getRacasForEspecie();
+    if (!text) {
+        window.renderRacaDropdown(baseRacas);
+        document.getElementById('pet-raca').value = '';
+        return;
+    }
+    document.getElementById('pet-raca').value = text;
+    const filtered = baseRacas.filter(r => r.toLowerCase().includes(text.toLowerCase()));
+    window.renderRacaDropdown(filtered);
+};
+
+document.addEventListener('click', function (e) {
+    const input = document.getElementById('pet-raca-input');
+    const list = document.getElementById('racas-custom-list');
+    if (input && list) {
+        if (!input.contains(e.target) && !list.contains(e.target)) {
+            list.style.display = 'none';
+            if (input.value) {
+                document.getElementById('pet-raca').value = input.value;
+            }
+        }
+    }
+});
+
+// --- DYNAMIC FIELDS LOGIC ---
+document.addEventListener('DOMContentLoaded', () => {
+    const servicosSelect = document.getElementById('pet-servicos');
+    if (servicosSelect) {
+        servicosSelect.addEventListener('change', (e) => {
+            const val = e.target.value;
+            const container = document.getElementById('dynamic-fields-container');
+            const allSections = document.querySelectorAll('.service-fields');
+
+            // Esconde todas as sessões primeiro
+            allSections.forEach(sec => sec.style.display = 'none');
+
+            if (!val) {
+                // Nenhum serviço selecionado
+                container.style.display = 'none';
+            } else {
+                // Mostra container geral
+                container.style.display = 'block';
+
+                // Mostra seção específica baseada no valor selecionado
+                if (val === 'Adestramento') {
+                    document.getElementById('fields-adestramento').style.display = 'block';
+                } else if (val === 'Hospedagem') {
+                    document.getElementById('fields-hospedagem').style.display = 'block';
+                } else if (val === 'Passeios') {
+                    document.getElementById('fields-passeios').style.display = 'block';
+                } else if (val === 'Cuidado Domiciliar') {
+                    document.getElementById('fields-cuidado').style.display = 'block';
+                }
+            }
+        });
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const especieSelect = document.getElementById('pet-especie');
+    if (especieSelect) {
+        especieSelect.addEventListener('change', () => {
+            document.getElementById('pet-raca-input').value = '';
+            document.getElementById('pet-raca').value = '';
+        });
+    }
+});
+
+// Helper functions for Pet Observations
+window.togglePetObs = function (isEditing) {
+    const textarea = document.getElementById('pet-restricao');
+    const btnEdit = document.getElementById('btn-edit-pet-obs');
+    const btnSave = document.getElementById('btn-save-pet-obs');
+
+    if (isEditing) {
+        textarea.removeAttribute('readonly');
+        textarea.style.opacity = '1';
+        textarea.style.borderColor = 'var(--primary)';
+        textarea.focus();
+        if (btnEdit) btnEdit.style.display = 'none';
+        if (btnSave) btnSave.style.display = 'flex';
+    } else {
+        textarea.setAttribute('readonly', 'true');
+        textarea.style.opacity = '0.8';
+        textarea.style.borderColor = 'var(--border-glow)';
+        if (btnEdit) btnEdit.style.display = 'flex';
+        if (btnSave) btnSave.style.display = 'none';
+        // Mostrar feedback sutil
+        CustomUI.toast("Salvo", "Observação validada. (Finalize no botão Salvar Pet)", "success");
+    }
+};
+
+window.copyPetObs = function () {
+    const textarea = document.getElementById('pet-restricao');
+    if (textarea && textarea.value) {
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            CustomUI.toast("Copiado", "Observação copiada para a área de transferência.", "success");
+        }).catch(() => {
+            CustomUI.toast("Erro", "Não foi possível copiar.", "warning");
+        });
+    }
+};
+
+// ==========================================
+// LÓGICA DE PETS
+// ==========================================
+
+async function loadPets(force = false) {
+    if (!force && state.pets.length > 0) {
+        if (state.activeTab === 'pets') {
+            renderPetsList();
+        }
+        return;
+    }
+
+    try {
+        const loading = document.getElementById('loading-pets');
+        if (loading) loading.style.display = 'flex';
+
+        const response = await fetch(`${API_BASE}/pets?limit=10000`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (!response.ok) throw new Error('Falha ao carregar pets');
+
+        const data = await response.json();
+        state.pets = Array.isArray(data) ? data : (data.items || []);
+        state.petsFilteredList = null; // reseta filtros
+
+        if (state.activeTab === 'pets') {
+            renderPetsList();
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        CustomUI.toast("Erro", "Não foi possível carregar a lista de pets.", "danger");
+    } finally {
+        const loading = document.getElementById('loading-pets');
+        if (loading) loading.style.display = 'none';
+    }
+}
+
+
+function renderPetsList() {
+    renderPetsTable(state.petsFilteredList || state.pets, state.petsFilteredList !== null);
+}
+
+// applyPetFilters duplicate at the bottom of file removed

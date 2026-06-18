@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException, Query, Request, BackgroundT
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlmodel import Session, select, text
+from sqlmodel import Session, select, text, func
 from typing import List, Optional
 from pydantic import BaseModel
 import os
@@ -16,7 +16,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
 
-from database import engine, get_session, create_db_and_tables, Cliente, Produto, Venda, Tutor, Usuario, Pet
+from database import engine, get_session, create_db_and_tables, Responsavel, Usuario, Pet
 from fastapi.security import OAuth2PasswordBearer
 import hashlib
 import secrets
@@ -597,12 +597,12 @@ def forgot_password(request: ForgotPasswordRequest, background_tasks: Background
 
         return {"success": True, "message": f"E-mail de recuperação enviado com sucesso para {usuario.email}"}
 
-    # 2. Se não achou na tabela de Usuários, verifica se é um e-mail ou nome de um Tutor (cliente)
-    tutor = session.exec(
-        select(Tutor).where((Tutor.email == query) | (Tutor.nome == query))
+    # 2. Se não achou na tabela de Usuários, verifica se é um e-mail ou nome de um Responsável (cliente)
+    responsavel = session.exec(
+        select(Responsavel).where((Responsavel.email == query) | (Responsavel.nome == query))
     ).first()
 
-    if tutor:
+    if responsavel:
         raise HTTPException(
             status_code=403,
             detail="Este e-mail/nome pertence a um Responsável. O painel administrativo é exclusivo para administradores e colaboradores. Se precisar de acesso, solicite a criação de um Usuário nas Configurações do sistema."
@@ -641,165 +641,109 @@ def reset_password(request: ResetPasswordRequest, session: Session = Depends(get
 
     return {"success": True, "message": "Senha atualizada com sucesso!"}
 
-# ==========================================
-# ROTAS DE CLIENTES
-# ==========================================
-
-@app.get("/api/clientes", response_model=List[Cliente])
-def listar_clientes(session: Session = Depends(get_session)):
-    return session.exec(select(Cliente)).all()
-
-@app.get("/api/clientes/{cliente_id}", response_model=Cliente)
-def obter_cliente(cliente_id: int, session: Session = Depends(get_session)):
-    cliente = session.get(Cliente, cliente_id)
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
-    return cliente
-
-@app.post("/api/clientes", response_model=Cliente)
-def criar_cliente(cliente: Cliente, session: Session = Depends(get_session)):
-    # Verifica CPF duplicado
-    if cliente.cpf:
-        cpf_limpo = cliente.cpf.replace(".", "").replace("-", "")
-        existente = session.exec(select(Cliente).where(Cliente.cpf == cpf_limpo)).first()
-        if not existente:
-            existente = session.exec(select(Cliente).where(Cliente.cpf == cliente.cpf)).first()
-        if existente:
-            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o cliente ID {existente.id} ({existente.nome}).")
-        cliente.cpf = cpf_limpo
-    # Remove o ID se fornecido para autoincremento
-    cliente.id = None
-    session.add(cliente)
-    session.commit()
-    session.refresh(cliente)
-    return cliente
-
-@app.put("/api/clientes/{cliente_id}", response_model=Cliente)
-def atualizar_cliente(cliente_id: int, cliente_data: Cliente, session: Session = Depends(get_session)):
-    db_cliente = session.get(Cliente, cliente_id)
-    if not db_cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
-    
-    # Verifica CPF duplicado (exclui o próprio registro)
-    if cliente_data.cpf:
-        cpf_limpo = cliente_data.cpf.replace(".", "").replace("-", "")
-        existente = session.exec(
-            select(Cliente).where(Cliente.cpf == cpf_limpo, Cliente.id != cliente_id)
-        ).first()
-        if not existente:
-            existente = session.exec(
-                select(Cliente).where(Cliente.cpf == cliente_data.cpf, Cliente.id != cliente_id)
-            ).first()
-        if existente:
-            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o cliente ID {existente.id} ({existente.nome}).")
-        cliente_data.cpf = cpf_limpo
-    
-    # Atualiza campos
-    db_cliente.cpf = cliente_data.cpf
-    db_cliente.nome = cliente_data.nome
-    db_cliente.email = cliente_data.email
-    db_cliente.telefone = cliente_data.telefone
-    db_cliente.status = cliente_data.status
-    
-    session.add(db_cliente)
-    session.commit()
-    session.refresh(db_cliente)
-    return db_cliente
-
-@app.delete("/api/clientes/{cliente_id}")
-def deletar_cliente(cliente_id: int, session: Session = Depends(get_session)):
-    cliente = session.get(Cliente, cliente_id)
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
-    
-    session.delete(cliente)
-    session.commit()
-    return {"detail": f"Cliente {cliente_id} excluído com sucesso"}
-
 
 # ==========================================
-# ROTAS DE TUTORES
+# ROTAS DE RESPONSÁVEIS
 # ==========================================
 
-@app.get("/api/tutores", response_model=List[Tutor])
-def listar_tutores(session: Session = Depends(get_session)):
-    return session.exec(select(Tutor)).all()
-
-@app.get("/api/tutores/{tutor_id}", response_model=Tutor)
-def obter_tutor(tutor_id: int, session: Session = Depends(get_session)):
-    tutor = session.get(Tutor, tutor_id)
-    if not tutor:
-        raise HTTPException(status_code=404, detail="Tutor não encontrado")
-    return tutor
-
-@app.post("/api/tutores", response_model=Tutor)
-def criar_tutor(tutor: Tutor, session: Session = Depends(get_session)):
-    # Verifica CPF duplicado
-    if tutor.cpf:
-        cpf_limpo = tutor.cpf.replace(".", "").replace("-", "")
-        existente = session.exec(select(Tutor).where(Tutor.cpf == cpf_limpo)).first()
-        if not existente:
-            existente = session.exec(select(Tutor).where(Tutor.cpf == tutor.cpf)).first()
-        if existente:
-            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o tutor ID {existente.id} ({existente.nome}).")
-        tutor.cpf = cpf_limpo
-    tutor.id = None
-    session.add(tutor)
-    session.commit()
-    session.refresh(tutor)
-    return tutor
-
-@app.put("/api/tutores/{tutor_id}", response_model=Tutor)
-def atualizar_tutor(tutor_id: int, tutor_data: Tutor, session: Session = Depends(get_session)):
-    db_tutor = session.get(Tutor, tutor_id)
-    if not db_tutor:
-        raise HTTPException(status_code=404, detail="Tutor não encontrado")
+@app.get("/api/responsaveis")
+def listar_responsaveis(
+    skip: int = 0,
+    limit: int = 20,
+    nome: Optional[str] = None,
+    cpf: Optional[str] = None,
+    status: Optional[str] = None,
+    session: Session = Depends(get_session)
+):
+    query = select(Responsavel)
     
-    # Verifica CPF duplicado (exclui o próprio registro)
-    if tutor_data.cpf:
-        cpf_limpo = tutor_data.cpf.replace(".", "").replace("-", "")
-        existente = session.exec(
-            select(Tutor).where(Tutor.cpf == cpf_limpo, Tutor.id != tutor_id)
-        ).first()
-        if not existente:
-            existente = session.exec(
-                select(Tutor).where(Tutor.cpf == tutor_data.cpf, Tutor.id != tutor_id)
-            ).first()
-        if existente:
-            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o tutor ID {existente.id} ({existente.nome}).")
-        tutor_data.cpf = cpf_limpo
-    
-    # Atualiza todos os campos de tutor_data em db_tutor
-    for key, value in tutor_data.dict(exclude={"id", "data_cadastro"}).items():
-        setattr(db_tutor, key, value)
+    if nome:
+        query = query.where(Responsavel.nome.ilike(f"%{nome}%"))
+    if cpf:
+        query = query.where(Responsavel.cpf.like(f"%{cpf}%"))
+    if status:
+        query = query.where(Responsavel.status == status)
         
-    session.add(db_tutor)
-    session.commit()
-    session.refresh(db_tutor)
-    return db_tutor
-
-@app.delete("/api/tutores/{tutor_id}")
-def deletar_tutor(tutor_id: int, session: Session = Depends(get_session)):
-    tutor = session.get(Tutor, tutor_id)
-    if not tutor:
-        raise HTTPException(status_code=404, detail="Tutor não encontrado")
+    total = session.exec(select(func.count()).select_from(query.subquery())).one()
+    items = session.exec(query.offset(skip).limit(limit)).all()
     
-    session.delete(tutor)
+    return {"total": total, "items": items}
+
+@app.get("/api/responsaveis/{responsavel_id}", response_model=Responsavel)
+def obter_responsavel(responsavel_id: int, session: Session = Depends(get_session)):
+    responsavel = session.get(Responsavel, responsavel_id)
+    if not responsavel:
+        raise HTTPException(status_code=404, detail="Responsável não encontrado")
+    return responsavel
+
+@app.post("/api/responsaveis", response_model=Responsavel)
+def criar_responsavel(responsavel: Responsavel, session: Session = Depends(get_session)):
+    # Verifica CPF duplicado
+    if responsavel.cpf:
+        cpf_limpo = responsavel.cpf.replace(".", "").replace("-", "")
+        existente = session.exec(select(Responsavel).where(Responsavel.cpf == cpf_limpo)).first()
+        if not existente:
+            existente = session.exec(select(Responsavel).where(Responsavel.cpf == responsavel.cpf)).first()
+        if existente:
+            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o responsável ID {existente.id} ({existente.nome}).")
+        responsavel.cpf = cpf_limpo
+    responsavel.id = None
+    session.add(responsavel)
     session.commit()
-    return {"detail": f"Tutor {tutor_id} excluído com sucesso"}
+    session.refresh(responsavel)
+    return responsavel
+
+@app.put("/api/responsaveis/{responsavel_id}", response_model=Responsavel)
+def atualizar_responsavel(responsavel_id: int, responsavel_data: Responsavel, session: Session = Depends(get_session)):
+    db_responsavel = session.get(Responsavel, responsavel_id)
+    if not db_responsavel:
+        raise HTTPException(status_code=404, detail="Responsável não encontrado")
+    
+    # Verifica CPF duplicado (exclui o próprio registro)
+    if responsavel_data.cpf:
+        cpf_limpo = responsavel_data.cpf.replace(".", "").replace("-", "")
+        existente = session.exec(
+            select(Responsavel).where(Responsavel.cpf == cpf_limpo, Responsavel.id != responsavel_id)
+        ).first()
+        if not existente:
+            existente = session.exec(
+                select(Responsavel).where(Responsavel.cpf == responsavel_data.cpf, Responsavel.id != responsavel_id)
+            ).first()
+        if existente:
+            raise HTTPException(status_code=409, detail=f"CPF já cadastrado para o responsável ID {existente.id} ({existente.nome}).")
+        responsavel_data.cpf = cpf_limpo
+    
+    # Atualiza todos os campos de responsavel_data em db_responsavel
+    for key, value in responsavel_data.dict(exclude={"id", "data_cadastro"}).items():
+        setattr(db_responsavel, key, value)
+        
+    session.add(db_responsavel)
+    session.commit()
+    session.refresh(db_responsavel)
+    return db_responsavel
+
+@app.delete("/api/responsaveis/{responsavel_id}")
+def deletar_responsavel(responsavel_id: int, session: Session = Depends(get_session)):
+    responsavel = session.get(Responsavel, responsavel_id)
+    if not responsavel:
+        raise HTTPException(status_code=404, detail="Responsável não encontrado")
+    
+    session.delete(responsavel)
+    session.commit()
+    return {"detail": f"Responsável {responsavel_id} excluído com sucesso"}
 
 
 class BatchDeleteRequest(BaseModel):
     ids: List[int]
 
 
-@app.post("/api/tutores/batch-delete")
-def deletar_tutores_em_massa(req: BatchDeleteRequest, session: Session = Depends(get_session)):
+@app.post("/api/responsaveis/batch-delete")
+def deletar_responsaveis_em_massa(req: BatchDeleteRequest, session: Session = Depends(get_session)):
     deleted_count = 0
-    for tutor_id in req.ids:
-        tutor = session.get(Tutor, tutor_id)
-        if tutor:
-            session.delete(tutor)
+    for responsavel_id in req.ids:
+        responsavel = session.get(Responsavel, responsavel_id)
+        if responsavel:
+            session.delete(responsavel)
             deleted_count += 1
     session.commit()
     return {"detail": f"{deleted_count} responsáveis excluídos com sucesso"}
@@ -809,9 +753,35 @@ def deletar_tutores_em_massa(req: BatchDeleteRequest, session: Session = Depends
 # ROTAS DE PETS
 # ==========================================
 
-@app.get("/api/pets", response_model=List[Pet])
-def listar_pets(session: Session = Depends(get_session)):
-    return session.exec(select(Pet)).all()
+@app.get("/api/pets")
+def listar_pets(
+    skip: int = 0,
+    limit: int = 20,
+    nome: Optional[str] = None,
+    responsavel_nome: Optional[str] = None,
+    especie: Optional[str] = None,
+    raca: Optional[str] = None,
+    status: Optional[str] = None,
+    session: Session = Depends(get_session)
+):
+    # Using outer join to be able to filter by responsavel_nome
+    query = select(Pet).outerjoin(Responsavel)
+    
+    if nome:
+        query = query.where(Pet.nome.ilike(f"%{nome}%"))
+    if responsavel_nome:
+        query = query.where(Responsavel.nome.ilike(f"%{responsavel_nome}%"))
+    if especie:
+        query = query.where(Pet.especie.ilike(f"%{especie}%"))
+    if raca:
+        query = query.where(Pet.raca.ilike(f"%{raca}%"))
+    if status:
+        query = query.where(Pet.status == status)
+        
+    total = session.exec(select(func.count()).select_from(query.subquery())).one()
+    items = session.exec(query.offset(skip).limit(limit)).all()
+    
+    return {"total": total, "items": items}
 
 @app.get("/api/pets/{pet_id}", response_model=Pet)
 def obter_pet(pet_id: int, session: Session = Depends(get_session)):
@@ -854,116 +824,6 @@ def deletar_pet(pet_id: int, session: Session = Depends(get_session)):
     session.commit()
     return {"detail": f"Pet {pet_id} excluído com sucesso"}
 
-# ==========================================
-# ROTAS DE PRODUTOS
-# ==========================================
-
-@app.get("/api/produtos", response_model=List[Produto])
-def listar_produtos(session: Session = Depends(get_session)):
-    return session.exec(select(Produto)).all()
-
-@app.get("/api/produtos/{produto_id}", response_model=Produto)
-def obter_produto(produto_id: int, session: Session = Depends(get_session)):
-    produto = session.get(Produto, produto_id)
-    if not produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    return produto
-
-@app.post("/api/produtos", response_model=Produto)
-def criar_produto(produto: Produto, session: Session = Depends(get_session)):
-    produto.id = None
-    session.add(produto)
-    session.commit()
-    session.refresh(produto)
-    return produto
-
-@app.put("/api/produtos/{produto_id}", response_model=Produto)
-def atualizar_produto(produto_id: int, produto_data: Produto, session: Session = Depends(get_session)):
-    db_produto = session.get(Produto, produto_id)
-    if not db_produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    
-    db_produto.nome = produto_data.nome
-    db_produto.categoria = produto_data.categoria
-    db_produto.preco = produto_data.preco
-    db_produto.estoque = produto_data.estoque
-    db_produto.status = "Disponível" if produto_data.estoque > 0 else "Sem Estoque"
-    
-    session.add(db_produto)
-    session.commit()
-    session.refresh(db_produto)
-    return db_produto
-
-@app.delete("/api/produtos/{produto_id}")
-def deletar_produto(produto_id: int, session: Session = Depends(get_session)):
-    produto = session.get(Produto, produto_id)
-    if not produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    
-    session.delete(produto)
-    session.commit()
-    return {"detail": f"Produto {produto_id} excluído com sucesso"}
-
-
-# ==========================================
-# ROTAS DE VENDAS
-# ==========================================
-
-@app.get("/api/vendas")
-def listar_vendas(session: Session = Depends(get_session)):
-    # Faz um join para retornar informações enriquecidas de clientes e produtos
-    query = select(
-        Venda.id,
-        Venda.quantidade,
-        Venda.valor_total,
-        Venda.data_venda,
-        Cliente.nome.label("cliente_nome"),
-        Produto.nome.label("produto_nome"),
-        Produto.preco.label("produto_preco")
-    ).join(Cliente, Venda.cliente_id == Cliente.id).join(Produto, Venda.produto_id == Produto.id)
-    
-    results = session.exec(query).all()
-    return [
-        {
-            "id": r[0],
-            "quantidade": r[1],
-            "valor_total": r[2],
-            "data_venda": r[3],
-            "cliente_nome": r[4],
-            "produto_nome": r[5],
-            "produto_preco": r[6]
-        }
-        for r in results
-    ]
-
-@app.post("/api/vendas")
-def registrar_venda(venda: Venda, session: Session = Depends(get_session)):
-    # Validações básicas
-    cliente = session.get(Cliente, venda.cliente_id)
-    produto = session.get(Produto, venda.produto_id)
-    
-    if not cliente:
-        raise HTTPException(status_code=404, detail="Cliente não encontrado")
-    if not produto:
-        raise HTTPException(status_code=404, detail="Produto não encontrado")
-    
-    if produto.estoque < venda.quantidade:
-        raise HTTPException(status_code=400, detail=f"Estoque insuficiente. Disponível: {produto.estoque}")
-    
-    # Deduz do estoque
-    produto.estoque -= venda.quantidade
-    if produto.estoque == 0:
-        produto.status = "Sem Estoque"
-        
-    # Calcula valor total
-    venda.valor_total = produto.preco * venda.quantidade
-    venda.id = None
-    
-    session.add(venda)
-    session.add(produto)
-    session.commit()
-    session.refresh(venda)
-    return venda
 
 
 # ==========================================
@@ -972,53 +832,19 @@ def registrar_venda(venda: Venda, session: Session = Depends(get_session)):
 
 @app.get("/api/dashboard/stats")
 def obter_metricas(session: Session = Depends(get_session)):
-    # 1. Total faturado
-    faturamento_total = session.exec(select(text("SUM(valor_total) from vendas"))).first() or 0.0
-    if isinstance(faturamento_total, tuple):
-        faturamento_total = faturamento_total[0] or 0.0
+    # Total de responsáveis ativos
+    responsaveis_ativos = session.exec(select(text("COUNT(id) from responsaveis WHERE status = 'Ativo'"))).first() or 0
+    if isinstance(responsaveis_ativos, tuple):
+        responsaveis_ativos = responsaveis_ativos[0] or 0
 
-    # 2. Total de clientes ativos
-    clientes_ativos = session.exec(select(text("COUNT(id) from clientes WHERE status = 'Ativo'"))).first() or 0
-    if isinstance(clientes_ativos, tuple):
-        clientes_ativos = clientes_ativos[0] or 0
-
-    # 3. Total de vendas realizadas
-    vendas_realizadas = session.exec(select(text("COUNT(id) from vendas"))).first() or 0
-    if isinstance(vendas_realizadas, tuple):
-        vendas_realizadas = vendas_realizadas[0] or 0
-
-    # 4. Alerta de estoque baixo (produtos com estoque < 5)
-    estoque_baixo = session.exec(select(text("COUNT(id) from produtos WHERE estoque < 5"))).first() or 0
-    if isinstance(estoque_baixo, tuple):
-        estoque_baixo = estoque_baixo[0] or 0
-
-    # 5. Vendas por dia para o gráfico
-    # Selecionamos a data formatada e a soma do faturamento
-    vendas_dia_query = text(
-        "SELECT substr(data_venda, 1, 10) as dia, SUM(valor_total) as total "
-        "FROM vendas GROUP BY dia ORDER BY dia DESC LIMIT 7"
-    )
-    vendas_dia_results = session.execute(vendas_dia_query).all()
-    vendas_grafico = [
-        {"dia": r[0], "total": r[1]} for r in reversed(vendas_dia_results)
-    ]
-
-    # 6. Distribuição de categorias de produtos
-    categorias_query = text(
-        "SELECT categoria, COUNT(id) as total FROM produtos GROUP BY categoria"
-    )
-    categorias_results = session.execute(categorias_query).all()
-    categorias_grafico = [
-        {"categoria": r[0], "total": r[1]} for r in categorias_results
-    ]
+    # Total de pets
+    total_pets = session.exec(select(text("COUNT(id) from pets"))).first() or 0
+    if isinstance(total_pets, tuple):
+        total_pets = total_pets[0] or 0
 
     return {
-        "faturamento_total": float(faturamento_total),
-        "clientes_ativos": int(clientes_ativos),
-        "vendas_realizadas": int(vendas_realizadas),
-        "estoque_baixo": int(estoque_baixo),
-        "vendas_grafico": vendas_grafico,
-        "categorias_grafico": categorias_grafico
+        "responsaveis_ativos": int(responsaveis_ativos),
+        "total_pets": int(total_pets)
     }
 
 
