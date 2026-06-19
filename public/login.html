@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,9 @@
     <!-- Fonte Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
     <!-- Ícones Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Estilos -->
@@ -17,78 +20,108 @@
             border-color: var(--success) !important;
             box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
         }
+
         .login-input-wrapper input.is-invalid {
             border-color: #ef4444 !important;
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
         }
     </style>
 </head>
-<body class="login-body">
+
+<body class="login-body light-theme">
     <!-- Orbes de Brilho Decorativo Premium no Fundo -->
     <div class="bg-glow-orb-1"></div>
     <div class="bg-glow-orb-2"></div>
     <div class="login-bg-watermark"></div>
 
     <!-- Botão de Alternar Tema no Canto Superior Esquerdo -->
-    <button class="btn btn-secondary btn-icon-only" id="theme-toggle-login" title="Alternar Tema" type="button" style="position: absolute; top: 24px; left: 24px; z-index: 1000;">
-        <i data-lucide="moon"></i>
+    <button class="btn btn-secondary btn-icon-only" id="theme-toggle-login" title="Tema fixo temporariamente"
+        type="button" disabled
+        style="position: absolute; top: 24px; left: 24px; z-index: 1000; opacity: 0.6; cursor: not-allowed;">
+        <i data-lucide="sun"></i>
     </button>
 
-    <div class="login-wrapper">
-        <div class="login-card">
-            <!-- Cabeçalho do Cartão -->
-            <div class="login-header">
-                <div style="height: 110px; margin-bottom: 0; display: flex; align-items: flex-end; justify-content: center;">
-                    <h2 style="font-size: 1.65rem; font-weight: 800; color: var(--primary); margin: 0 0 4px 0; text-align: center; letter-spacing: -0.5px;">Bem-Vindo!</h2>
-                </div>
-                <p style="margin-bottom: 35px;">Faça login para acessar sua conta.</p>
-            </div>
-
-            <!-- Alerta de Erro -->
-            <div class="login-error-alert" id="login-error" style="display: none;">
-                <i data-lucide="alert-triangle"></i>
-                <span id="login-error-msg">Login ou senha incorretos.</span>
-            </div>
-
-            <!-- Formulário de Login -->
-            <form id="form-login-element" onsubmit="executeLogin(event)">
-                <div class="form-group">
-                    <label for="login-username">Login</label>
-                    <div class="login-input-wrapper">
-                        <i data-lucide="user" class="input-icon"></i>
-                        <input type="text" id="login-username" required placeholder="Digite seu login..." autocomplete="off">
+    <div class="login-wrapper split-wrapper">
+        <!-- Wrapper exclusivo para a borda gradiente -->
+        <div class="gradient-border-wrapper">
+            <div class="login-card split-layout">
+                <!-- Lado Esquerdo -->
+                <div class="login-left" style="flex-direction: column; gap: 50px;">
+                    <!-- Reduzido o gap para aproximar o texto do logo -->
+                    <img src="new-logo-transparent.png" alt="Mascote Explora"
+                        style="width: 250px; height: auto; border-radius: 16px; box-shadow: 0 16px 36px rgba(49, 179, 115, 0.12); margin-top: 15px; background: linear-gradient(135deg, #31b373, #1d854e);" />
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0px;">
+                        <img src="explora-logo-text-gradient.png" alt="Logo Explora"
+                            style="width: 190px; height: auto; mix-blend-mode: multiply;" />
+                        <span
+                            style="font-family: 'Montserrat', 'Inter', sans-serif; font-size: 10.5px; font-weight: 600; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-top: -6px; margin-left: 30px;">BEM-ESTAR
+                            ANIMAL</span>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="login-password">Senha</label>
-                    <div class="login-input-wrapper">
-                        <i data-lucide="lock" class="input-icon"></i>
-                        <input type="password" id="login-password" required placeholder="Digite sua senha..." autocomplete="off">
-                        <button type="button" class="password-toggle-btn" id="toggle-password" onclick="togglePasswordVisibility()" title="Visualizar senha">
-                            <i data-lucide="eye"></i>
+                <!-- Lado Direito -->
+                <div class="login-right">
+                    <!-- Cabeçalho do Cartão -->
+                    <div class="login-header" style="margin-top: 0; margin-bottom: 30px;">
+                        <div style="display: flex; align-items: flex-end; justify-content: center;">
+                            <h2
+                                style="font-size: 1.8rem; font-weight: 800; color: var(--primary); margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;">
+                                Bem-Vindo!</h2>
+                        </div>
+                        <p style="margin-bottom: 0;">Faça login para acessar sua conta.</p>
+                    </div>
+
+                    <!-- Alerta de Erro -->
+                    <div class="login-error-alert" id="login-error" style="display: none;">
+                        <i data-lucide="alert-triangle"></i>
+                        <span id="login-error-msg">Login ou senha incorretos.</span>
+                    </div>
+
+                    <!-- Formulário de Login -->
+                    <form id="form-login-element" onsubmit="executeLogin(event)">
+                        <div class="form-group">
+                            <label for="login-username">Login</label>
+                            <div class="login-input-wrapper">
+                                <i data-lucide="user" class="input-icon"></i>
+                                <input type="text" id="login-username" required placeholder="Digite seu login"
+                                    autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label for="login-password">Senha</label>
+                            <div class="login-input-wrapper">
+                                <i data-lucide="lock" class="input-icon"></i>
+                                <input type="password" id="login-password" required placeholder="Digite sua senha"
+                                    autocomplete="off">
+                                <button type="button" class="password-toggle-btn" id="toggle-password"
+                                    onclick="togglePasswordVisibility()" title="Visualizar senha">
+                                    <i data-lucide="eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="login-options-row">
+                            <label class="remember-me-label"><input type="checkbox" id="login-remember"> Ficar
+                                conectado?</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-login" id="btn-login-submit">
+                            <i data-lucide="log-in"></i> Acessar o Sistema
                         </button>
-                    </div>
-                </div>
 
-                <div class="login-options-row">
-                    <label class="remember-me-label"><input type="checkbox" id="login-remember"> Ficar conectado?</label>
+                        <div class="forgot-password-container">
+                            <a href="#" class="forgot-password-link" onclick="handleForgotPassword(event)">
+                                Esqueceu a senha?
+                            </a>
+                        </div>
+                    </form>
                 </div>
-
-                <button type="submit" class="btn btn-primary btn-login" id="btn-login-submit">
-                    <i data-lucide="log-in"></i> Entrar no Sistema
-                </button>
-
-                <div class="forgot-password-container">
-                    <a href="#" class="forgot-password-link" onclick="handleForgotPassword(event)">
-                        Esqueceu a senha?
-                    </a>
-                </div>
-            </form>
-        </div>
+            </div>
+        </div> <!-- Fim do gradient-border-wrapper -->
 
         <!-- Rodapé do Login -->
-        <div class="login-footer" style="justify-content: center;">
+        <div class="login-footer" style="justify-content: center; margin-top: 15px;">
             <p>© 2026 Explora Pet. Todos os direitos reservados.</p>
         </div>
     </div>
@@ -103,33 +136,25 @@
             const passwordInput = document.getElementById('login-password');
             const toggleBtn = document.getElementById('toggle-password');
             const isPrivate = passwordInput.getAttribute('type') === 'password';
-            
+
             passwordInput.setAttribute('type', isPrivate ? 'text' : 'password');
             toggleBtn.innerHTML = isPrivate ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
-            
+
             lucide.createIcons();
         }
 
-        // Alternador de Temas
+        // Alternador de Temas (Fixado em Modo Claro)
         const themeToggle = document.getElementById('theme-toggle-login');
         const root = document.body;
 
-        // Recupera tema salvo ou usa escuro por padrão
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.documentElement.classList.add('light-theme');
-            themeToggle.innerHTML = '<i data-lucide="sun"></i>';
-        } else {
-            document.documentElement.classList.remove('light-theme');
-            themeToggle.innerHTML = '<i data-lucide="moon"></i>';
-        }
+        // Força o tema claro (light mode)
+        document.documentElement.classList.add('light-theme');
+        document.body.classList.add('light-theme');
         lucide.createIcons();
 
+        // Desativa a funcionalidade do botão
         themeToggle.addEventListener('click', () => {
-            const isLight = document.documentElement.classList.toggle('light-theme');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-            themeToggle.innerHTML = isLight ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
-            lucide.createIcons();
+            // Desativado
         });
 
         // Remove destaque de erro e fica verde ao interagir novamente com os campos
@@ -137,7 +162,7 @@
             field.classList.remove('is-invalid');
             document.getElementById('login-username').classList.remove('is-invalid');
             document.getElementById('login-password').classList.remove('is-invalid');
-            if(field.value.length > 0) {
+            if (field.value.length > 0) {
                 field.classList.add('is-valid');
             } else {
                 field.classList.remove('is-valid');
@@ -145,15 +170,15 @@
             document.getElementById('login-error').style.display = 'none';
         }
 
-        document.getElementById('login-username').addEventListener('input', function() { clearLoginErrors(this); });
-        document.getElementById('login-username').addEventListener('focus', function() { clearLoginErrors(this); });
-        document.getElementById('login-password').addEventListener('input', function() { clearLoginErrors(this); });
-        document.getElementById('login-password').addEventListener('focus', function() { clearLoginErrors(this); });
+        document.getElementById('login-username').addEventListener('input', function () { clearLoginErrors(this); });
+        document.getElementById('login-username').addEventListener('focus', function () { clearLoginErrors(this); });
+        document.getElementById('login-password').addEventListener('input', function () { clearLoginErrors(this); });
+        document.getElementById('login-password').addEventListener('focus', function () { clearLoginErrors(this); });
 
         // Executar o Login via AJAX
         async function executeLogin(e) {
             e.preventDefault();
-            
+
             const usernameInput = document.getElementById('login-username');
             const passwordInput = document.getElementById('login-password');
             const errorAlert = document.getElementById('login-error');
@@ -182,14 +207,14 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    
+
                     // Salva credenciais no localStorage
                     localStorage.setItem('auth_token', data.access_token);
                     localStorage.setItem('user_nome', data.nome);
                     localStorage.setItem('user_username', data.username);
                     localStorage.setItem('user_cargo', data.cargo);
                     localStorage.setItem('user_telas_liberadas', data.telas_liberadas || 'dashboard,clientes,pets');
-                    
+
                     // Redireciona para o painel principal
                     window.location.href = 'index.html';
                 } else {
@@ -199,25 +224,25 @@
                         if (err.detail) {
                             errorMessage = typeof err.detail === 'string' ? err.detail : "Login ou senha incorretos.";
                         }
-                    } catch (e) {}
+                    } catch (e) { }
 
                     errorMsg.textContent = errorMessage;
                     errorAlert.style.display = 'flex';
-                    
+
                     // Destaca os campos em vermelho
                     usernameInput.classList.add('is-invalid');
                     passwordInput.classList.add('is-invalid');
                     usernameInput.classList.remove('is-valid');
                     passwordInput.classList.remove('is-valid');
-                    
+
                     // Limpa os campos para digitar novamente
                     usernameInput.value = '';
                     passwordInput.value = '';
-                    
+
                     // Remove o focus automático pois agora o focus limpa o erro
                     // Se focarmos, o erro sumiria instantaneamente
                     // usernameInput.focus();
-                    
+
                     // Restaura o botão
                     submitBtn.removeAttribute('disabled');
                     submitBtn.innerHTML = '<i data-lucide="log-in"></i> Entrar no Sistema';
@@ -226,17 +251,17 @@
             } catch (err) {
                 errorMsg.textContent = "Erro de conexão ao servidor de autenticação.";
                 errorAlert.style.display = 'flex';
-                
+
                 // Destaca os campos em vermelho
                 usernameInput.classList.add('is-invalid');
                 passwordInput.classList.add('is-invalid');
                 usernameInput.classList.remove('is-valid');
                 passwordInput.classList.remove('is-valid');
-                
+
                 // Limpa os campos para digitar novamente
                 usernameInput.value = '';
                 passwordInput.value = '';
-                
+
                 // Restaura o botão
                 submitBtn.removeAttribute('disabled');
                 submitBtn.innerHTML = '<i data-lucide="log-in"></i> Entrar no Sistema';
@@ -251,14 +276,14 @@
             document.getElementById('forgot-username').value = '';
             document.getElementById('forgot-error').style.display = 'none';
             document.getElementById('forgot-success').style.display = 'none';
-            
+
             const submitBtn = document.getElementById('btn-forgot-submit');
             submitBtn.removeAttribute('disabled');
             submitBtn.innerHTML = '<i data-lucide="mail"></i> Enviar e-mail';
 
             const modal = document.getElementById('forgot-password-modal');
             modal.classList.add('active');
-            
+
             // Re-renderiza os ícones do modal caso não tenham sido carregados corretamente
             lucide.createIcons();
         }
@@ -297,7 +322,7 @@
                     successMsg.textContent = data.message;
                     successAlert.style.display = 'flex';
                     usernameInput.value = '';
-                    
+
                     // Desabilita o botão para evitar cliques extras
                     submitBtn.innerHTML = 'Enviado!';
                     lucide.createIcons();
@@ -331,13 +356,14 @@
             <p class="custom-dialog-message">
                 Digite seu login ou e-mail cadastrado para receber um link de redefinição de senha.
             </p>
-            
+
             <!-- Alertas de feedback -->
             <div class="login-error-alert" id="forgot-error" style="display: none; width: 100%;">
                 <i data-lucide="alert-triangle"></i>
                 <span id="forgot-error-msg">Erro ao enviar e-mail.</span>
             </div>
-            <div class="login-error-alert" id="forgot-success" style="display: none; width: 100%; background-color: var(--success-glow); border-color: rgba(16, 185, 129, 0.3); color: var(--success);">
+            <div class="login-error-alert" id="forgot-success"
+                style="display: none; width: 100%; background-color: var(--success-glow); border-color: rgba(16, 185, 129, 0.3); color: var(--success);">
                 <i data-lucide="check-circle-2"></i>
                 <span id="forgot-success-msg">E-mail enviado com sucesso!</span>
             </div>
@@ -347,14 +373,16 @@
                     <label for="forgot-username">Login ou e-mail</label>
                     <div class="login-input-wrapper">
                         <i data-lucide="user" class="input-icon"></i>
-                        <input type="text" id="forgot-username" required placeholder="Digite seu login ou e-mail..." autocomplete="off">
+                        <input type="text" id="forgot-username" required placeholder="Digite seu login ou e-mail..."
+                            autocomplete="off">
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-login" id="btn-forgot-submit">
                     <i data-lucide="mail"></i> Enviar e-mail
                 </button>
                 <div class="forgot-password-container">
-                    <a href="#" class="forgot-password-link" onclick="event.preventDefault(); closeForgotPasswordModal()">
+                    <a href="#" class="forgot-password-link"
+                        onclick="event.preventDefault(); closeForgotPasswordModal()">
                         Cancelar
                     </a>
                 </div>
@@ -362,4 +390,5 @@
         </div>
     </div>
 </body>
+
 </html>

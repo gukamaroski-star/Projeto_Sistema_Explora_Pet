@@ -52,12 +52,26 @@
     --text-muted: #64748b; /* Slate 500 - Cinza médio premium para rótulos secundários */
     --text-inverse: #ffffff;
 
-    --shadow-main: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 0 3px rgba(0, 0, 0, 0.02); /* Sombra difusa e super delicada */
+    --shadow-main: 0 8px 30px -4px rgba(0, 0, 0, 0.04), 0 0 4px rgba(0, 0, 0, 0.02); /* Sombra ainda mais rica e premium */
 
-    background-color: var(--bg-app);
+    /* Fundo em gradiente suave com "spotlight" central superior */
+    background: radial-gradient(circle at top center, #ffffff 0%, #f1f5f9 100%);
+    background-attachment: fixed;
 }
 
 /* Custom Overrides de Premium Design para Modo Claro */
+.light-theme .sidebar {
+    border-right: none !important; /* Remove a linha dura */
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.04) !important; /* Sombra projetada elegante */
+    background-color: #ffffff !important;
+}
+
+.light-theme .kpi-card, .light-theme .data-table-container, .light-theme .section-header {
+    border: 1px solid rgba(255, 255, 255, 0.8) !important; /* Borda de vidro branco */
+    box-shadow: 0 12px 35px -5px rgba(0, 0, 0, 0.05), 0 0 5px rgba(0, 0, 0, 0.02) !important; /* Sombra 3D suave */
+    background: rgba(255, 255, 255, 0.95) !important; /* Leve translucidez para glassmorphism sutil */
+    backdrop-filter: blur(10px);
+}
 .light-theme .form-group input,
 .light-theme .form-group select,
 .light-theme .form-group textarea {
@@ -84,56 +98,73 @@
 }
 
 /* Menu ativo (Dashboard) super elegante e delicado no modo claro */
-.light-theme .nav-link.active {
-    background-color: rgba(37, 142, 90, 0.1) !important;
-    color: var(--primary) !important;
-    box-shadow: none !important;
+.light-theme .nav-link.active, .light-theme .nav-link:active {
+    background: linear-gradient(135deg, #31b373, #1d854e) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(49, 179, 115, 0.3) !important;
 }
 
 .light-theme .nav-link.active i,
-.light-theme .nav-link.active .dropdown-arrow {
-    color: var(--primary) !important;
+.light-theme .nav-link.active span,
+.light-theme .nav-link.active .dropdown-arrow,
+.light-theme .nav-link:active i,
+.light-theme .nav-link:active span,
+.light-theme .nav-link:active .dropdown-arrow {
+    color: #ffffff !important;
 }
 
 /* Efeito de hover nos menus em modo claro */
 .light-theme .nav-link:hover,
 .light-theme .submenu-link:hover {
-    background-color: rgba(0, 0, 0, 0.03) !important;
-    color: var(--text-main) !important;
+    background-color: rgba(37, 142, 90, 0.08) !important;
+    color: var(--text-muted) !important;
 }
 
 .light-theme .nav-link:hover i,
+.light-theme .nav-link:hover span,
 .light-theme .submenu-link:hover i,
+.light-theme .submenu-link:hover span,
 .light-theme .nav-link:hover .dropdown-arrow {
-    color: var(--text-main) !important;
+    color: var(--text-muted) !important;
 }
 
-/* Itens de submenu padrão (não ativos) no modo claro: texto escuro e legível */
+/* Itens de menu e submenu padrão (não ativos) no modo claro: cinza elegante */
+.light-theme .nav-link,
 .light-theme .submenu-link {
-    color: #374151 !important; /* Cinza-escuro com ótimo contraste na sidebar branca */
+    color: var(--text-muted) !important; /* Cinza Slate 500 */
 }
 
-.light-theme .submenu-link i {
-    color: #6b7280 !important;
+.light-theme .nav-link i,
+.light-theme .nav-link span,
+.light-theme .submenu-link i,
+.light-theme .submenu-link span,
+.light-theme .nav-link .dropdown-arrow {
+    color: var(--text-muted) !important;
 }
 
-/* Item ativo no submenu em modo claro: fundo verde suave e texto verde escuro */
-.light-theme .submenu-link.active {
-    background-color: rgba(16, 185, 129, 0.12) !important; /* Verde suave e visível */
-    color: hsl(142, 76%, 30%) !important;                   /* Verde escuro com alto contraste */
-    box-shadow: none !important;
+/* Item ativo no submenu em modo claro */
+.light-theme .submenu-link.active, .light-theme .submenu-link:active {
+    background: linear-gradient(135deg, #31b373, #1d854e) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(49, 179, 115, 0.25) !important;
 }
 
-.light-theme .submenu-link.active i {
-    color: hsl(142, 76%, 30%) !important;
-}
-
-.light-theme .submenu-link.active:hover {
-    background-color: var(--primary) !important;
+.light-theme .submenu-link.active i,
+.light-theme .submenu-link.active span,
+.light-theme .submenu-link:active i,
+.light-theme .submenu-link:active span {
     color: #ffffff !important;
 }
 
-.light-theme .submenu-link.active:hover i {
+.light-theme .submenu-link.active:hover, .light-theme .submenu-link:active:hover {
+    background: linear-gradient(135deg, #31b373, #1d854e) !important;
+    color: #ffffff !important;
+}
+
+.light-theme .submenu-link.active:hover i,
+.light-theme .submenu-link.active:hover span,
+.light-theme .submenu-link:active:hover i,
+.light-theme .submenu-link:active:hover span {
     color: #ffffff !important;
 }
 
@@ -345,18 +376,18 @@ textarea {
 
 .nav-link:hover {
     color: var(--text-main);
-    background-color: var(--primary);
-    box-shadow: 0 4px 15px var(--primary-glow);
+    background-color: rgba(37, 142, 90, 0.08);
+    box-shadow: none;
 }
 
-.nav-link.active {
-    color: var(--text-main);
-    background-color: var(--primary);
-    box-shadow: 0 4px 15px var(--primary-glow);
+.nav-link.active, .nav-link:active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #31b373, #1d854e);
+    box-shadow: 0 4px 15px rgba(49, 179, 115, 0.3);
 }
 
-.nav-link.active:hover {
-    background-color: var(--primary);
+.nav-link.active:hover, .nav-link:active:hover {
+    background: linear-gradient(135deg, #31b373, #1d854e);
 }
 
 .nav-group {
@@ -403,18 +434,18 @@ textarea {
 
 .submenu-link:hover {
     color: var(--text-main);
-    background-color: var(--primary);
-    box-shadow: 0 4px 15px var(--primary-glow);
+    background-color: rgba(37, 142, 90, 0.08);
+    box-shadow: none;
 }
 
-.submenu-link.active {
-    color: var(--text-main);
-    background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 4px 15px var(--primary-glow);
+.submenu-link.active, .submenu-link:active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #31b373, #1d854e);
+    box-shadow: 0 4px 15px rgba(49, 179, 115, 0.25);
 }
 
 .submenu-link.active:hover {
-    background-color: var(--primary);
+    background: linear-gradient(135deg, #31b373, #1d854e);
 }
 
 .submenu-link i {
@@ -1573,18 +1604,28 @@ textarea {
     transform: translate(-50%, -50%);
     width: 100%;
     height: 100%;
-    background-image: url('login-bg-photo.jpg?v=3');
+    background-image: url('bg-login.png');
     background-size: cover;
-    background-position: center;
+    background-position: 85% center; /* Desloca mais para a esquerda para o focinho do cão ficar totalmente livre */
     background-repeat: no-repeat;
-    opacity: 0.3; /* Full photo background with transparency */
+    filter: brightness(0.85) saturate(130%) contrast(115%); /* Clareia um tom da imagem mantendo a riqueza de cores */
+    opacity: 1; /* Mantém 100% visível, controlando a luz apenas pelo filtro */
     z-index: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
+/* Efeito Vignette mais suave para não escurecer tanto as bordas */
+.login-bg-watermark::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.5) 100%);
+    z-index: 1;
+}
+
 .light-theme .login-bg-watermark {
-    opacity: 0.35; /* Increased visibility in light theme */
+    opacity: 1.0; /* Imagem de fundo totalmente visível no modo claro */
 }
 
 .light-theme .login-card {
@@ -1642,8 +1683,9 @@ textarea {
 .login-card {
     background-color: var(--bg-card);
     border: 1px solid var(--border-glow);
+    border-top: none; /* Remove a borda branca superior para a fita verde ficar no limite */
     border-radius: var(--border-radius);
-    padding: 30px 40px 40px 40px; /* Reduced top padding for better vertical balance */
+    padding: 30px 40px 40px 40px;
     box-shadow: var(--shadow-main);
     backdrop-filter: var(--glass-blur);
     position: relative;
@@ -1656,8 +1698,9 @@ textarea {
     top: 0;
     left: 0;
     width: 100%;
-    height: 4px;
-    background: var(--primary);
+    height: 2px; /* Fita neon final */
+    background: linear-gradient(90deg, #31b373, #1d854e);
+    z-index: 10;
 }
 
 .login-header {
@@ -1916,7 +1959,7 @@ textarea {
 }
 
 .login-footer p {
-    font-size: 13px; /* Slightly larger footer text */
+    font-size: 14.5px; /* Aumentado para melhor leitura */
     color: var(--text-muted);
 }
 
@@ -1974,10 +2017,11 @@ textarea {
 .custom-dialog-container {
     background: var(--bg-card);
     border: 1px solid var(--border-glow);
-    border-radius: var(--border-radius); /* Matches login card border radius */
-    padding: 50px 40px 30px 40px;        /* Matches login card horizontal padding */
+    border-top: none; /* Remove a borda branca superior para a fita verde assumir */
+    border-radius: var(--border-radius);
+    padding: 50px 40px 30px 40px;
     width: 90%;
-    max-width: 480px;                    /* Wider to match login screen proportions */
+    max-width: 480px;
     box-shadow: var(--shadow-main);
     transform: scale(0.9) translateY(20px);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -2046,6 +2090,12 @@ textarea {
     margin-top: 28px;
 }
 
+/* Limita a largura do formulário para que o campo e o botão fiquem mais estreitos */
+.custom-dialog-container form {
+    max-width: 340px;
+    margin: 0 auto;
+}
+
 .custom-dialog-container .forgot-password-container {
     margin-top: 24px;
 }
@@ -2060,8 +2110,9 @@ textarea {
     top: 0;
     left: 0;
     width: 100%;
-    height: 4px;
-    background: var(--primary); /* Neon green top bar matches login card */
+    height: 2px; /* Fita neon final */
+    background: linear-gradient(90deg, #31b373, #1d854e);
+    z-index: 10;
 }
 
 .custom-dialog-overlay.active .custom-dialog-container {
@@ -2987,4 +3038,182 @@ input[type=number] {
 .raca-item:hover {
     background-color: var(--primary) !important;
     color: var(--text-inverse) !important;
+}
+
+/* ==========================================================================
+   SPLIT LAYOUT PARA LOGIN
+   ========================================================================== */
+.split-wrapper {
+    max-width: 805px !important; /* Ajustado para eliminar a folga excessiva no lado direito */
+    margin: 0 auto !important;
+    transform: translateY(15px) scale(0.85); /* Escala reduzida ainda mais para efeito 'zoom out' */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.gradient-border-wrapper {
+    padding: 1.5px; /* Espessura realmente fina */
+    border-radius: 17.5px; 
+    background: linear-gradient(135deg, #258e5a, #146038);
+    display: flex; 
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+    width: 100%;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.04); /* Sombra externa bem mais clara/suave */
+}
+
+.login-card.split-layout {
+    display: flex;
+    flex-direction: row;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 16px; 
+    border: none !important;
+    box-shadow: none !important; /* Remove a sombra interna que criava a ilusão de borda grossa */
+    min-height: 485px; /* Leve aumento para dar um mínimo de respiro em cima e embaixo */
+    height: 100%;
+    position: relative;
+    width: 100%;
+    flex: 1; 
+}
+
+.login-card.split-layout::before {
+    display: none;
+}
+
+/* Aplicar gradiente no botão e no título do login */
+.login-card.split-layout h2 {
+    background: linear-gradient(135deg, #31b373, #1d854e) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+}
+
+.login-card.split-layout .btn-login {
+    background: linear-gradient(135deg, #31b373, #1d854e) !important;
+    border: none !important;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+}
+
+.login-card.split-layout .btn-login:hover {
+    background: linear-gradient(135deg, #258e5a, #146038) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(49, 179, 115, 0.2); /* Sombra do hover combinando com o novo tom */
+}
+
+.login-left {
+    flex: 0.9; /* Proporção matematicamente calculada para igualar as bordas laterais */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-card);
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 15px 0 30px -15px rgba(0, 0, 0, 0.05); /* Sombra intermediária e elegante */
+    position: relative;
+    z-index: 2; 
+    padding: 35px;
+    border-radius: 16px 0 0 16px;
+}
+
+.light-theme .login-left {
+    background-color: #ffffff; /* Branco absoluto e clean */
+    border-right: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.login-logo-img-split {
+    max-width: 85%;
+    height: auto;
+}
+
+.login-right {
+    flex: 1;
+    padding: 40px 55px; /* Define exatos 55px de distância até a borda direita, igualando o lado esquerdo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 0 16px 16px 0;
+}
+
+#form-login-element {
+    max-width: 315px; /* Um pouco maior na largura */
+    margin: 0 auto;
+    width: 100%;
+}
+
+.light-theme .login-right {
+    background-color: #ffffff; /* Branco absoluto e clean */
+}
+
+.split-layout .login-input-wrapper .input-icon {
+    color: #81c784; /* Verde bem suave e pastel, como na referência */
+}
+
+.split-layout .login-input-wrapper .password-toggle-btn i {
+    color: #64748b !important; /* Ícone do olho cinza azulado */
+}
+
+@media (max-width: 850px) {
+    .login-card.split-layout {
+        flex-direction: column;
+    }
+    .login-left {
+        display: none;
+    }
+    .login-right {
+        padding: 40px 30px;
+    }
+}
+
+/* Ajustes Finos dos Campos para o Layout Split */
+.split-layout .login-input-wrapper input {
+    padding: 10px 40px 10px 40px !important;
+    font-size: 14.5px !important; /* Fonte um pouco mais refinada */
+    height: 46px !important; 
+    border-radius: 6px !important; 
+    border: 1px solid #d0d7de !important; /* Borda visível mas elegante */
+    background-color: #f6f8fa !important; /* Fundo flat azulado/acinzentado, sem sombras */
+    box-shadow: none !important; /* Removemos a sombra para ficar exatamente igual ao print (Flat) */
+    color: #475569 !important; /* Texto levemente mais suave */
+    transition: all 0.3s ease;
+}
+
+.split-layout .login-input-wrapper input::placeholder {
+    color: #64748b !important; /* Placeholder em cinza escuro */
+    font-weight: 400 !important;
+}
+
+.split-layout .login-input-wrapper input:focus {
+    background-color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(37, 142, 90, 0.1) !important;
+    border-color: var(--primary) !important;
+}
+
+.split-layout .form-group label {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+    margin-bottom: 6px !important;
+}
+
+.split-layout .btn-login {
+    height: 48px !important;
+    font-size: 15px !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+    font-size: 15px !important;
+    margin-top: 5px !important;
+}
+
+.split-layout .login-header h2 {
+    color: #579d71 !important;
 }

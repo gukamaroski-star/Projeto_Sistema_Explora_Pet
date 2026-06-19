@@ -27,17 +27,17 @@
     <link rel="stylesheet" href="style.css?v=8">
 </head>
 
-<body>
+<body class="light-theme">
     <div class="app-container">
         <!-- Sidebar lateral -->
         <aside class="sidebar">
             <div class="brand">
-                <div class="brand-logo">
-                    <img src="logo.png?v=6" alt="Explora Pet Oficial" />
-                </div>
-                <div class="brand-text">
-                    <h1></h1>
-                    <span>Bem-estar e Comportamento Canino</span>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 5px;">
+                    <img src="new-logo-transparent.png" alt="Mascote Explora" style="width: 125px; height: auto; border-radius: 14px; box-shadow: 0 12px 30px rgba(49, 179, 115, 0.2); background: linear-gradient(135deg, #31b373, #1d854e); padding: 5px;" />
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 0;">
+                        <img src="explora-logo-text-gradient.png" alt="Logo Explora" style="width: 115px; height: auto; mix-blend-mode: multiply;" />
+                        <span style="font-family: 'Montserrat', 'Inter', sans-serif; font-size: 7.5px; font-weight: 600; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; margin-top: -3px; margin-left: 18px;">BEM-ESTAR ANIMAL</span>
+                    </div>
                 </div>
             </div>
 
@@ -118,8 +118,8 @@
                     <p id="current-tab-subtitle">Visão unificada das operações de negócios e faturamento.</p>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-secondary btn-icon-only" id="theme-toggle" title="Alternar Tema">
-                        <i data-lucide="moon"></i>
+                    <button class="btn btn-secondary btn-icon-only" id="theme-toggle" title="Tema fixo temporariamente" disabled style="opacity: 0.6; cursor: not-allowed;">
+                        <i data-lucide="sun"></i>
                     </button>
                     <div class="user-profile" id="user-profile-widget" style="cursor: pointer;"
                         title="Clique para Sair (Logout)">

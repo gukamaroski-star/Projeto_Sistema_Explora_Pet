@@ -37,11 +37,11 @@ ENV/
 # ------------------------------------------------------------
 # Banco de Dados
 # ------------------------------------------------------------
-database/*.db
-database/*.db-shm
-database/*.db-wal
-*.sqlite
-*.sqlite3
+# database/*.db
+# database/*.db-shm
+# database/*.db-wal
+# *.sqlite
+# *.sqlite3
 
 
 # ------------------------------------------------------------
