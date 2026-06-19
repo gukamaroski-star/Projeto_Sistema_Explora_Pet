@@ -188,6 +188,7 @@
                     localStorage.setItem('user_nome', data.nome);
                     localStorage.setItem('user_username', data.username);
                     localStorage.setItem('user_cargo', data.cargo);
+                    localStorage.setItem('user_telas_liberadas', data.telas_liberadas || 'dashboard,clientes,pets');
                     
                     // Redireciona para o painel principal
                     window.location.href = 'index.html';

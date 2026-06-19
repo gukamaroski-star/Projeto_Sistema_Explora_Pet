@@ -1,40 +1,60 @@
 import os
 import sys
-import uvicorn
 import socket
+import uvicorn
 
-def obter_ip_local():
+# ------------------------------------------------------------
+# Configurações do Servidor
+# ------------------------------------------------------------
+HOST      = "0.0.0.0"
+PORT      = 9001
+APP_NAME  = "Explora Pet"
+APP_MODULE = "main:app"
+RELOAD    = True
+
+
+def obter_ip_local() -> str:
+    """Retorna o IP local da máquina na rede Wi-Fi ativa."""
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # Tenta se conectar a um IP externo fictício para obter a interface de rede ativa
-        s.connect(('10.255.255.255', 1))
-        ip = s.getsockname()[0]
+        s.connect(("10.255.255.255", 1))
+        return s.getsockname()[0]
     except Exception:
-        ip = '127.0.0.1'
+        return "127.0.0.1"
     finally:
         s.close()
-    return ip
+
+
+def exibir_banner(ip_local: str) -> None:
+    """Exibe as informações de inicialização do servidor."""
+    linha = "=" * 70
+    print(f"\n{linha}")
+    print(f"  🐾 {APP_NAME} — Servidor Iniciado")
+    print(linha)
+    print(f"  🖥️  IP Local:        {ip_local}")
+    print(f"  🌐 Host:            {HOST}  (aceita conexões externas)")
+    print(f"  🔌 Porta:           {PORT}")
+    print(f"  📱 URL Mobile:      http://{ip_local}:{PORT}")
+    print(f"  📝 Swagger Docs:    http://localhost:{PORT}/docs")
+    print(linha)
+    print("  🔔 IMPORTANTE:")
+    print("     • Celular e computador devem estar no mesmo Wi-Fi.")
+    print(f"    • Emulador Android: http://10.0.2.2:{PORT}")
+    print(f"{linha}\n")
+
 
 if __name__ == "__main__":
     try:
-        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
+
+    # Garante que o uvicorn encontra o main.py na raiz do projeto (infra/dev/ → raiz)
+    raiz = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    os.chdir(raiz)
+    sys.path.insert(0, raiz)
+
     ip_local = obter_ip_local()
-    
-    print("\n" + "="*80)
-    print(" ENTERPRISEDB - PREPARANDO AMBIENTE DE REDE PARA MOBILE")
-    print("="*80)
-    print(f" 🖥️  IP local do seu computador:  {ip_local}")
-    print(f" 🌐 Iniciando servidor no host:   0.0.0.0 (Aceita conexões do celular)")
-    print(f" 🔌 Porta:                        9001")
-    print(f" 📱 URL para o App Mobile:        http://{ip_local}:9001")
-    print("="*80)
-    print(" 🔔 IMPORTANTE:")
-    print("    1. Garanta que o seu celular está no mesmo Wi-Fi que este computador.")
-    print("    2. Caso use emulador de Android/iOS no próprio PC, você também pode")
-    print(f"       usar 'http://{ip_local}:9001' ou 'http://10.0.2.2:9001' (Android).")
-    print("="*80 + "\n")
-    
-    # Inicia o servidor uvicorn habilitando conexões externas de outros dispositivos na rede local
-    uvicorn.run("main:app", host="0.0.0.0", port=9001, reload=True)
+    exibir_banner(ip_local)
+
+    uvicorn.run(APP_MODULE, host=HOST, port=PORT, reload=RELOAD)

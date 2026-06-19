@@ -4168,6 +4168,11 @@ function checkUserPermissions() {
     if (thAcoes) {
         thAcoes.style.display = is_admin ? 'table-cell' : 'none';
     }
+
+    // Aplica as permissões de tela no menu lateral
+    if (typeof applyScreenPermissions === 'function') {
+        applyScreenPermissions();
+    }
 }
 
 async function verifySession() {
@@ -4178,6 +4183,7 @@ async function verifySession() {
             localStorage.setItem('user_nome', data.nome);
             localStorage.setItem('user_username', data.username);
             localStorage.setItem('user_cargo', data.cargo);
+            localStorage.setItem('user_telas_liberadas', data.telas_liberadas || 'dashboard,clientes,pets');
 
             // Atualiza o display do profile no header
             const displayUserName = document.getElementById('display-user-name');
@@ -4242,6 +4248,9 @@ function renderUsuariosTable(list) {
             actionsHTML = `
                 <td style="text-align: center;">
                     <div style="display: flex; gap: 18px; justify-content: center; align-items: center;">
+                        <a href="#" onclick="event.preventDefault(); openPermissionsModal(${u.id})" class="flat-action-btn permissions" title="Liberar Telas" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+                        </a>
                         <a href="#" onclick="event.preventDefault(); openUsuarioModal(${u.id})" class="flat-action-btn edit" title="Editar Usuário" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
                             <i data-lucide="edit-2" style="width: 18px; height: 18px;"></i>
                         </a>
@@ -5491,7 +5500,7 @@ async function loadPets(force = false) {
         if (loading) loading.style.display = 'flex';
 
         const response = await fetch(`${API_BASE}/pets?limit=10000`, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
         });
 
         if (!response.ok) throw new Error('Falha ao carregar pets');
@@ -5564,7 +5573,7 @@ window.bulkDeletePets = async function () {
         for (const id of ids) {
             await fetch(`${API_BASE}/pets/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
             });
         }
 
@@ -7397,6 +7406,11 @@ function checkUserPermissions() {
     if (thAcoes) {
         thAcoes.style.display = is_admin ? 'table-cell' : 'none';
     }
+
+    // Aplica as permissões de tela no menu lateral
+    if (typeof applyScreenPermissions === 'function') {
+        applyScreenPermissions();
+    }
 }
 
 async function verifySession() {
@@ -7407,6 +7421,7 @@ async function verifySession() {
             localStorage.setItem('user_nome', data.nome);
             localStorage.setItem('user_username', data.username);
             localStorage.setItem('user_cargo', data.cargo);
+            localStorage.setItem('user_telas_liberadas', data.telas_liberadas || 'dashboard,clientes,pets');
 
             // Atualiza o display do profile no header
             const displayUserName = document.getElementById('display-user-name');
@@ -7471,6 +7486,9 @@ function renderUsuariosTable(list) {
             actionsHTML = `
                 <td style="text-align: center;">
                     <div style="display: flex; gap: 18px; justify-content: center; align-items: center;">
+                        <a href="#" onclick="event.preventDefault(); openPermissionsModal(${u.id})" class="flat-action-btn permissions" title="Liberar Telas" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                            <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+                        </a>
                         <a href="#" onclick="event.preventDefault(); openUsuarioModal(${u.id})" class="flat-action-btn edit" title="Editar Usuário" style="color: #94a3b8; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
                             <i data-lucide="edit-2" style="width: 18px; height: 18px;"></i>
                         </a>
@@ -8777,3 +8795,171 @@ function renderPetsList() {
 }
 
 // applyPetFilters duplicate at the bottom of file removed
+
+// --- CONTROLE DE ACESSO A TELAS ---
+window.applyScreenPermissions = function () {
+    const userTelasRaw = localStorage.getItem('user_telas_liberadas') || 'dashboard,clientes,pets';
+    const userTelas = userTelasRaw.split(',').map(s => s.trim());
+    
+    const hasDashboard = userTelas.includes('dashboard');
+    const hasClientes = userTelas.includes('clientes');
+    const hasPets = userTelas.includes('pets');
+    const hasUsuarios = userTelas.includes('usuarios');
+    const hasSqlTerminal = userTelas.includes('sql-terminal');
+    
+    // 1. Dashboard Link
+    const linkDashboard = document.querySelector('.nav-link[data-tab="dashboard"]');
+    if (linkDashboard) linkDashboard.style.display = hasDashboard ? 'flex' : 'none';
+    
+    // 2. Clientes & Pets Submenus
+    const linkNovoResponsavel = document.querySelector('.submenu-link[data-tab="novo-responsavel"]');
+    const linkClientes = document.querySelector('.submenu-link[data-tab="clientes"]');
+    const linkNovoPet = document.querySelector('.submenu-link[data-tab="novo-pet"]');
+    const linkPets = document.querySelector('.submenu-link[data-tab="pets"]');
+    
+    if (linkNovoResponsavel) linkNovoResponsavel.style.display = hasClientes ? 'flex' : 'none';
+    if (linkClientes) linkClientes.style.display = hasClientes ? 'flex' : 'none';
+    if (linkNovoPet) linkNovoPet.style.display = hasPets ? 'flex' : 'none';
+    if (linkPets) linkPets.style.display = hasPets ? 'flex' : 'none';
+    
+    // Encontra o grupo do Clientes/Pets (nav-group)
+    const submenus = [linkNovoResponsavel, linkClientes, linkNovoPet, linkPets];
+    const presentSubmenu = submenus.find(el => el !== null);
+    const clientesGroup = presentSubmenu ? presentSubmenu.closest('.nav-group') : null;
+    if (clientesGroup) {
+        clientesGroup.style.display = (hasClientes || hasPets) ? 'block' : 'none';
+    }
+    
+    // 3. Settings / Usuarios
+    const linkUsuarios = document.querySelector('.submenu-link[data-tab="usuarios"]');
+    if (linkUsuarios) linkUsuarios.style.display = hasUsuarios ? 'flex' : 'none';
+    
+    const settingsGroup = linkUsuarios ? linkUsuarios.closest('.nav-group') : null;
+    if (settingsGroup) {
+        settingsGroup.style.display = hasUsuarios ? 'block' : 'none';
+    }
+    
+    // 4. SQL Terminal Link
+    const linkSql = document.querySelector('.nav-link[data-tab="sql-terminal"]');
+    if (linkSql) linkSql.style.display = hasSqlTerminal ? 'flex' : 'none';
+    
+    // Se o usuário estiver na aba atual bloqueada, redireciona para a primeira aba permitida
+    if (state.activeTab && !userTelas.includes(state.activeTab)) {
+        // Ignora abas internas como cadastros e perfis
+        const internalTabs = ['novo-responsavel', 'responsavel-perfil', 'novo-pet', 'pet-perfil'];
+        if (!internalTabs.includes(state.activeTab)) {
+            const firstAvailableTab = ['dashboard', 'clientes', 'pets', 'usuarios', 'sql-terminal'].find(t => userTelas.includes(t));
+            if (firstAvailableTab) {
+                const tabLink = document.querySelector(`[data-tab="${firstAvailableTab}"]`);
+                if (tabLink) {
+                    tabLink.click();
+                } else {
+                    onTabChanged(firstAvailableTab);
+                }
+            } else {
+                localStorage.clear();
+                window.location.href = 'login.html';
+            }
+        }
+    }
+};
+
+window.openPermissionsModal = async function (id) {
+    try {
+        const response = await fetch(`${API_BASE}/users`);
+        if (!response.ok) throw new Error("Erro ao listar usuários");
+        const users = await response.json();
+        const user = users.find(u => u.id === id);
+        if (!user) {
+            CustomUI.toast("Erro", "Usuário não encontrado.", "danger");
+            return;
+        }
+        
+        document.getElementById('permissions-user-id').value = user.id;
+        document.getElementById('permissions-user-name').textContent = user.nome;
+        
+        const telas = (user.telas_liberadas || 'dashboard,clientes,pets').split(',').map(s => s.trim());
+        
+        document.getElementById('perm-dashboard').checked = telas.includes('dashboard');
+        document.getElementById('perm-clientes').checked = telas.includes('clientes');
+        document.getElementById('perm-pets').checked = telas.includes('pets');
+        document.getElementById('perm-usuarios').checked = telas.includes('usuarios');
+        document.getElementById('perm-sql-terminal').checked = telas.includes('sql-terminal');
+        
+        const modal = document.getElementById('modal-permissions');
+        if (modal) {
+            modal.classList.add('active');
+        }
+    } catch (error) {
+        console.error("Erro ao abrir modal de permissões:", error);
+        CustomUI.toast("Erro", "Falha ao obter dados do usuário.", "danger");
+    }
+};
+
+window.savePermissions = async function (event) {
+    event.preventDefault();
+    const id = document.getElementById('permissions-user-id').value;
+    
+    const checkboxes = [
+        { id: 'perm-dashboard', val: 'dashboard' },
+        { id: 'perm-clientes', val: 'clientes' },
+        { id: 'perm-pets', val: 'pets' },
+        { id: 'perm-usuarios', val: 'usuarios' },
+        { id: 'perm-sql-terminal', val: 'sql-terminal' }
+    ];
+    
+    const selectedTelas = checkboxes
+        .filter(cb => document.getElementById(cb.id).checked)
+        .map(cb => cb.val);
+        
+    const telas_liberadas = selectedTelas.join(',');
+    
+    try {
+        // Busca os dados atuais do usuário para não apagar outros campos no PUT
+        const usersResponse = await fetch(`${API_BASE}/users`);
+        const users = await usersResponse.json();
+        const user = users.find(u => u.id == id);
+        if (!user) {
+            CustomUI.toast("Erro", "Usuário não encontrado.", "danger");
+            return;
+        }
+        
+        const payload = {
+            username: user.username,
+            nome: user.nome,
+            email: user.email,
+            cargo: user.cargo,
+            password: "", // Não altera a senha
+            telas_liberadas: telas_liberadas
+        };
+        
+        const response = await fetch(`${API_BASE}/users/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || "Falha ao salvar permissões");
+        }
+        
+        CustomUI.toast("Sucesso", "Permissões de tela atualizadas com sucesso!", "success");
+        closeModal('modal-permissions');
+        
+        // Se for o próprio usuário logado alterando suas permissões, atualiza o cache local e aplica
+        const meResponse = await fetch(`${API_BASE}/auth/me`);
+        if (meResponse.ok) {
+            const meData = await meResponse.json();
+            if (meData.id == id) {
+                localStorage.setItem('user_telas_liberadas', telas_liberadas);
+                applyScreenPermissions();
+            }
+        }
+        
+        loadUsuarios();
+    } catch (error) {
+        console.error("Erro ao salvar permissões:", error);
+        CustomUI.toast("Erro", error.message || "Erro desconhecido.", "danger");
+    }
+};

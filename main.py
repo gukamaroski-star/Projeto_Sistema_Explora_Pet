@@ -64,6 +64,7 @@ class UsuarioCreate(BaseModel):
     nome: str
     email: str
     cargo: str = "Colaborador"
+    telas_liberadas: Optional[str] = "dashboard,clientes,pets"
 
 class UsuarioUpdate(BaseModel):
     username: str
@@ -71,6 +72,7 @@ class UsuarioUpdate(BaseModel):
     email: str
     cargo: str = "Colaborador"
     password: Optional[str] = None
+    telas_liberadas: Optional[str] = None
 
 # Dependência para obter e validar o usuário atual logado
 def obter_usuario_atual(token: Optional[str] = Depends(oauth2_scheme), session: Session = Depends(get_session)) -> Usuario:
@@ -156,11 +158,16 @@ def on_startup():
         pass
     create_db_and_tables()
     
-    # Auto-migração: adiciona a coluna 'cargo' se estiver faltando no SQLite
+    # Auto-migração: adiciona as colunas 'cargo', 'email' e 'telas_liberadas' se estiverem faltando
     with Session(engine) as session:
         try:
-            columns_info = session.execute(text("PRAGMA table_info(usuarios)")).all()
-            columns = [col[1] for col in columns_info]
+            if engine.dialect.name == "sqlite":
+                columns_info = session.execute(text("PRAGMA table_info(usuarios)")).all()
+                columns = [col[1] for col in columns_info]
+            else:
+                columns_info = session.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name = 'usuarios'")).all()
+                columns = [col[0] for col in columns_info]
+
             if "cargo" not in columns:
                 print("Alterando tabela 'usuarios' para adicionar coluna 'cargo'...")
                 session.execute(text("ALTER TABLE usuarios ADD COLUMN cargo VARCHAR DEFAULT 'Colaborador'"))
@@ -172,6 +179,12 @@ def on_startup():
                 session.execute(text("ALTER TABLE usuarios ADD COLUMN email VARCHAR DEFAULT 'explorapetoficial@gmail.com'"))
                 session.commit()
                 print("Coluna 'email' migrada com sucesso!")
+            if "telas_liberadas" not in columns:
+                print("Alterando tabela 'usuarios' para adicionar coluna 'telas_liberadas'...")
+                session.execute(text("ALTER TABLE usuarios ADD COLUMN telas_liberadas VARCHAR DEFAULT 'dashboard,clientes,pets'"))
+                session.execute(text("UPDATE usuarios SET telas_liberadas = 'dashboard,clientes,pets,usuarios,sql-terminal' WHERE cargo = 'Administrador'"))
+                session.commit()
+                print("Coluna 'telas_liberadas' migrada com sucesso!")
         except Exception as e:
             print(f"Erro na migração automática: {e}")
     
@@ -247,6 +260,7 @@ def login(request: LoginRequest, session: Session = Depends(get_session)):
         "nome": usuario.nome,
         "email": usuario.email,
         "cargo": usuario.cargo,
+        "telas_liberadas": usuario.telas_liberadas,
         "expira_em": expira_em
     }
     
@@ -255,7 +269,8 @@ def login(request: LoginRequest, session: Session = Depends(get_session)):
         "token_type": "bearer",
         "nome": usuario.nome,
         "username": usuario.username,
-        "cargo": usuario.cargo
+        "cargo": usuario.cargo,
+        "telas_liberadas": usuario.telas_liberadas
     }
 
 @app.post("/api/auth/logout")
@@ -271,7 +286,8 @@ def get_me(usuario: Usuario = Depends(obter_usuario_atual)):
         "username": usuario.username,
         "nome": usuario.nome,
         "email": usuario.email,
-        "cargo": usuario.cargo
+        "cargo": usuario.cargo,
+        "telas_liberadas": usuario.telas_liberadas
     }
 
 def limpar_emails_enviados_antigos():
@@ -904,7 +920,8 @@ def listar_usuarios(session: Session = Depends(get_session)):
         "username": u.username,
         "nome": u.nome,
         "email": u.email,
-        "cargo": u.cargo
+        "cargo": u.cargo,
+        "telas_liberadas": u.telas_liberadas
     } for u in usuarios]
 
 @app.post("/api/users")
@@ -927,7 +944,8 @@ def criar_usuario(
         hashed_password=hashed_pw,
         nome=dados.nome,
         email=dados.email,
-        cargo=dados.cargo
+        cargo=dados.cargo,
+        telas_liberadas=dados.telas_liberadas
     )
     
     try:
@@ -939,7 +957,8 @@ def criar_usuario(
             "username": novo_usuario.username,
             "nome": novo_usuario.nome,
             "email": novo_usuario.email,
-            "cargo": novo_usuario.cargo
+            "cargo": novo_usuario.cargo,
+            "telas_liberadas": novo_usuario.telas_liberadas
         }
     except Exception as e:
         session.rollback()
@@ -970,6 +989,9 @@ def atualizar_usuario(
     usuario.email = dados.email
     usuario.cargo = dados.cargo
     
+    if dados.telas_liberadas is not None:
+        usuario.telas_liberadas = dados.telas_liberadas
+    
     # Se senha foi enviada, faz o hash e atualiza
     if dados.password and dados.password.strip():
         usuario.hashed_password = get_password_hash(dados.password)
@@ -983,7 +1005,8 @@ def atualizar_usuario(
             "username": usuario.username,
             "nome": usuario.nome,
             "email": usuario.email,
-            "cargo": usuario.cargo
+            "cargo": usuario.cargo,
+            "telas_liberadas": usuario.telas_liberadas
         }
     except Exception as e:
         session.rollback()

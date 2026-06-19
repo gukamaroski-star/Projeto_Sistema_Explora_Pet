@@ -1704,6 +1704,52 @@
             </form>
         </div>
     </div>
+
+    <!-- MODAL LIBERAÇÃO DE TELAS -->
+    <div class="modal-overlay" id="modal-permissions">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="modal-permissions-title">Liberação de Telas</h3>
+                <button class="modal-close" onclick="closeModal('modal-permissions')">&times;</button>
+            </div>
+            <form id="form-permissions" onsubmit="savePermissions(event)">
+                <input type="hidden" id="permissions-user-id">
+                <div style="margin-bottom: 20px;">
+                    <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 16px 0;">
+                        Selecione as telas que o usuário <strong id="permissions-user-name" style="color: var(--text-main);">...</strong> terá permissão para acessar:
+                    </p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 14px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glow); padding: 18px; border-radius: 8px;">
+                        <label class="custom-checkbox-container" style="display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="perm-dashboard" value="dashboard" class="custom-checkbox">
+                            <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">Dashboard</span>
+                        </label>
+                        <label class="custom-checkbox-container" style="display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="perm-clientes" value="clientes" class="custom-checkbox">
+                            <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">Responsáveis (Clientes)</span>
+                        </label>
+                        <label class="custom-checkbox-container" style="display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="perm-pets" value="pets" class="custom-checkbox">
+                            <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">Pets</span>
+                        </label>
+                        <label class="custom-checkbox-container" style="display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="perm-usuarios" value="usuarios" class="custom-checkbox">
+                            <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">Usuários (Configuração)</span>
+                        </label>
+                        <label class="custom-checkbox-container" style="display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none;">
+                            <input type="checkbox" id="perm-sql-terminal" value="sql-terminal" class="custom-checkbox">
+                            <span style="font-size: 14px; color: var(--text-main); font-weight: 500;">Console SQL</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="modal-footer" style="padding-top: 16px; border-top: 1px solid var(--border-glow); margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-permissions')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Permissões</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <!-- Botão Flutuante (FAB) para cadastrar Novo Usuário (Controlado via JS) -->
     <button class="fab-btn" id="btn-novo-usuario" onclick="openUsuarioModal()" title="Cadastrar Novo Usuário"
         style="display: none;">

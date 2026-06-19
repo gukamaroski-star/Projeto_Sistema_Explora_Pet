@@ -51,6 +51,7 @@ class Usuario(SQLModel, table=True):
     nome: str
     email: str
     cargo: str = Field(default="Colaborador")
+    telas_liberadas: str = Field(default="dashboard,clientes,pets")
 
 # Modelo para a tabela de Pets
 class Pet(SQLModel, table=True):
